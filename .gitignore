@@ -26,7 +26,7 @@ backups/
 *.backup
 
 # Directories to ignore
-trans/
+trans/*
 logs/
 
 # Python cache files
@@ -36,3 +36,6 @@ lib/__pycache__/
 
 # Ignore python virtual environment
 venv/
+
+# Ignore compiled SA site
+SACompiled/
