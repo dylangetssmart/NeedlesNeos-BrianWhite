@@ -19,162 +19,261 @@ alter table [sma_TRN_LienDetails] disable trigger all
 */
 
 ---(0)---
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Lienors'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Lienors')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_Lienors] ADD [saga] varchar(50) NULL; 
+	ALTER TABLE [sma_TRN_Lienors] ADD [saga] VARCHAR(50) NULL;
 END
 
 ---(0)---
-IF EXISTS (select * from sys.objects where name='value_tab_Liencheckbox_Helper' and type='U')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'value_tab_Liencheckbox_Helper'
+			AND type = 'U'
+	)
 BEGIN
 	DROP TABLE value_tab_Liencheckbox_Helper
-END 
+END
 GO
 
 ---(0)---
 CREATE TABLE value_tab_Liencheckbox_Helper (
-    TableIndex		    int IDENTITY(1,1) NOT NULL,
-    value_id		    varchar(50),
-CONSTRAINT IOC_Clustered_Index_value_tab_Liencheckbox_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Liencheckbox_Helper_value_id ON [value_tab_Liencheckbox_Helper] (value_id);   
+	TableIndex INT IDENTITY (1, 1) NOT NULL
+   ,value_id VARCHAR(50)
+   ,CONSTRAINT IOC_Clustered_Index_value_tab_Liencheckbox_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Liencheckbox_Helper_value_id ON [value_tab_Liencheckbox_Helper] (value_id);
 GO
 
 ---(0)---
-INSERT INTO value_tab_Liencheckbox_Helper ( value_id )
-SELECT VP1.id
-FROM [NeosBrianWhite].[dbo].[value_Indexed] VP1 
-LEFT JOIN ( select distinct id from [NeosBrianWhite]..[value_Indexed] where lien=1 ) VP2 on VP1.id = VP2.id and VP2.id is not null
-WHERE VP2.id is not null -- ( Lien checkbox got marked ) 
+INSERT INTO value_tab_Liencheckbox_Helper
+	(
+	value_id
+	)
+	SELECT
+		VP1.id
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] VP1
+	LEFT JOIN (
+		SELECT DISTINCT
+			id
+		FROM [NeosBrianWhite]..[value_Indexed]
+		WHERE lien = 1
+	) VP2
+		ON VP1.id = VP2.id
+			AND VP2.id IS NOT NULL
+	WHERE VP2.id IS NOT NULL -- ( Lien checkbox got marked ) 
 GO
 
 ---(0)---
-DBCC DBREINDEX('value_tab_Liencheckbox_Helper',' ',90)  WITH NO_INFOMSGS 
+DBCC DBREINDEX ('value_tab_Liencheckbox_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 
 ---(0)---
-INSERT INTO [sma_MST_LienType] ([lntsCode],[lntsDscrptn])
-(
-	SELECT DISTINCT 'CONVERSION',VC.[description]
+INSERT INTO [sma_MST_LienType]
+	(
+	[lntsCode]
+   ,[lntsDscrptn]
+	)
+	(
+	SELECT DISTINCT
+		'CONVERSION'
+	   ,VC.[description]
 	FROM [NeosBrianWhite].[dbo].[value] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id=V.valuecodeid
-	WHERE isnull(Vc.code,'') in ( 'OAG' )
-)
-EXCEPT
-SELECT [lntsCode],[lntsDscrptn] FROM [sma_MST_LienType] 
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON VC.id = V.valuecodeid
+	WHERE ISNULL(Vc.code, '') IN ('OAG')
+	)
+	EXCEPT
+	SELECT
+		[lntsCode]
+	   ,[lntsDscrptn]
+	FROM [sma_MST_LienType]
 GO
 
 
 ---(0)---
-IF EXISTS (select * from sys.objects where name='value_tab_Lien_Helper' and type='U')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'value_tab_Lien_Helper'
+			AND type = 'U'
+	)
 BEGIN
 	DROP TABLE value_tab_Lien_Helper
-END 
+END
 GO
 
 ---(0)---
 CREATE TABLE value_tab_Lien_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-    case_id		    varchar(50),
-    value_id		varchar(50),
-    ProviderNameId	varchar(50),
-    ProviderName	varchar(200),
-    ProviderCID	    int,
-    ProviderCTG	    int,
-    ProviderAID	    int,
-    casnCaseID		int,
-    PlaintiffID	    int,
-    Paid			varchar(20),
-CONSTRAINT IOC_Clustered_Index_value_tab_Lien_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
+	TableIndex [INT] IDENTITY (1, 1) NOT NULL
+   ,case_id VARCHAR(50)
+   ,value_id VARCHAR(50)
+   ,ProviderNameId VARCHAR(50)
+   ,ProviderName VARCHAR(200)
+   ,ProviderCID INT
+   ,ProviderCTG INT
+   ,ProviderAID INT
+   ,casnCaseID INT
+   ,PlaintiffID INT
+   ,Paid VARCHAR(20)
+   ,CONSTRAINT IOC_Clustered_Index_value_tab_Lien_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_case_id ON [dbo].[value_tab_Lien_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_value_id ON [dbo].[value_tab_Lien_Helper] (value_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_ProviderNameId ON [dbo].[value_tab_Lien_Helper] (ProviderNameId);   
-GO
-
----(0)---
-INSERT INTO value_tab_Lien_Helper ( case_id,value_id,ProviderNameId,ProviderName,ProviderCID,ProviderCTG,ProviderAID,casnCaseID,PlaintiffID,Paid )
-SELECT
-    convert(varchar(50),V.casesid)	    as case_id,	-- needles case
-    convert(varchar(50),V.id)		    as tab_id,		-- needles records TAB item
-    convert(varchar(50),V.namesid)		as ProviderNameId,  
-    IOC.[Name]		    as ProviderName,
-    IOC.CID				as ProviderCID,  
-    IOC.CTG				as ProviderCTG,
-    IOC.AID				as ProviderAID,
-    CAS.casnCaseID		as casnCaseID,
-    null			    as PlaintiffID,
-    null			    as Paid
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id=V.valuecodeid
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50),V.casesid)
-JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref = convert(varchar(50),V.Namesid) 
-WHERE code in ( 'OAG' )
-	OR V.id in ( select value_id from value_tab_Liencheckbox_Helper ) 
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_case_id ON [dbo].[value_tab_Lien_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_value_id ON [dbo].[value_tab_Lien_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Lien_Helper_ProviderNameId ON [dbo].[value_tab_Lien_Helper] (ProviderNameId);
 GO
 
 ---(0)---
-DBCC DBREINDEX('value_tab_Lien_Helper',' ',90)  WITH NO_INFOMSGS 
+INSERT INTO value_tab_Lien_Helper
+	(
+	case_id
+   ,value_id
+   ,ProviderNameId
+   ,ProviderName
+   ,ProviderCID
+   ,ProviderCTG
+   ,ProviderAID
+   ,casnCaseID
+   ,PlaintiffID
+   ,Paid
+	)
+	SELECT
+		CONVERT(VARCHAR(50), V.casesid) AS case_id
+	   ,	-- needles case
+		CONVERT(VARCHAR(50), V.id)		AS tab_id
+	   ,		-- needles records TAB item
+		CONVERT(VARCHAR(50), V.namesid) AS ProviderNameId
+	   ,IOC.[Name]						AS ProviderName
+	   ,IOC.CID							AS ProviderCID
+	   ,IOC.CTG							AS ProviderCTG
+	   ,IOC.AID							AS ProviderAID
+	   ,CAS.casnCaseID					AS casnCaseID
+	   ,NULL							AS PlaintiffID
+	   ,NULL							AS Paid
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON VC.id = V.valuecodeid
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
+	JOIN [IndvOrgContacts_Indexed] IOC
+		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), V.Namesid)
+	WHERE code IN ('OAG')
+		OR V.id IN (
+			SELECT
+				value_id
+			FROM value_tab_Liencheckbox_Helper
+		)
+GO
+
+---(0)---
+DBCC DBREINDEX ('value_tab_Lien_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 
 ---(0)---
-IF EXISTS (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
 BEGIN
-    DROP TABLE value_tab_Multi_Party_Helper_Temp
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
 END
 GO
 
-SELECT 
-    V.casesid		    as cid,	
-    V.id		    as vid,
-    convert(varchar,((select sum(payment_amount) from [NeosBrianWhite].[dbo].[value_payment] where id = V.id))) as Paid,
-    T.plnnPlaintiffID
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,CONVERT(VARCHAR, ((
+		SELECT
+			SUM(payment_amount)
+		FROM [NeosBrianWhite].[dbo].[value_payment]
+		WHERE id = V.id
+	)
+	))		  AS Paid
+   ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id=V.valuecodeid
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Plaintiff] t on t.plnnCaseID=CAS.casnCaseID and t.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON VC.id = V.valuecodeid
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Plaintiff] t
+	ON t.plnnCaseID = CAS.casnCaseID
+		AND t.saga_party = v.partyid
 --JOIN [NeosBrianWhite].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 GO
 
-UPDATE value_tab_Lien_Helper 
-SET PlaintiffID=A.plnnPlaintiffID,Paid=A.Paid
+UPDATE value_tab_Lien_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+   ,Paid = A.Paid
 FROM value_tab_Multi_Party_Helper_Temp A
-WHERE case_id=A.cid and value_id=A.vid
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 
-IF EXISTS (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
 BEGIN
-    DROP TABLE value_tab_Multi_Party_Helper_Temp
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
 END
 GO
 
-SELECT 
-    V.casesid	    as cid,	
-    V.id		    as vid,
-    convert(varchar,((select sum(payment_amount) from [NeosBrianWhite].[dbo].[value_payment] where id = V.id))) as Paid,
-    ( select plnnPlaintiffID from [sma_TRN_Plaintiff] where plnnCaseID=CAS.casnCaseID and plnbIsPrimary=1) as plnnPlaintiffID 
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,CONVERT(VARCHAR, ((
+		SELECT
+			SUM(payment_amount)
+		FROM [NeosBrianWhite].[dbo].[value_payment]
+		WHERE id = V.id
+	)
+	))		  AS Paid
+   ,(
+		SELECT
+			plnnPlaintiffID
+		FROM [sma_TRN_Plaintiff]
+		WHERE plnnCaseID = CAS.casnCaseID
+			AND plnbIsPrimary = 1
+	)		  
+	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id=V.valuecodeid
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Defendants] d on d.defnCaseID = cas.casncaseid and d.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON VC.id = V.valuecodeid
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Defendants] d
+	ON d.defnCaseID = cas.casncaseid
+		AND d.saga_party = v.partyid
 --JOIN [NeosBrianWhite].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_REF = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
 
-UPDATE value_tab_Lien_Helper 
-SET PlaintiffID=A.plnnPlaintiffID,Paid=A.Paid
+UPDATE value_tab_Lien_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+   ,Paid = A.Paid
 FROM value_tab_Multi_Party_Helper_Temp A
-WHERE case_id=A.cid and value_id=A.vid
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 ---------------------------------------------------------------------------------------
@@ -183,67 +282,81 @@ GO
 ALTER TABLE [sma_TRN_LienDetails] DISABLE TRIGGER ALL
 GO
 ---(1)---
-INSERT INTO [sma_TRN_Lienors] (
-		[lnrnCaseID],
-		[lnrnLienorTypeID],
-		[lnrnLienorContactCtgID],
-		[lnrnLienorContactID],
-		[lnrnLienorAddressID],
-		[lnrnLienorRelaContactID],
-		[lnrnPlaintiffID],
-		[lnrnCnfrmdLienAmount],
-		[lnrnNegLienAmount],
-		[lnrsComments],
-		[lnrnRecUserID],
-		[lnrdDtCreated],
-		[lnrnFinal],
-		[saga]
-)
-SELECT 
-    MAP.casnCaseID				as [lnrnCaseID],
-    ( select top 1 lntnLienTypeID FROM [sma_MST_LienType] where lntsDscrptn=
-	   (select [description] FROM NeosBrianWhite..[value_code] where [code]=vc.code)) 
-								as [lnrnLienorTypeID],				   
-    MAP.ProviderCTG				as [lnrnLienorContactCtgID],
-    MAP.ProviderCID				as [lnrnLienorContactID],
-    MAP.ProviderAID				as [lnrnLienorAddressID],
-    0							as [lnrnLienorRelaContactID],
-    MAP.PlaintiffID				as [lnrnPlaintiffID],
-    isnull(V.total_value,0)		as [lnrnCnfrmdLienAmount],
-    isnull(V.due,0)				as [lnrnNegLienAmount],
-    isnull('Memo : ' + isnull(V.memo,'') + CHAR(13),'') +
-    isnull('From : ' + convert(varchar(10),V.start_date) + CHAR(13),'') +
-    isnull('To : ' + convert(varchar(10),V.stop_date) + CHAR(13),'') + 
-    isnull('Value Total : ' + convert(varchar,V.total_value) + CHAR(13),'') +
-    isnull('Reduction : ' + convert(varchar,V.reduction) + CHAR(13),'') +
-    isnull('Paid : ' + MAP.Paid,'') 
-								as [lnrsComments],
-    368							as [lnrnRecUserID],
-    getdate()					as [lnrdDtCreated],
-    0							as [lnrnFinal],
-    V.id					as [saga]
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id=V.valuecodeid
-JOIN [value_tab_Lien_Helper] MAP on MAP.case_id=V.casesid and MAP.value_id=V.id
+INSERT INTO [sma_TRN_Lienors]
+	(
+	[lnrnCaseID]
+   ,[lnrnLienorTypeID]
+   ,[lnrnLienorContactCtgID]
+   ,[lnrnLienorContactID]
+   ,[lnrnLienorAddressID]
+   ,[lnrnLienorRelaContactID]
+   ,[lnrnPlaintiffID]
+   ,[lnrnCnfrmdLienAmount]
+   ,[lnrnNegLienAmount]
+   ,[lnrsComments]
+   ,[lnrnRecUserID]
+   ,[lnrdDtCreated]
+   ,[lnrnFinal]
+   ,[saga]
+	)
+	SELECT
+		MAP.casnCaseID			 AS [lnrnCaseID]
+	   ,(
+			SELECT TOP 1
+				lntnLienTypeID
+			FROM [sma_MST_LienType]
+			WHERE lntsDscrptn = (
+					SELECT
+						[description]
+					FROM NeosBrianWhite..[value_code]
+					WHERE [code] = vc.code
+				)
+		)						 
+		AS [lnrnLienorTypeID]
+	   ,MAP.ProviderCTG			 AS [lnrnLienorContactCtgID]
+	   ,MAP.ProviderCID			 AS [lnrnLienorContactID]
+	   ,MAP.ProviderAID			 AS [lnrnLienorAddressID]
+	   ,0						 AS [lnrnLienorRelaContactID]
+	   ,MAP.PlaintiffID			 AS [lnrnPlaintiffID]
+	   ,ISNULL(V.total_value, 0) AS [lnrnCnfrmdLienAmount]
+	   ,ISNULL(V.due, 0)		 AS [lnrnNegLienAmount]
+	   ,ISNULL('Memo : ' + ISNULL(V.memo, '') + CHAR(13), '') +
+		ISNULL('From : ' + CONVERT(VARCHAR(10), V.start_date) + CHAR(13), '') +
+		ISNULL('To : ' + CONVERT(VARCHAR(10), V.stop_date) + CHAR(13), '') +
+		ISNULL('Value Total : ' + CONVERT(VARCHAR, V.total_value) + CHAR(13), '') +
+		ISNULL('Reduction : ' + CONVERT(VARCHAR, V.reduction) + CHAR(13), '') +
+		ISNULL('Paid : ' + MAP.Paid, '')
+		AS [lnrsComments]
+	   ,368						 AS [lnrnRecUserID]
+	   ,GETDATE()				 AS [lnrdDtCreated]
+	   ,0						 AS [lnrnFinal]
+	   ,V.id					 AS [saga]
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON VC.id = V.valuecodeid
+	JOIN [value_tab_Lien_Helper] MAP
+		ON MAP.case_id = V.casesid
+			AND MAP.value_id = V.id
 GO
 
 ---(2)---
-INSERT INTO [sma_TRN_LienDetails] (
-	lndnLienorID,
-	lndnLienTypeID,
-	lndnCnfrmdLienAmount,
-	lndsRefTable,
-	lndnRecUserID,
-	lnddDtCreated
-)
-SELECT 
-	lnrnLienorID			as lndnLienorID,
-	lnrnLienorTypeID		as lndnLienTypeID,
-	lnrnCnfrmdLienAmount	as lndnCnfrmdLienAmount,
-	'sma_TRN_Lienors'		as lndsRefTable,
-	368						as lndnRecUserID,
-	getdate()				as lnddDtCreated
-FROM [sma_TRN_Lienors]
+INSERT INTO [sma_TRN_LienDetails]
+	(
+	lndnLienorID
+   ,lndnLienTypeID
+   ,lndnCnfrmdLienAmount
+   ,lndsRefTable
+   ,lndnRecUserID
+   ,lnddDtCreated
+	)
+	SELECT
+		lnrnLienorID		 AS lndnLienorID
+	   ,lnrnLienorTypeID	 AS lndnLienTypeID
+	   ,lnrnCnfrmdLienAmount AS lndnCnfrmdLienAmount
+	   ,'sma_TRN_Lienors'	 AS lndsRefTable
+	   ,368					 AS lndnRecUserID
+	   ,GETDATE()			 AS lnddDtCreated
+	FROM [sma_TRN_Lienors]
 GO
 
 ----

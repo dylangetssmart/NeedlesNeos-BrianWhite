@@ -10,10 +10,16 @@ alter table [sma_TRN_TaskNew] disable trigger all
 */
 
 ----(0)----
-INSERT INTO [sma_MST_TaskCategory] (tskCtgDescription)
-SELECT 'Checklist'
-EXCEPT
-SELECT tskCtgDescription FROM [sma_MST_TaskCategory] 
+INSERT INTO [sma_MST_TaskCategory]
+	(
+	tskCtgDescription
+	)
+	SELECT
+		'Checklist'
+	EXCEPT
+	SELECT
+		tskCtgDescription
+	FROM [sma_MST_TaskCategory]
 
 /*
 select distinct (select top 1 replace(ltrim(DIR.[description]),'>','')) 
@@ -25,10 +31,16 @@ select tskCtgDescription from [SANeosBrianWhite].[dbo].[sma_MST_TaskCategory]
 GO
 */
 ---(0)---
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_TaskNew'))
-begin
-    ALTER TABLE [sma_TRN_TaskNew] ADD [saga] int NULL; 
-end
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_TaskNew')
+	)
+BEGIN
+	ALTER TABLE [sma_TRN_TaskNew] ADD [saga] INT NULL;
+END
 GO
 
 ---(1)---
@@ -36,50 +48,110 @@ ALTER TABLE [sma_TRN_TaskNew] DISABLE TRIGGER ALL
 GO
 
 INSERT INTO [sma_TRN_TaskNew]
-(
-       [tskCaseID]
-      ,[tskDueDate]
-      ,[tskStartDate]
-      ,[tskRequestorID]
-      ,[tskAssigneeId]
-      ,[tskReminderDays]
-      ,[tskDescription]
-      ,[tskCreatedDt]
-      ,[tskCreatedUserID]
-      ,[tskMasterID]
-      ,[tskCtgID]
-      ,[tskSummary]
-      ,[tskPriority]
-      ,[tskCompleted]
-	 ,[saga]
-)  
-SELECT DISTINCT
-    CAS.casnCaseID																			as [tskCaseID],
-    case when CKL.due_date between '1900-01-01' and '2079-06-06' then CKL.due_date else '1900-01-01' end		as [tskDueDate],
-    null																					as [tskStartDate],
-    null																					as [tskRequestorID],
-    (select usrnUserID from sma_MST_Users where saga= convert(varchar(50),CKL.staffassignedid))		as [tskAssigneeId],
-    null																					as [tskReminderDays],
-    --ltrim(CKL.[description])																as [tskDescription],
-	null																					as [tskDescription],
-    ckl.date_created																		as [tskCreatedDt],
-    (select usrnUserID from sma_mst_Users where saga = ckl.staffcreatedid)					as tskCreatedUserID,
-    (select tskMasterID from sma_mst_Task_Template where tskMasterDetails = 'Custom Task')	as [tskMasterID],
-	(select tskCtgID from sma_MST_TaskCategory where tskCtgDescription = 'Checklist')		as [tskCtgID], 
-    ltrim(CKL.[description])																as [tskSummary],  --task subject--
-    (select uId from PriorityTypes where PriorityType = 'Normal')							as [tskPriority],
-	case     
-		when CKL.[status]='Done' then (select StatusID from TaskStatusTypes where StatusType = 'Completed' )		
-		when CKL.[status]='Open' then (select StatusID from TaskStatusTypes where StatusType = 'In Progress')					
-		when CKL.[status]='N/A' then (select StatusID from TaskStatusTypes where StatusType = 'Cancelled')					
-		else (select StatusID from TaskStatusTypes where StatusType = 'Not Started')					
-	end																						as [tskCompleted], 
-    convert(varchar(50),CKL.id)																as [saga]
---SELECT *
-FROM [NeosBrianWhite].[dbo].[case_checklist] CKL
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = convert(varchar(50),CKL.casesid)
-WHERE isnull(CAS.casdClosingDate,'') = ''
-and CKL.due_date between '1900-01-01' and '2079-06-06'
+	(
+	[tskCaseID]
+   ,[tskDueDate]
+   ,[tskStartDate]
+   ,[tskRequestorID]
+   ,[tskAssigneeId]
+   ,[tskReminderDays]
+   ,[tskDescription]
+   ,[tskCreatedDt]
+   ,[tskCreatedUserID]
+   ,[tskMasterID]
+   ,[tskCtgID]
+   ,[tskSummary]
+   ,[tskPriority]
+   ,[tskCompleted]
+   ,[saga]
+	)
+	SELECT DISTINCT
+		CAS.casnCaseID				 AS [tskCaseID]
+	   ,CASE
+			WHEN CKL.due_date BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN CKL.due_date
+			ELSE '1900-01-01'
+		END							 AS [tskDueDate]
+	   ,NULL						 AS [tskStartDate]
+	   ,NULL						 AS [tskRequestorID]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_MST_Users
+			WHERE saga = CONVERT(VARCHAR(50), CKL.staffassignedid)
+		)							 
+		AS [tskAssigneeId]
+	   ,NULL						 AS [tskReminderDays]
+	   ,
+		--ltrim(CKL.[description])																as [tskDescription],
+		NULL						 AS [tskDescription]
+	   ,ckl.date_created			 AS [tskCreatedDt]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_Users
+			WHERE saga = ckl.staffcreatedid
+		)							 
+		AS tskCreatedUserID
+	   ,(
+			SELECT
+				tskMasterID
+			FROM sma_mst_Task_Template
+			WHERE tskMasterDetails = 'Custom Task'
+		)							 
+		AS [tskMasterID]
+	   ,(
+			SELECT
+				tskCtgID
+			FROM sma_MST_TaskCategory
+			WHERE tskCtgDescription = 'Checklist'
+		)							 
+		AS [tskCtgID]
+	   ,LTRIM(CKL.[description])	 AS [tskSummary]
+	   ,  --task subject--
+		(
+			SELECT
+				uId
+			FROM PriorityTypes
+			WHERE PriorityType = 'Normal'
+		)							 
+		AS [tskPriority]
+	   ,CASE
+			WHEN CKL.[status] = 'Done'
+				THEN (
+						SELECT
+							StatusID
+						FROM TaskStatusTypes
+						WHERE StatusType = 'Completed'
+					)
+			WHEN CKL.[status] = 'Open'
+				THEN (
+						SELECT
+							StatusID
+						FROM TaskStatusTypes
+						WHERE StatusType = 'In Progress'
+					)
+			WHEN CKL.[status] = 'N/A'
+				THEN (
+						SELECT
+							StatusID
+						FROM TaskStatusTypes
+						WHERE StatusType = 'Cancelled'
+					)
+			ELSE (
+					SELECT
+						StatusID
+					FROM TaskStatusTypes
+					WHERE StatusType = 'Not Started'
+				)
+		END							 AS [tskCompleted]
+	   ,CONVERT(VARCHAR(50), CKL.id) AS [saga]
+	--SELECT *
+	FROM [NeosBrianWhite].[dbo].[case_checklist] CKL
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CKL.casesid)
+	WHERE ISNULL(CAS.casdClosingDate, '') = ''
+		AND CKL.due_date BETWEEN '1900-01-01' AND '2079-06-06'
 GO
 
 ALTER TABLE [sma_TRN_TaskNew] ENABLE TRIGGER ALL

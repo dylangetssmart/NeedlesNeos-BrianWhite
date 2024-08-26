@@ -12,124 +12,186 @@ alter table [sma_TRN_Settlements] enable trigger all
 
 --select distinct code, description from [NeosBrianWhite].[dbo].[value] order by code
 ---(0)---
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Settlements'))
-begin
-    ALTER TABLE [sma_TRN_Settlements] ADD [saga] varchar(50) NULL; 
-end
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Settlements')
+	)
+BEGIN
+	ALTER TABLE [sma_TRN_Settlements] ADD [saga] VARCHAR(50) NULL;
+END
 GO
 
 ---(0)---
 ------------------------------------------------
 --INSERT SETTLEMENT TYPES
 ------------------------------------------------
-INSERT INTO [sma_MST_SettlementType] (SettlTypeName)
-SELECT 'Settlement'
-EXCEPT SELECT SettlTypeName FROM [sma_MST_SettlementType]
+INSERT INTO [sma_MST_SettlementType]
+	(
+	SettlTypeName
+	)
+	SELECT
+		'Settlement'
+	EXCEPT
+	SELECT
+		SettlTypeName
+	FROM [sma_MST_SettlementType]
 GO
 
 
-if exists (select * from sys.objects where name='value_tab_Settlement_Helper' and type='U')
-begin
-	drop table value_tab_Settlement_Helper
-end 
-GO
-
----(0)---
-create table value_tab_Settlement_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-    case_id		    varchar(50),
-    value_id		varchar(50),
-    ProviderNameId	varchar(50),
-    ProviderName	varchar(200),
-    ProviderCID	    int,
-    ProviderCTG	    int,
-    ProviderAID	    int,
-    casnCaseID		int,
-    PlaintiffID	    int,
-CONSTRAINT IOC_Clustered_Index_value_tab_Settlement_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
-GO
-
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_case_id ON [value_tab_Settlement_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_value_id ON [value_tab_Settlement_Helper] (value_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_ProviderNameId ON [value_tab_Settlement_Helper] (ProviderNameId);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_PlaintiffID ON [value_tab_Settlement_Helper] (PlaintiffID);   
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'value_tab_Settlement_Helper'
+			AND type = 'U'
+	)
+BEGIN
+	DROP TABLE value_tab_Settlement_Helper
+END
 GO
 
 ---(0)---
-insert into value_tab_Settlement_Helper ( case_id,value_id,ProviderNameId,ProviderName,ProviderCID,ProviderCTG,ProviderAID,casnCaseID,PlaintiffID )
-select
-    convert(varchar(50),V.casesid)		as case_id,	-- needles case
-    convert(varchar(50),V.id)			as tab_id,		-- needles records TAB item
-     convert(varchar(50),V.namesid)		as ProviderNameId,  
-    IOC.Name		as ProviderName,
-    IOC.CID		    as ProviderCID,  
-    IOC.CTG		    as ProviderCTG,
-    IOC.AID		    as ProviderAID,
-    CAS.casnCaseID	as casnCaseID,
-    null			as PlaintiffID
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),V.namesid)
-where code in ( 'UIM','SETTLE','SUBRO','ATTYFEE','PIP','ATTYREFFEE','UM','REFERRAL','MEDPAY' )
+CREATE TABLE value_tab_Settlement_Helper (
+	TableIndex [INT] IDENTITY (1, 1) NOT NULL
+   ,case_id VARCHAR(50)
+   ,value_id VARCHAR(50)
+   ,ProviderNameId VARCHAR(50)
+   ,ProviderName VARCHAR(200)
+   ,ProviderCID INT
+   ,ProviderCTG INT
+   ,ProviderAID INT
+   ,casnCaseID INT
+   ,PlaintiffID INT
+   ,CONSTRAINT IOC_Clustered_Index_value_tab_Settlement_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_case_id ON [value_tab_Settlement_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_value_id ON [value_tab_Settlement_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_ProviderNameId ON [value_tab_Settlement_Helper] (ProviderNameId);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Settlement_Helper_PlaintiffID ON [value_tab_Settlement_Helper] (PlaintiffID);
+GO
+
+---(0)---
+INSERT INTO value_tab_Settlement_Helper
+	(
+	case_id
+   ,value_id
+   ,ProviderNameId
+   ,ProviderName
+   ,ProviderCID
+   ,ProviderCTG
+   ,ProviderAID
+   ,casnCaseID
+   ,PlaintiffID
+	)
+	SELECT
+		CONVERT(VARCHAR(50), V.casesid) AS case_id
+	   ,	-- needles case
+		CONVERT(VARCHAR(50), V.id)		AS tab_id
+	   ,		-- needles records TAB item
+		CONVERT(VARCHAR(50), V.namesid) AS ProviderNameId
+	   ,IOC.Name						AS ProviderName
+	   ,IOC.CID							AS ProviderCID
+	   ,IOC.CTG							AS ProviderCTG
+	   ,IOC.AID							AS ProviderAID
+	   ,CAS.casnCaseID					AS casnCaseID
+	   ,NULL							AS PlaintiffID
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON v.valuecodeid = vc.id
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+	JOIN IndvOrgContacts_Indexed IOC
+		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), V.namesid)
+	WHERE code IN ('UIM', 'SETTLE', 'SUBRO', 'ATTYFEE', 'PIP', 'ATTYREFFEE', 'UM', 'REFERRAL', 'MEDPAY')
 GO
 ---(0)---
-DBCC DBREINDEX('value_tab_Settlement_Helper',' ',90)  WITH NO_INFOMSGS 
+DBCC DBREINDEX ('value_tab_Settlement_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 
 ---(0)--- (prepare for multiple party)
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
-begin
-    drop table value_tab_Multi_Party_Helper_Temp
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
+BEGIN
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
+END
 GO
 
-SELECT 
-    V.casesid		    as cid,	
-    V.id				as vid,
-    T.plnnPlaintiffID
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Plaintiff] t on t.plnnCaseID=CAS.casnCaseID and t.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON v.valuecodeid = vc.id
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Plaintiff] t
+	ON t.plnnCaseID = CAS.casnCaseID
+		AND t.saga_party = v.partyid
 
 --JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 
-UPDATE value_tab_Settlement_Helper set PlaintiffID=A.plnnPlaintiffID
+UPDATE value_tab_Settlement_Helper
+SET PlaintiffID = A.plnnPlaintiffID
 FROM value_tab_Multi_Party_Helper_Temp A
-WHERE case_id=A.cid and value_id=A.vid
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
-begin
-    drop table value_tab_Multi_Party_Helper_Temp
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
+BEGIN
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
+END
 GO
 
-SELECT 
-    V.casesid		    as cid,	
-    V.id				as vid,
-    ( select plnnPlaintiffID from [sma_TRN_Plaintiff] where plnnCaseID=CAS.casnCaseID and plnbIsPrimary=1) as plnnPlaintiffID 
-    into value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,(
+		SELECT
+			plnnPlaintiffID
+		FROM [sma_TRN_Plaintiff]
+		WHERE plnnCaseID = CAS.casnCaseID
+			AND plnbIsPrimary = 1
+	)		  
+	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Defendants] d on d.defnCaseID = cas.casncaseid and d.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON v.valuecodeid = vc.id
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Defendants] d
+	ON d.defnCaseID = cas.casncaseid
+		AND d.saga_party = v.partyid
 
 --JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(Varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
 
-update value_tab_Settlement_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
+UPDATE value_tab_Settlement_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+FROM value_tab_Multi_Party_Helper_Temp A
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 ----(1)----(  specified items go to settlement rows )
@@ -137,49 +199,78 @@ ALTER TABLE [sma_TRN_Settlements] DISABLE TRIGGER ALL
 GO
 
 INSERT INTO [sma_TRN_Settlements]
-(
-    stlnCaseID,
-    stlnSetAmt,
-    stlnNet,
-    stlnNetToClientAmt,
-    stlnPlaintiffID,
-    stlnStaffID, 
-    stlnLessDisbursement,
-    stlnGrossAttorneyFee,
-	stlnForwarder,  --referrer
-	stlnOther,
-	stlnMedPay,
-	InterestOnDisbursement,
-    stlsComments,
-    stlTypeID,
-	stldSettlementDate,
-	saga
-)
-select 
-    MAP.casnCaseID					as stlnCaseID,
-    case when vc.code IN ('SETTLE','SUBRO','UIM','PIP','UM') then v.total_value else null end			as stlnSetAmt,
-    null							as stlnNet,
-    null							as stlnNetToClientAmt, 
-    MAP.PlaintiffID					as stlnPlaintiffID,
-    null							as stlnStaffID, 
-    null							as stlnLessDisbursement,
-    case when Vc.code IN ('ATTYFEE') then v.total_value else null end					as stlnGrossAttorneyFee,
-	case when vc.code in ('ATTYREFFEE','REFERRAL') then v.total_value else null end		as stlnForwarder,    --Referrer
-	null							as stlnOther,
-	case when vc.code = 'MEDPAY' then v.total_value else null end						as stlnMedPay,
-    null							as InterestOnDisbursement,
-    isnull('memo:' + nullif(V.memo,'') + CHAR(13),'') +
-    isnull('code:' + nullif(Vc.code,'') + CHAR(13),'') +
-	''								as [stlsComments],
-    (select ID from [sma_MST_SettlementType] where SettlTypeName= 'Settlement' ) 
-									as stlTypeID,
-    case when V.[start_date] between '1900-01-01' and '2079-06-06' then V.[start_date]
-	   else null end				as stldSettlementDate,
-    V.id							as saga
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN value_tab_Settlement_Helper MAP on MAP.case_id= convert(varchar(50),V.casesid) and MAP.value_id= convert(varchar(50),V.id)
-WHERE Vc.code in  ( 'UIM','SETTLE','SUBRO','ATTYFEE','PIP','ATTYREFFEE','UM','REFERRAL','MEDPAY' )
+	(
+	stlnCaseID
+   ,stlnSetAmt
+   ,stlnNet
+   ,stlnNetToClientAmt
+   ,stlnPlaintiffID
+   ,stlnStaffID
+   ,stlnLessDisbursement
+   ,stlnGrossAttorneyFee
+   ,stlnForwarder
+   ,  --referrer
+	stlnOther
+   ,stlnMedPay
+   ,InterestOnDisbursement
+   ,stlsComments
+   ,stlTypeID
+   ,stldSettlementDate
+   ,saga
+	)
+	SELECT
+		MAP.casnCaseID  AS stlnCaseID
+	   ,CASE
+			WHEN vc.code IN ('SETTLE', 'SUBRO', 'UIM', 'PIP', 'UM')
+				THEN v.total_value
+			ELSE NULL
+		END				AS stlnSetAmt
+	   ,NULL			AS stlnNet
+	   ,NULL			AS stlnNetToClientAmt
+	   ,MAP.PlaintiffID AS stlnPlaintiffID
+	   ,NULL			AS stlnStaffID
+	   ,NULL			AS stlnLessDisbursement
+	   ,CASE
+			WHEN Vc.code IN ('ATTYFEE')
+				THEN v.total_value
+			ELSE NULL
+		END				AS stlnGrossAttorneyFee
+	   ,CASE
+			WHEN vc.code IN ('ATTYREFFEE', 'REFERRAL')
+				THEN v.total_value
+			ELSE NULL
+		END				AS stlnForwarder
+	   ,    --Referrer
+		NULL			AS stlnOther
+	   ,CASE
+			WHEN vc.code = 'MEDPAY'
+				THEN v.total_value
+			ELSE NULL
+		END				AS stlnMedPay
+	   ,NULL			AS InterestOnDisbursement
+	   ,ISNULL('memo:' + NULLIF(V.memo, '') + CHAR(13), '') +
+		ISNULL('code:' + NULLIF(Vc.code, '') + CHAR(13), '') +
+		''				AS [stlsComments]
+	   ,(
+			SELECT
+				ID
+			FROM [sma_MST_SettlementType]
+			WHERE SettlTypeName = 'Settlement'
+		)				
+		AS stlTypeID
+	   ,CASE
+			WHEN V.[start_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN V.[start_date]
+			ELSE NULL
+		END				AS stldSettlementDate
+	   ,V.id			AS saga
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON v.valuecodeid = vc.id
+	JOIN value_tab_Settlement_Helper MAP
+		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
+			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
+	WHERE Vc.code IN ('UIM', 'SETTLE', 'SUBRO', 'ATTYFEE', 'PIP', 'ATTYREFFEE', 'UM', 'REFERRAL', 'MEDPAY')
 GO
 
 ALTER TABLE [sma_TRN_Settlements] ENABLE TRIGGER ALL

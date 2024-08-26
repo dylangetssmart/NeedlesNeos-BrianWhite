@@ -16,14 +16,26 @@ select * from [sma_TRN_Plaintiff] enable trigger all
 */
 
 ---(0)---
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga_party' AND Object_ID = Object_ID(N'sma_TRN_Plaintiff'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga_party'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Plaintiff')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_Plaintiff] ADD [saga_party] varchar(50) NULL; 
+	ALTER TABLE [sma_TRN_Plaintiff] ADD [saga_party] VARCHAR(50) NULL;
 END
 
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga_party' AND Object_ID = Object_ID(N'sma_TRN_Defendants'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga_party'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Defendants')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_Defendants] ADD [saga_party] varchar(50) NULL; 
+	ALTER TABLE [sma_TRN_Defendants] ADD [saga_party] VARCHAR(50) NULL;
 END
 
 
@@ -36,40 +48,110 @@ GO
 
 -------(1) sma_TRN_Plaintiff
 INSERT INTO [sma_TRN_Plaintiff]
-(
- [plnnCaseID],[plnnContactCtg],[plnnContactID],[plnnAddressID],[plnnRole],[plnbIsPrimary],[plnbWCOut],[plnnPartiallySettled],[plnbSettled],[plnbOut],
- [plnbSubOut],[plnnSeatBeltUsed],[plnnCaseValueID],[plnnCaseValueFrom],[plnnCaseValueTo],[plnnPriority],[plnnDisbursmentWt],[plnbDocAttached],[plndFromDt],
- [plndToDt],[plnnRecUserID],[plndDtCreated],[plnnModifyUserID],[plndDtModified],[plnnLevelNo],[plnsMarked],[saga],[plnnNoInj],[plnnMissing],
- [plnnLIPBatchNo],[plnnPlaintiffRole],[plnnPlaintiffGroup],[plnnPrimaryContact],[plnsComments],[plnbIsClient],[saga_party]
-)
-SELECT 
-	CAS.casnCaseID			as [plnnCaseID],
-	CIO.CTG					as [plnnContactCtg],
-	CIO.CID					as [plnnContactID],
-	CIO.AID					as [plnnAddressID],
-	S.sbrnSubRoleId			as [plnnRole],
-	1						as [plnbIsPrimary],
-	0,0,0,0,0,0,null,null,null,null,null,null,GETDATE(),null,
-	(select usrnUserID from sma_mst_users where saga = p.staffcreatedid) 	as [plnnRecUserID],
-	p.date_created			as [plndDtCreated],
-	(select usrnUserID from sma_mst_users where saga = p.staffmodifiedid)	as [plnnModifyUserID],
-	p.date_modified			as [plndDtModified],
-	null					as [plnnLevelNo],  
-	null,'',null,null,null,null,null,
-	1						as [plnnPrimaryContact],
-	isnull('Relationship: ' + nullif(convert(varchar,p.relationship),'') + CHAR(13),'') +
-	''						as [plnsComments],
-	p.our_client			as [plnbIsClient],
-	P.id					as [saga_party]
---SELECT *
-FROM [NeosBrianWhite].[dbo].[party_indexed] P 
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_saga = convert(varchar(50),P.casesid)
-JOIN IndvOrgContacts_Indexed CIO on CIO.saga_ref = convert(varchar(50),P.namesid)
-JOIN [NeosBrianWhite]..party_role_list prl on prl.id = p.partyrolelistid
-JOIN [PartyRoles] pr on pr.[Needles Roles] = prl.[role]
-JOIN [sma_MST_SubRole] S on CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID and s.sbrsDscrptn = [sa roles] and  S.sbrnRoleID=4
-WHERE pr.[sa party] = 'Plaintiff' 
-ORDER BY p.record_num
+	(
+	[plnnCaseID]
+   ,[plnnContactCtg]
+   ,[plnnContactID]
+   ,[plnnAddressID]
+   ,[plnnRole]
+   ,[plnbIsPrimary]
+   ,[plnbWCOut]
+   ,[plnnPartiallySettled]
+   ,[plnbSettled]
+   ,[plnbOut]
+   ,[plnbSubOut]
+   ,[plnnSeatBeltUsed]
+   ,[plnnCaseValueID]
+   ,[plnnCaseValueFrom]
+   ,[plnnCaseValueTo]
+   ,[plnnPriority]
+   ,[plnnDisbursmentWt]
+   ,[plnbDocAttached]
+   ,[plndFromDt]
+   ,[plndToDt]
+   ,[plnnRecUserID]
+   ,[plndDtCreated]
+   ,[plnnModifyUserID]
+   ,[plndDtModified]
+   ,[plnnLevelNo]
+   ,[plnsMarked]
+   ,[saga]
+   ,[plnnNoInj]
+   ,[plnnMissing]
+   ,[plnnLIPBatchNo]
+   ,[plnnPlaintiffRole]
+   ,[plnnPlaintiffGroup]
+   ,[plnnPrimaryContact]
+   ,[plnsComments]
+   ,[plnbIsClient]
+   ,[saga_party]
+	)
+	SELECT
+		CAS.casnCaseID  AS [plnnCaseID]
+	   ,CIO.CTG			AS [plnnContactCtg]
+	   ,CIO.CID			AS [plnnContactID]
+	   ,CIO.AID			AS [plnnAddressID]
+	   ,S.sbrnSubRoleId AS [plnnRole]
+	   ,1				AS [plnbIsPrimary]
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,GETDATE()
+	   ,NULL
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = p.staffcreatedid
+		)				
+		AS [plnnRecUserID]
+	   ,p.date_created  AS [plndDtCreated]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = p.staffmodifiedid
+		)				
+		AS [plnnModifyUserID]
+	   ,p.date_modified AS [plndDtModified]
+	   ,NULL			AS [plnnLevelNo]
+	   ,NULL
+	   ,''
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,1				AS [plnnPrimaryContact]
+	   ,ISNULL('Relationship: ' + NULLIF(CONVERT(VARCHAR, p.relationship), '') + CHAR(13), '') +
+		''				AS [plnsComments]
+	   ,p.our_client	AS [plnbIsClient]
+	   ,P.id			AS [saga_party]
+	--SELECT *
+	FROM [NeosBrianWhite].[dbo].[party_indexed] P
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_saga = CONVERT(VARCHAR(50), P.casesid)
+	JOIN IndvOrgContacts_Indexed CIO
+		ON CIO.saga_ref = CONVERT(VARCHAR(50), P.namesid)
+	JOIN [NeosBrianWhite]..party_role_list prl
+		ON prl.id = p.partyrolelistid
+	JOIN [PartyRoles] pr
+		ON pr.[Needles Roles] = prl.[role]
+	JOIN [sma_MST_SubRole] S
+		ON CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID
+			AND s.sbrsDscrptn = [sa roles]
+			AND S.sbrnRoleID = 4
+	WHERE pr.[sa party] = 'Plaintiff'
+	ORDER BY p.record_num
 GO
 
 /*
@@ -102,37 +184,81 @@ GO
 
 -------(2) [sma_TRN_Defendants]
 INSERT INTO [sma_TRN_Defendants]
-   (
-	[defnCaseID],[defnContactCtgID],[defnContactID],[defnAddressID],[defnSubRole],[defbIsPrimary],[defbCounterClaim],[defbThirdParty],
-    [defsThirdPartyRole],[defnPriority],[defdFrmDt],[defdToDt],[defnRecUserID],[defdDtCreated],[defnModifyUserID],[defdDtModified],
-    [defnLevelNo],[defsMarked],[saga],[defsComments],[defbIsClient],[saga_party]
-   )
-SELECT 
-	casnCaseID				as [defnCaseID],
-	ACIO.CTG				as [defnContactCtgID],
-	ACIO.CID				as [defnContactID],
-	ACIO.AID				as [defnAddressID],
-	sbrnSubRoleId			as [defnSubRole],
-	1						as [defbIsPrimary], 
-	null,null,null,null,null,null,
-	(select usrnUserID from sma_mst_users where saga = p.staffcreatedid) 	as [defnRecUserID],
-	p.date_created			as [defdDtCreated],
-	(select usrnUserID from sma_mst_users where saga = p.staffmodifiedid)	as [defnModifyUserID],
-	p.date_modified			as [defdDtModified],
-     null					as [defnLevelNo],	 
-	null,null,
-	isnull('Relationship: ' + nullif(convert(varchar,p.relationship),'') + CHAR(13),'') +
-	''						as [defsComments],
-	p.our_client			as [defbIsClient],
-	P.[id]				    as [saga_party]
-FROM [NeosBrianWhite].[dbo].[party_indexed] P 
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_saga = convert(varchar(50),P.casesid)
-JOIN IndvOrgContacts_Indexed ACIO on ACIO.saga_ref = convert(varchar(50),P.namesid)
-JOIN [NeosBrianWhite]..party_role_list prl on prl.id = p.partyrolelistid
-JOIN [PartyRoles] pr on pr.[Needles Roles] = prl.[role]
-JOIN [sma_MST_SubRole] S on CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID and s.sbrsDscrptn = [sa roles] and  S.sbrnRoleID=5
-WHERE pr.[sa party] = 'Defendant' 
-ORDER BY p.record_num
+	(
+	[defnCaseID]
+   ,[defnContactCtgID]
+   ,[defnContactID]
+   ,[defnAddressID]
+   ,[defnSubRole]
+   ,[defbIsPrimary]
+   ,[defbCounterClaim]
+   ,[defbThirdParty]
+   ,[defsThirdPartyRole]
+   ,[defnPriority]
+   ,[defdFrmDt]
+   ,[defdToDt]
+   ,[defnRecUserID]
+   ,[defdDtCreated]
+   ,[defnModifyUserID]
+   ,[defdDtModified]
+   ,[defnLevelNo]
+   ,[defsMarked]
+   ,[saga]
+   ,[defsComments]
+   ,[defbIsClient]
+   ,[saga_party]
+	)
+	SELECT
+		casnCaseID		AS [defnCaseID]
+	   ,ACIO.CTG		AS [defnContactCtgID]
+	   ,ACIO.CID		AS [defnContactID]
+	   ,ACIO.AID		AS [defnAddressID]
+	   ,sbrnSubRoleId   AS [defnSubRole]
+	   ,1				AS [defbIsPrimary]
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = p.staffcreatedid
+		)				
+		AS [defnRecUserID]
+	   ,p.date_created  AS [defdDtCreated]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = p.staffmodifiedid
+		)				
+		AS [defnModifyUserID]
+	   ,p.date_modified AS [defdDtModified]
+	   ,NULL			AS [defnLevelNo]
+	   ,NULL
+	   ,NULL
+	   ,ISNULL('Relationship: ' + NULLIF(CONVERT(VARCHAR, p.relationship), '') + CHAR(13), '') +
+		''				AS [defsComments]
+	   ,p.our_client	AS [defbIsClient]
+	   ,P.[id]			AS [saga_party]
+	FROM [NeosBrianWhite].[dbo].[party_indexed] P
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_saga = CONVERT(VARCHAR(50), P.casesid)
+	JOIN IndvOrgContacts_Indexed ACIO
+		ON ACIO.saga_ref = CONVERT(VARCHAR(50), P.namesid)
+	JOIN [NeosBrianWhite]..party_role_list prl
+		ON prl.id = p.partyrolelistid
+	JOIN [PartyRoles] pr
+		ON pr.[Needles Roles] = prl.[role]
+	JOIN [sma_MST_SubRole] S
+		ON CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID
+			AND s.sbrsDscrptn = [sa roles]
+			AND S.sbrnRoleID = 5
+	WHERE pr.[sa party] = 'Defendant'
+	ORDER BY p.record_num
 GO
 
 
@@ -173,86 +299,200 @@ GO
 */
 ---(Appendix A)-- every case need at least one plaintiff
 INSERT INTO [sma_TRN_Plaintiff]
-(
- [plnnCaseID],[plnnContactCtg],[plnnContactID],[plnnAddressID],[plnnRole],[plnbIsPrimary],[plnbWCOut],[plnnPartiallySettled],[plnbSettled],[plnbOut],
- [plnbSubOut],[plnnSeatBeltUsed],[plnnCaseValueID],[plnnCaseValueFrom],[plnnCaseValueTo],[plnnPriority],[plnnDisbursmentWt],[plnbDocAttached],[plndFromDt],
- [plndToDt],[plnnRecUserID],[plndDtCreated],[plnnModifyUserID],[plndDtModified],[plnnLevelNo],[plnsMarked],[saga],[plnnNoInj],[plnnMissing],
- [plnnLIPBatchNo],[plnnPlaintiffRole],[plnnPlaintiffGroup],[plnnPrimaryContact]
-)
+	(
+	[plnnCaseID]
+   ,[plnnContactCtg]
+   ,[plnnContactID]
+   ,[plnnAddressID]
+   ,[plnnRole]
+   ,[plnbIsPrimary]
+   ,[plnbWCOut]
+   ,[plnnPartiallySettled]
+   ,[plnbSettled]
+   ,[plnbOut]
+   ,[plnbSubOut]
+   ,[plnnSeatBeltUsed]
+   ,[plnnCaseValueID]
+   ,[plnnCaseValueFrom]
+   ,[plnnCaseValueTo]
+   ,[plnnPriority]
+   ,[plnnDisbursmentWt]
+   ,[plnbDocAttached]
+   ,[plndFromDt]
+   ,[plndToDt]
+   ,[plnnRecUserID]
+   ,[plndDtCreated]
+   ,[plnnModifyUserID]
+   ,[plndDtModified]
+   ,[plnnLevelNo]
+   ,[plnsMarked]
+   ,[saga]
+   ,[plnnNoInj]
+   ,[plnnMissing]
+   ,[plnnLIPBatchNo]
+   ,[plnnPlaintiffRole]
+   ,[plnnPlaintiffGroup]
+   ,[plnnPrimaryContact]
+	)
 
-SELECT 
-	casnCaseID		   as [plnnCaseID],
-	1				   as [plnnContactCtg],
-	(Select cinncontactid from sma_MST_IndvContacts where cinsFirstName = 'Plaintiff' and cinsLastName = 'Unidentified')   as [plnnContactID],   -- Unidentified Plaintiff
-	NULL			   as [plnnAddressID],
-	(select sbrnSubRoleId from sma_MST_SubRole S inner join sma_MST_SubRoleCode C on C.srcnCodeId = S.sbrnTypeCode and C.srcsDscrptn='(P)-Default Role'
-	where S.sbrnCaseTypeID=CAS.casnOrgCaseTypeID)	 as plnnRole,
-	1				   as [plnbIsPrimary],
-	0,0,0,0,0,0,null,null,null,null,null,null,GETDATE(),null,
-	368				   as [plnnRecUserID],
-	GETDATE()		   as [plndDtCreated],
-	null,null,'',null,'',null,null,null,null,null,
-	1				   as [plnnPrimaryContact] 
-FROM sma_trn_cases CAS
-LEFT JOIN [sma_TRN_Plaintiff] T on T.plnnCaseID=CAS.casnCaseID
-WHERE plnnCaseID is null
+	SELECT
+		casnCaseID AS [plnnCaseID]
+	   ,1		   AS [plnnContactCtg]
+	   ,(
+			SELECT
+				cinncontactid
+			FROM sma_MST_IndvContacts
+			WHERE cinsFirstName = 'Plaintiff'
+				AND cinsLastName = 'Unidentified'
+		)		   
+		AS [plnnContactID]
+	   ,   -- Unidentified Plaintiff
+		NULL	   AS [plnnAddressID]
+	   ,(
+			SELECT
+				sbrnSubRoleId
+			FROM sma_MST_SubRole S
+			INNER JOIN sma_MST_SubRoleCode C
+				ON C.srcnCodeId = S.sbrnTypeCode
+				AND C.srcsDscrptn = '(P)-Default Role'
+			WHERE S.sbrnCaseTypeID = CAS.casnOrgCaseTypeID
+		)		   
+		AS plnnRole
+	   ,1		   AS [plnbIsPrimary]
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,0
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,GETDATE()
+	   ,NULL
+	   ,368		   AS [plnnRecUserID]
+	   ,GETDATE()  AS [plndDtCreated]
+	   ,NULL
+	   ,NULL
+	   ,''
+	   ,NULL
+	   ,''
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,1		   AS [plnnPrimaryContact]
+	FROM sma_trn_cases CAS
+	LEFT JOIN [sma_TRN_Plaintiff] T
+		ON T.plnnCaseID = CAS.casnCaseID
+	WHERE plnnCaseID IS NULL
 GO
 
-UPDATE sma_TRN_Plaintiff set plnbIsPrimary=0
+UPDATE sma_TRN_Plaintiff
+SET plnbIsPrimary = 0
 
-UPDATE sma_TRN_Plaintiff set plnbIsPrimary=1
-FROM
-(
-SELECT DISTINCT 
-	   T.plnnCaseID, ROW_NUMBER() OVER (Partition BY T.plnnCaseID order by P.record_num) as RowNumber,
-	   T.plnnPlaintiffID as ID  
-    FROM sma_TRN_Plaintiff T
-    LEFT JOIN [NeosBrianWhite].[dbo].[party_indexed] P on P.[id]=T.saga_party
+UPDATE sma_TRN_Plaintiff
+SET plnbIsPrimary = 1
+FROM (
+	SELECT DISTINCT
+		T.plnnCaseID
+	   ,ROW_NUMBER() OVER (PARTITION BY T.plnnCaseID ORDER BY P.record_num) AS RowNumber
+	   ,T.plnnPlaintiffID AS ID
+	FROM sma_TRN_Plaintiff T
+	LEFT JOIN [NeosBrianWhite].[dbo].[party_indexed] P
+		ON P.[id] = T.saga_party
 ) A
-WHERE A.RowNumber=1
-and plnnPlaintiffID = A.ID
+WHERE A.RowNumber = 1
+AND plnnPlaintiffID = A.ID
 
 
 
 ---(Appendix B)-- every case need at least one defendant
 INSERT INTO [sma_TRN_Defendants]
-   (
-	[defnCaseID],[defnContactCtgID],[defnContactID],[defnAddressID],[defnSubRole],[defbIsPrimary],[defbCounterClaim],[defbThirdParty],
-    [defsThirdPartyRole],[defnPriority],[defdFrmDt],[defdToDt],[defnRecUserID],[defdDtCreated],[defnModifyUserID],[defdDtModified],
-    [defnLevelNo],[defsMarked],[saga]
-   )
-SELECT 
-	casnCaseID	    as [defnCaseID],
-	1			    as [defnContactCtgID],
-	(Select cinncontactid from sma_MST_IndvContacts where cinsFirstName = 'Defendant' and cinsLastName = 'Unidentified')			    as [defnContactID],
-	null		    as [defnAddressID],
-	(select sbrnSubRoleId from sma_MST_SubRole S inner join sma_MST_SubRoleCode C on C.srcnCodeId = S.sbrnTypeCode and C.srcsDscrptn='(D)-Default Role' 
-	where S.sbrnCaseTypeID=CAS.casnOrgCaseTypeID)	 as [defnSubRole],
-	1			    as [defbIsPrimary], -- reexamine??
-	null,null,null,null,null,null,
-	368			    as [defnRecUserID],
-	GETDATE()	    as [defdDtCreated],
-	368			    as [defnModifyUserID],
-	GETDATE()	    as [defdDtModified],
-	null,null,null
-FROM sma_trn_cases CAS
-LEFT JOIN [sma_TRN_Defendants] D on D.defnCaseID=CAS.casnCaseID
-WHERE D.defnCaseID is null
+	(
+	[defnCaseID]
+   ,[defnContactCtgID]
+   ,[defnContactID]
+   ,[defnAddressID]
+   ,[defnSubRole]
+   ,[defbIsPrimary]
+   ,[defbCounterClaim]
+   ,[defbThirdParty]
+   ,[defsThirdPartyRole]
+   ,[defnPriority]
+   ,[defdFrmDt]
+   ,[defdToDt]
+   ,[defnRecUserID]
+   ,[defdDtCreated]
+   ,[defnModifyUserID]
+   ,[defdDtModified]
+   ,[defnLevelNo]
+   ,[defsMarked]
+   ,[saga]
+	)
+	SELECT
+		casnCaseID AS [defnCaseID]
+	   ,1		   AS [defnContactCtgID]
+	   ,(
+			SELECT
+				cinncontactid
+			FROM sma_MST_IndvContacts
+			WHERE cinsFirstName = 'Defendant'
+				AND cinsLastName = 'Unidentified'
+		)		   
+		AS [defnContactID]
+	   ,NULL	   AS [defnAddressID]
+	   ,(
+			SELECT
+				sbrnSubRoleId
+			FROM sma_MST_SubRole S
+			INNER JOIN sma_MST_SubRoleCode C
+				ON C.srcnCodeId = S.sbrnTypeCode
+				AND C.srcsDscrptn = '(D)-Default Role'
+			WHERE S.sbrnCaseTypeID = CAS.casnOrgCaseTypeID
+		)		   
+		AS [defnSubRole]
+	   ,1		   AS [defbIsPrimary]
+	   , -- reexamine??
+		NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,368		   AS [defnRecUserID]
+	   ,GETDATE()  AS [defdDtCreated]
+	   ,368		   AS [defnModifyUserID]
+	   ,GETDATE()  AS [defdDtModified]
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	FROM sma_trn_cases CAS
+	LEFT JOIN [sma_TRN_Defendants] D
+		ON D.defnCaseID = CAS.casnCaseID
+	WHERE D.defnCaseID IS NULL
 
 ----
-UPDATE sma_TRN_Defendants SET defbIsPrimary=0
+UPDATE sma_TRN_Defendants
+SET defbIsPrimary = 0
 
-UPDATE sma_TRN_Defendants SET defbIsPrimary=1
+UPDATE sma_TRN_Defendants
+SET defbIsPrimary = 1
 FROM (
-    SELECT DISTINCT 
-		D.defnCaseID, 
-		ROW_NUMBER() OVER (Partition BY D.defnCaseID order by P.record_num) as RowNumber,
-		D.defnDefendentID as ID  
-    FROM sma_TRN_Defendants D
-    LEFT JOIN [NeosBrianWhite].[dbo].[party_indexed] P on P.[id]=D.saga_party
+	SELECT DISTINCT
+		D.defnCaseID
+	   ,ROW_NUMBER() OVER (PARTITION BY D.defnCaseID ORDER BY P.record_num) AS RowNumber
+	   ,D.defnDefendentID AS ID
+	FROM sma_TRN_Defendants D
+	LEFT JOIN [NeosBrianWhite].[dbo].[party_indexed] P
+		ON P.[id] = D.saga_party
 ) A
-WHERE A.RowNumber=1
-and defnDefendentID = A.ID
+WHERE A.RowNumber = 1
+AND defnDefendentID = A.ID
 
 GO
 

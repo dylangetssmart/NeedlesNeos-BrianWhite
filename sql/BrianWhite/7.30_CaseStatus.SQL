@@ -10,19 +10,39 @@ alter table [sma_TRN_CaseStatus] enable trigger all
 */
 
 ---(0)---
-INSERT INTO sma_MST_CaseStatus ( csssDescription,cssnStatusTypeID )
-SELECT 
-    A.[name],
-    (select stpnStatusTypeID from sma_MST_CaseStatusType where stpsStatusType='Status')
-FROM
-(	SELECT DISTINCT [description] as [name]
-	FROM [NeosBrianWhite].[dbo].[class] class
-	JOIN [NeosBrianWhite].[dbo].[cases] C on C.classid = class.[id]
-	UNION SELECT 'Conversion Case No Status'
-  EXCEPT
-SELECT csssDescription as [name] FROM sma_MST_CaseStatus
-WHERE cssnStatusTypeID = (select stpnStatusTypeID from sma_MST_CaseStatusType where stpsStatusType='Status')
-) A
+INSERT INTO sma_MST_CaseStatus
+	(
+	csssDescription
+   ,cssnStatusTypeID
+	)
+	SELECT
+		A.[name]
+	   ,(
+			SELECT
+				stpnStatusTypeID
+			FROM sma_MST_CaseStatusType
+			WHERE stpsStatusType = 'Status'
+		)
+	FROM (
+		SELECT DISTINCT
+			[description] AS [name]
+		FROM [NeosBrianWhite].[dbo].[class] class
+		JOIN [NeosBrianWhite].[dbo].[cases] C
+			ON C.classid = class.[id]
+		UNION
+		SELECT
+			'Conversion Case No Status'
+		EXCEPT
+		SELECT
+			csssDescription AS [name]
+		FROM sma_MST_CaseStatus
+		WHERE cssnStatusTypeID = (
+				SELECT
+					stpnStatusTypeID
+				FROM sma_MST_CaseStatusType
+				WHERE stpsStatusType = 'Status'
+			)
+	) A
 GO
 
 
@@ -31,43 +51,78 @@ ALTER TABLE [sma_TRN_CaseStatus] DISABLE TRIGGER ALL
 GO
 ---------
 
-INSERT INTO [sma_TRN_CaseStatus] (
-		[cssnCaseID],
-		[cssnStatusTypeID],
-		[cssnStatusID],
-		[cssnExpDays],
-		[cssdFromDate],
-		[cssdToDt],
-		[csssComments],
-		[cssnRecUserID],
-		[cssdDtCreated],
-		[cssnModifyUserID],
-		[cssdDtModified],
-		[cssnLevelNo],
-		[cssnDelFlag]
-)
-SELECT
-    CAS.casnCaseID,
-    (select stpnStatusTypeID from sma_MST_CaseStatusType where stpsStatusType='Status') as [cssnStatusTypeID],
-    case when C.close_date between '1900-01-01' and '2079-06-06' 
-			then (select cssnStatusID from sma_MST_CaseStatus where csssDescription='Closed Case')
-	   when exists (select * from sma_MST_CaseStatus where csssDescription=CL.[description]) 
-			then (select cssnStatusID from sma_MST_CaseStatus where csssDescription=CL.[description])
-	   else (select cssnStatusID from sma_MST_CaseStatus where csssDescription='Conversion Case No Status')
-    end				as [cssnStatusID],
-    ''				as [cssnExpDays],
-   GETDATE()		as [cssdFromDate],
-    null			as [cssdToDt],
-    case when C.close_date between '1900-01-01' and '2079-06-06' 
-		  then 'Prior Status : ' + CL.[description]
-	   else '' end	+char(13) +
-	   ''			as [csssComments],
-    368,
-    GETDATE(),
-    null,null,null,null 
-FROM [sma_trn_cases] CAS
-JOIN [NeosBrianWhite].[dbo].[cases] C on convert(varchar(50),C.[id]) = CAS.Neos_saga
-JOIN [NeosBrianWhite].[dbo].[class] CL on C.classid = CL.id
+INSERT INTO [sma_TRN_CaseStatus]
+	(
+	[cssnCaseID]
+   ,[cssnStatusTypeID]
+   ,[cssnStatusID]
+   ,[cssnExpDays]
+   ,[cssdFromDate]
+   ,[cssdToDt]
+   ,[csssComments]
+   ,[cssnRecUserID]
+   ,[cssdDtCreated]
+   ,[cssnModifyUserID]
+   ,[cssdDtModified]
+   ,[cssnLevelNo]
+   ,[cssnDelFlag]
+	)
+	SELECT
+		CAS.casnCaseID
+	   ,(
+			SELECT
+				stpnStatusTypeID
+			FROM sma_MST_CaseStatusType
+			WHERE stpsStatusType = 'Status'
+		)		  
+		AS [cssnStatusTypeID]
+	   ,CASE
+			WHEN C.close_date BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN (
+						SELECT
+							cssnStatusID
+						FROM sma_MST_CaseStatus
+						WHERE csssDescription = 'Closed Case'
+					)
+			WHEN EXISTS (
+					SELECT
+						*
+					FROM sma_MST_CaseStatus
+					WHERE csssDescription = CL.[description]
+				)
+				THEN (
+						SELECT
+							cssnStatusID
+						FROM sma_MST_CaseStatus
+						WHERE csssDescription = CL.[description]
+					)
+			ELSE (
+					SELECT
+						cssnStatusID
+					FROM sma_MST_CaseStatus
+					WHERE csssDescription = 'Conversion Case No Status'
+				)
+		END		  AS [cssnStatusID]
+	   ,''		  AS [cssnExpDays]
+	   ,GETDATE() AS [cssdFromDate]
+	   ,NULL	  AS [cssdToDt]
+	   ,CASE
+			WHEN C.close_date BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN 'Prior Status : ' + CL.[description]
+			ELSE ''
+		END + CHAR(13) +
+		''		  AS [csssComments]
+	   ,368
+	   ,GETDATE()
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	FROM [sma_trn_cases] CAS
+	JOIN [NeosBrianWhite].[dbo].[cases] C
+		ON CONVERT(VARCHAR(50), C.[id]) = CAS.Neos_saga
+	JOIN [NeosBrianWhite].[dbo].[class] CL
+		ON C.classid = CL.id
 GO
 
 --------
@@ -80,9 +135,10 @@ GO
 ALTER TABLE [sma_trn_cases] DISABLE TRIGGER ALL
 GO
 ---------
-UPDATE sma_trn_cases set casnStatusValueID=STA.cssnStatusID
+UPDATE sma_trn_cases
+SET casnStatusValueID = STA.cssnStatusID
 FROM sma_TRN_CaseStatus STA
-WHERE STA.cssnCaseID=casnCaseID
+WHERE STA.cssnCaseID = casnCaseID
 GO
 
 ALTER TABLE [sma_trn_cases] ENABLE TRIGGER ALL

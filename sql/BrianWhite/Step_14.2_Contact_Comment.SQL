@@ -8,113 +8,121 @@ GO
 ---
 
 ----(1)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Age : ' + convert(varchar,A.Age)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    DATEPART(yyyy,getdate()) - DATEPART(yyyy,N.date_of_birth) - 1   as Age
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Age : ' + CONVERT(VARCHAR, A.Age)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,DATEPART(yyyy, GETDATE()) - DATEPART(yyyy, N.date_of_birth) - 1 AS Age
 
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id =P.namesid
-WHERE N.date_of_birth is not null
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE N.date_of_birth IS NOT NULL
 ) A
-WHERE convert(varchar(50), A.PartyID) = saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 ----(2)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Age at DOI : ' + convert(varchar,A.DOI)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    DATEPART(yyyy,C.date_of_incident) - DATEPART(yyyy,N.date_of_birth) - 1   as DOI
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id =P.namesid
-JOIN [NeosBrianWhite].[dbo].[cases] C on C.id=P.casesid
-WHERE C.date_of_incident is not null 
-and N.date_of_birth is not null
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Age at DOI : ' + CONVERT(VARCHAR, A.DOI)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,DATEPART(yyyy, C.date_of_incident) - DATEPART(yyyy, N.date_of_birth) - 1 AS DOI
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	JOIN [NeosBrianWhite].[dbo].[cases] C
+		ON C.id = P.casesid
+	WHERE C.date_of_incident IS NOT NULL
+		AND N.date_of_birth IS NOT NULL
 ) A
-WHERE convert(varchar(50), A.PartyID)=saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 ----(3)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Deceased : ' + convert(varchar,A.Deceased)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    N.Deceased											   as Deceased
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id=P.namesid
-WHERE N.Deceased is not null
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Deceased : ' + CONVERT(VARCHAR, A.Deceased)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,N.Deceased AS Deceased
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE N.Deceased IS NOT NULL
 ) A
-WHERE convert(varchar(50), A.PartyID)=saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 ----(4)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Date of Death : ' + convert(varchar,A.DOD)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    DATEPART(yyyy,N.date_of_death)							   as DOD
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id=P.namesid
-WHERE N.date_of_death is not null
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Date of Death : ' + CONVERT(VARCHAR, A.DOD)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,DATEPART(yyyy, N.date_of_death) AS DOD
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE N.date_of_death IS NOT NULL
 ) A
-WHERE convert(varchar(50), A.PartyID) = saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 
 ----(5)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Incapacitated : ' + convert(varchar,A.incapacitated)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    P.incapacitated										   as incapacitated
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id=P.namesid
-WHERE isnull(incapacitated,'')<>''
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Incapacitated : ' + CONVERT(VARCHAR, A.incapacitated)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,P.incapacitated AS incapacitated
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE ISNULL(incapacitated, '') <> ''
 ) A
-WHERE convert(varchar(50), A.PartyID) = saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 ----(5)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Incapacity : ' + convert(varchar,A.Incapacity)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    P.incapacity										   as Incapacity
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id=P.namesid
-WHERE isnull(incapacity,'')<>''
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Incapacity : ' + CONVERT(VARCHAR, A.Incapacity)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,P.incapacity AS Incapacity
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE ISNULL(incapacity, '') <> ''
 ) A
-WHERE convert(varchar(50), A.PartyID) = saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 
 ----(6)----
-UPDATE sma_MST_IndvContacts SET cinsComments = isnull(cinsComments,'') + CHAR(13) + 'Responsible for another party : ' + convert(varchar,A.Responsibility)
-FROM
-(
-SELECT 
-    P.casesid											   as CaseID, 
-    P.namesid											   as PartyID,
-    P.responsibility									   as Responsibility
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P 
-JOIN [NeosBrianWhite].[dbo].[names] N on N.id=P.namesid
-WHERE isnull(P.responsibility,'')<>''
+UPDATE sma_MST_IndvContacts
+SET cinsComments = ISNULL(cinsComments, '') + CHAR(13) + 'Responsible for another party : ' + CONVERT(VARCHAR, A.Responsibility)
+FROM (
+	SELECT
+		P.casesid AS CaseID
+	   ,P.namesid AS PartyID
+	   ,P.responsibility AS Responsibility
+	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
+	JOIN [NeosBrianWhite].[dbo].[names] N
+		ON N.id = P.namesid
+	WHERE ISNULL(P.responsibility, '') <> ''
 ) A
-WHERE convert(varchar(50), A.PartyID) =saga_ref 
+WHERE CONVERT(VARCHAR(50), A.PartyID) = saga_ref
 
 
 ---

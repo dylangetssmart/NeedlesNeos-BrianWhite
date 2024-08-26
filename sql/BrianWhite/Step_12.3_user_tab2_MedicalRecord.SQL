@@ -1,4 +1,4 @@
-use SANeosBrianWhite
+USE SANeosBrianWhite
 GO
 
 /*
@@ -18,10 +18,16 @@ where isnull(g.code,'') IN ('', 'Medical Records w/Affidavit','Billing Records w
 ------------------------------------
 --ADD SAGA BILL ID TO SP DAMAGES
 ------------------------------------
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga_bill_id' AND Object_ID = Object_ID(N'sma_TRN_SpDamages'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga_bill_id'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_SpDamages')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_SpDamages] 
-	ADD [saga_bill_id] [varchar](50) NULL; 
+	ALTER TABLE [sma_TRN_SpDamages]
+	ADD [saga_bill_id] [VARCHAR](50) NULL;
 END
 GO
 /*
@@ -38,97 +44,147 @@ GO
 ------------------------------------
 --ADD SAGA TO HOSPITALS TABLE
 ------------------------------------
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Hospitals'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Hospitals')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_Hospitals] 
-	ADD [saga] [varchar](50) NULL; 
+	ALTER TABLE [sma_TRN_Hospitals]
+	ADD [saga] [VARCHAR](50) NULL;
 END
 
 ------------------------------------
 --ADD SAGA TO MEDICAL REQUESTS TABLE
 ------------------------------------
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_trn_MedicalProviderRequest'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_trn_MedicalProviderRequest')
+	)
 BEGIN
-    ALTER TABLE [sma_trn_MedicalProviderRequest] 
-	ADD [saga] [varchar](50) NULL; 
+	ALTER TABLE [sma_trn_MedicalProviderRequest]
+	ADD [saga] [VARCHAR](50) NULL;
 END
 
 ------------------------------------
 --RECORD REQUEST TYPES
 ------------------------------------
-INSERT INTO sma_MST_Request_RecordTypes ( RecordType )
-(	SELECT DISTINCT isnull(g.code ,'Other')
+INSERT INTO sma_MST_Request_RecordTypes
+	(
+	RecordType
+	)
+	(SELECT DISTINCT
+		ISNULL(g.code, 'Other')
 	FROM NeosBrianWhite..neosUsertab2 u
-	LEFT JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Type of Record]
-	WHERE isnull(g.code,'') IN ('', 'Medical Records w/Affidavit','Billing Records w/Affidavit','Medical Record and Bill w/Affidavit',
-		'Record and Bill','Medical Record','Medical Record and Bill','Billing','Medical Bill','MRI Reports w/Affidavit','Authorization Request',
-		'MRI Billing Records w/Affidavit' )
-)
-EXCEPT SELECT RecordType FROM sma_MST_Request_RecordTypes
+	LEFT JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = u.[Type of Record]
+	WHERE ISNULL(g.code, '') IN ('', 'Medical Records w/Affidavit', 'Billing Records w/Affidavit', 'Medical Record and Bill w/Affidavit',
+		'Record and Bill', 'Medical Record', 'Medical Record and Bill', 'Billing', 'Medical Bill', 'MRI Reports w/Affidavit', 'Authorization Request',
+		'MRI Billing Records w/Affidavit')
+	)
+	EXCEPT
+	SELECT
+		RecordType
+	FROM sma_MST_Request_RecordTypes
 GO
 ------------------------------------
 --REQUEST STATUS
 ------------------------------------
-INSERT INTO sma_MST_RequestStatus ( Status, Description )
-SELECT 'No Record Available','No Record Available'
-EXCEPT
-SELECT Status,Description FROM sma_MST_RequestStatus
+INSERT INTO sma_MST_RequestStatus
+	(
+	Status
+   ,Description
+	)
+	SELECT
+		'No Record Available'
+	   ,'No Record Available'
+	EXCEPT
+	SELECT
+		Status
+	   ,Description
+	FROM sma_MST_RequestStatus
 GO
 
 ------------------------------------
 --MEDICAL PROVIDER HELPER
 ------------------------------------
-IF EXISTS (select * from sys.objects where name='user_tab2_MedicalProvider_Helper' and type='U')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'user_tab2_MedicalProvider_Helper'
+			AND type = 'U'
+	)
 BEGIN
-	drop table user_tab2_MedicalProvider_Helper
-END 
+	DROP TABLE user_tab2_MedicalProvider_Helper
+END
 GO
 
 ---(0)---
 CREATE TABLE user_tab2_MedicalProvider_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-	case_id				varchar(50),
-	tab_id				varchar(50),
-	ProviderNameId		varchar(50),
-	ProviderName		varchar(200),
-	ProviderCID			int,
-	ProviderCTG			int,
-	ProviderAID			int,
+	TableIndex [INT] IDENTITY (1, 1) NOT NULL
+   ,case_id VARCHAR(50)
+   ,tab_id VARCHAR(50)
+   ,ProviderNameId VARCHAR(50)
+   ,ProviderName VARCHAR(200)
+   ,ProviderCID INT
+   ,ProviderCTG INT
+   ,ProviderAID INT
+   ,
 	--CounselOrderingCID		int,
 	--CounselOrderingCTG		int,
 	--CounselOrderingAID		int,
-	casnCaseID			int,
-CONSTRAINT IOC_Clustered_Index_user_tab2_MedicalProvider_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
+	casnCaseID INT
+   ,CONSTRAINT IOC_Clustered_Index_user_tab2_MedicalProvider_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_case_id ON [user_tab2_MedicalProvider_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_tab_id ON [user_tab2_MedicalProvider_Helper] (tab_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_ProviderNameId ON [user_tab2_MedicalProvider_Helper] (ProviderNameId);   
-GO
-
----(0)---
-INSERT INTO user_tab2_MedicalProvider_Helper ( case_id,tab_id,ProviderNameId,ProviderName,ProviderCID,ProviderCTG,ProviderAID,casnCaseID )
-SELECT
-    u.CasesID			   as case_id,		
-    u.tablistid			   as tab_id,		--NEEDLES RECORDS TAB ITEM
-    u.[Provider Name]	   as ProviderNameId,  
-    IOC.[Name]			   as ProviderName,
-    IOC.CID				   as ProviderCID,  
-    IOC.CTG				   as ProviderCTG,
-    IOC.AID				   as ProviderAID,
-    CAS.casnCaseID		   as casnCaseID  
-from NeosBrianWhite..neosUsertab2 u
-LEFT JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Type of Record]
-JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref= convert(varchar(50),u.[Provider Name])
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = u.casesid
-WHERE isnull(g.code,'') IN ('', 'Medical Records w/Affidavit','Billing Records w/Affidavit','Medical Record and Bill w/Affidavit',
-	'Record and Bill','Medical Record','Medical Record and Bill','Billing','Medical Bill','MRI Reports w/Affidavit','Authorization Request',
-	'MRI Billing Records w/Affidavit' )
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_case_id ON [user_tab2_MedicalProvider_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_tab_id ON [user_tab2_MedicalProvider_Helper] (tab_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_user_tab2_MedicalProvider_Helper_ProviderNameId ON [user_tab2_MedicalProvider_Helper] (ProviderNameId);
 GO
 
 ---(0)---
-DBCC DBREINDEX('user_tab2_MedicalProvider_Helper',' ',90)  WITH NO_INFOMSGS 
+INSERT INTO user_tab2_MedicalProvider_Helper
+	(
+	case_id
+   ,tab_id
+   ,ProviderNameId
+   ,ProviderName
+   ,ProviderCID
+   ,ProviderCTG
+   ,ProviderAID
+   ,casnCaseID
+	)
+	SELECT
+		u.CasesID		  AS case_id
+	   ,u.tablistid		  AS tab_id
+	   ,		--NEEDLES RECORDS TAB ITEM
+		u.[Provider Name] AS ProviderNameId
+	   ,IOC.[Name]		  AS ProviderName
+	   ,IOC.CID			  AS ProviderCID
+	   ,IOC.CTG			  AS ProviderCTG
+	   ,IOC.AID			  AS ProviderAID
+	   ,CAS.casnCaseID	  AS casnCaseID
+	FROM NeosBrianWhite..neosUsertab2 u
+	LEFT JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = u.[Type of Record]
+	JOIN [IndvOrgContacts_Indexed] IOC
+		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), u.[Provider Name])
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_Saga = u.casesid
+	WHERE ISNULL(g.code, '') IN ('', 'Medical Records w/Affidavit', 'Billing Records w/Affidavit', 'Medical Record and Bill w/Affidavit',
+		'Record and Bill', 'Medical Record', 'Medical Record and Bill', 'Billing', 'Medical Bill', 'MRI Reports w/Affidavit', 'Authorization Request',
+		'MRI Billing Records w/Affidavit')
+GO
+
+---(0)---
+DBCC DBREINDEX ('user_tab2_MedicalProvider_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 ---
@@ -145,108 +201,172 @@ GO
 ---------------------------- MEDICAL PROVIDERS ---------------------------
 --------------------------------------------------------------------------
 INSERT INTO [sma_TRN_Hospitals]
- (	[hosnCaseID], 
-	[hosnContactID], 
-	[hosnContactCtg],
-	[hosnAddressID], 
-	[hossMedProType], 
-	[hosdStartDt],
-	[hosdEndDt],
-	[hosnPlaintiffID],
-	[hosnComments], 
-	[hosnHospitalChart], 
-	[hosnRecUserID],
-	[hosdDtCreated], 
-	[hosnModifyUserID],
-	[hosdDtModified],
-	[saga]
-)
-SELECT DISTINCT
-    casnCaseID				as [hosnCaseID], 
-    ProviderCID				as [hosnContactID],
-    ProviderCTG				as [hosnContactCtg],
-    ProviderAID				as [hosnAddressID], 
-     'M' 					as [hossMedProType],			--M or P (P for Prior Medical Provider)
-    NULL 					as [hosdStartDt],
-    NULL 					as [hosdEndDt],
-    ( select plnnPlaintiffID FROM [sma_TRN_Plaintiff] WHERE plnnCaseID = casnCaseID and plnbIsPrimary=1) 
-							as hosnPlaintiffID,
-	''						as [hosnComments],
-	null					as [hosnHospitalChart],
-    368						as [hosnRecUserID],
-    getdate()				as [hosdDtCreated],
-    null					as [hosnModifyUserID],
-    null					as [hosdDtModified],
-    'tab2'					as [saga]
+	(
+	[hosnCaseID]
+   ,[hosnContactID]
+   ,[hosnContactCtg]
+   ,[hosnAddressID]
+   ,[hossMedProType]
+   ,[hosdStartDt]
+   ,[hosdEndDt]
+   ,[hosnPlaintiffID]
+   ,[hosnComments]
+   ,[hosnHospitalChart]
+   ,[hosnRecUserID]
+   ,[hosdDtCreated]
+   ,[hosnModifyUserID]
+   ,[hosdDtModified]
+   ,[saga]
+	)
+	SELECT DISTINCT
+		casnCaseID  AS [hosnCaseID]
+	   ,ProviderCID AS [hosnContactID]
+	   ,ProviderCTG AS [hosnContactCtg]
+	   ,ProviderAID AS [hosnAddressID]
+	   ,'M'			AS [hossMedProType]
+	   ,			--M or P (P for Prior Medical Provider)
+		NULL		AS [hosdStartDt]
+	   ,NULL		AS [hosdEndDt]
+	   ,(
+			SELECT
+				plnnPlaintiffID
+			FROM [sma_TRN_Plaintiff]
+			WHERE plnnCaseID = casnCaseID
+				AND plnbIsPrimary = 1
+		)			
+		AS hosnPlaintiffID
+	   ,''			AS [hosnComments]
+	   ,NULL		AS [hosnHospitalChart]
+	   ,368			AS [hosnRecUserID]
+	   ,GETDATE()   AS [hosdDtCreated]
+	   ,NULL		AS [hosnModifyUserID]
+	   ,NULL		AS [hosdDtModified]
+	   ,'tab2'		AS [saga]
 	--'tab2:'+convert(varchar,UD.tab_id)	as [saga]
-FROM NeosBrianWhite..neosUsertab2 d
-JOIN user_tab2_MedicalProvider_Helper MAP on MAP.case_id = convert(varchar(50),D.casesid) and MAP.tab_id= convert(varchar(50),D.tablistid)
-LEFT JOIN [sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
-WHERE H.hosnHospitalID is null	--only add the hospital if it does not already exist
+	FROM NeosBrianWhite..neosUsertab2 d
+	JOIN user_tab2_MedicalProvider_Helper MAP
+		ON MAP.case_id = CONVERT(VARCHAR(50), D.casesid)
+			AND MAP.tab_id = CONVERT(VARCHAR(50), D.tablistid)
+	LEFT JOIN [sma_TRN_Hospitals] H
+		ON H.hosnCaseID = MAP.casnCaseID
+			AND H.hosnContactID = MAP.ProviderCID
+			AND H.hosnContactCtg = MAP.ProviderCTG
+			AND H.hosnAddressID = MAP.ProviderAID
+	WHERE H.hosnHospitalID IS NULL	--only add the hospital if it does not already exist
 GO
 
 --------------------------------------------------------------------------
 ---------------------------- MEDICAL REQUESTS ----------------------------
 --------------------------------------------------------------------------
 INSERT INTO [sma_trn_MedicalProviderRequest]
-(
-    MedPrvCaseID,
-    MedPrvPlaintiffID,
-    MedPrvhosnHospitalID,
-    MedPrvRecordType,
-    MedPrvRequestdate,
-    MedPrvAssignee,
-    MedPrvAssignedBy,
-	MedPrvHighPriority,
-    MedPrvFromDate,
-    MedPrvToDate,
-    MedPrvComments,
-	MedPrvNotes,
-    MedPrvCompleteDate,
-    MedPrvStatusId,
-    MedPrvFollowUpDate,
-	MedPrvStatusDate,
-	OrderAffidavit,
-	FollowUpNotes,		--Retrieval Provider Notes
+	(
+	MedPrvCaseID
+   ,MedPrvPlaintiffID
+   ,MedPrvhosnHospitalID
+   ,MedPrvRecordType
+   ,MedPrvRequestdate
+   ,MedPrvAssignee
+   ,MedPrvAssignedBy
+   ,MedPrvHighPriority
+   ,MedPrvFromDate
+   ,MedPrvToDate
+   ,MedPrvComments
+   ,MedPrvNotes
+   ,MedPrvCompleteDate
+   ,MedPrvStatusId
+   ,MedPrvFollowUpDate
+   ,MedPrvStatusDate
+   ,OrderAffidavit
+   ,FollowUpNotes
+   ,		--Retrieval Provider Notes
 	SAGA
-)
-SELECT 
-    hosnCaseID					 as MedPrvCaseID,
-    hosnPlaintiffID				 as MedPrvPlaintiffID,
-    H.hosnHospitalID			 as MedPrvhosnHospitalID,
-    (select uId from sma_MST_Request_RecordTypes where RecordType = isnull(g.code ,'Other')) 	   							 as MedPrvRecordType,
-    case when ( UD.[Date Requested] between '1900-01-01' and '2079-06-06') then UD.[Date Requested]  else null end	 as MedPrvRequestdate,
-    null						 as MedPrvAssignee,
-    (select usrnUserID From sma_mst_users u join sma_MST_IndvContacts i on u.usrnContactID = i.cinnContactID where i.cinsGrade = ud.[Ordered By])			 as MedPrvAssignedBy,
-    0							 as MedPrvHighPriority,		--1=high priority; 0=Normal
-    NULL						 as MedPrvFromDate,
-    NULL						 as MedPrvToDate,
-    isnull('PrePayment Required: ' + NULLIF(convert(varchar,UD.[pre-payment required]),'') + CHAR(13),'') + 
-	isnull('Method: ' + NULLIF(convert(varchar,me.code),'') + CHAR(13),'') + 
-	isnull('Value Code: ' + NULLIF(convert(varchar,vc.[Description]),'') + CHAR(13),'') + 
-	isnull('Alternate Provider: ' + NULLIF(convert(varchar,iocalt.[Name]),'') + CHAR(13),'') + 
-	''																											as MedPrvComments,
-	isnull('Comments: ' + NULLIF(convert(varchar(max),UD.Comments),'') + CHAR(13),'') +  
-	isnull('Findings: ' + NULLIF(convert(varchar(max),UD.Findings),'') + CHAR(13),'') + 
-	''																											as MedPrvNotes,
-    case when ( UD.[Date Received] between '1900-01-01' and '2079-06-06') then UD.[Date Received] else null end		as MedPrvCompleteDate,
-    case when (UD.[Date Received] between '1900-01-01' and '2079-06-06') then (select uId from [sma_MST_RequestStatus] where [status]='Received')
-	   else null end							as MedPrvStatusId,
-    NULL										as MedPrvFollowUpDate,
-	case when (UD.[Date Received] between '1900-01-01' and '2079-06-06') 
-				then (select uId from [sma_MST_RequestStatus] where [status]='Received')						 
-	   else null end			as MedPrvStatusDate,
-	NULL						as OrderAffidavit,	--bit
-	''												as FollowUpNotes,	--Retreival Provider Notes
-	'tab2: '+convert(varchar(50),UD.tablistid)			as SAGA
---select *
-FROM NeosBrianWhite..neosUsertab2 UD
-JOIN NeosBrianWhite..mini_general_dir g on g.id = ud.[Type of Record]
-LEFT JOIN NeosBrianWhite..value_code vc on vc.id = ud.[value Code]
-LEFT JOIN NeosBrianWhite..mini_general_dir me on me.id = ud.[method]
-JOIN user_tab2_MedicalProvider_Helper MAP on MAP.case_id= convert(varchar(50),UD.caseSid) and MAP.tab_id = convert(varchar(50),UD.tablistid)
-LEFT JOIN IndvOrgContacts_Indexed iocalt on iocalt.saga_ref = convert(varchar(50),ud.[Alternate Provider])
-JOIN [sma_TRN_Hospitals] H on H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnCaseID=MAP.casnCaseID
+	)
+	SELECT
+		hosnCaseID									  AS MedPrvCaseID
+	   ,hosnPlaintiffID								  AS MedPrvPlaintiffID
+	   ,H.hosnHospitalID							  AS MedPrvhosnHospitalID
+	   ,(
+			SELECT
+				uId
+			FROM sma_MST_Request_RecordTypes
+			WHERE RecordType = ISNULL(g.code, 'Other')
+		)											  
+		AS MedPrvRecordType
+	   ,CASE
+			WHEN (UD.[Date Requested] BETWEEN '1900-01-01' AND '2079-06-06')
+				THEN UD.[Date Requested]
+			ELSE NULL
+		END											  AS MedPrvRequestdate
+	   ,NULL										  AS MedPrvAssignee
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users u
+			JOIN sma_MST_IndvContacts i
+				ON u.usrnContactID = i.cinnContactID
+			WHERE i.cinsGrade = ud.[Ordered By]
+		)											  
+		AS MedPrvAssignedBy
+	   ,0											  AS MedPrvHighPriority
+	   ,		--1=high priority; 0=Normal
+		NULL										  AS MedPrvFromDate
+	   ,NULL										  AS MedPrvToDate
+	   ,ISNULL('PrePayment Required: ' + NULLIF(CONVERT(VARCHAR, UD.[pre-payment required]), '') + CHAR(13), '') +
+		ISNULL('Method: ' + NULLIF(CONVERT(VARCHAR, me.code), '') + CHAR(13), '') +
+		ISNULL('Value Code: ' + NULLIF(CONVERT(VARCHAR, vc.[Description]), '') + CHAR(13), '') +
+		ISNULL('Alternate Provider: ' + NULLIF(CONVERT(VARCHAR, iocalt.[Name]), '') + CHAR(13), '') +
+		''											  AS MedPrvComments
+	   ,ISNULL('Comments: ' + NULLIF(CONVERT(VARCHAR(MAX), UD.Comments), '') + CHAR(13), '') +
+		ISNULL('Findings: ' + NULLIF(CONVERT(VARCHAR(MAX), UD.Findings), '') + CHAR(13), '') +
+		''											  AS MedPrvNotes
+	   ,CASE
+			WHEN (UD.[Date Received] BETWEEN '1900-01-01' AND '2079-06-06')
+				THEN UD.[Date Received]
+			ELSE NULL
+		END											  AS MedPrvCompleteDate
+	   ,CASE
+			WHEN (UD.[Date Received] BETWEEN '1900-01-01' AND '2079-06-06')
+				THEN (
+						SELECT
+							uId
+						FROM [sma_MST_RequestStatus]
+						WHERE [status] = 'Received'
+					)
+			ELSE NULL
+		END											  AS MedPrvStatusId
+	   ,NULL										  AS MedPrvFollowUpDate
+	   ,CASE
+			WHEN (UD.[Date Received] BETWEEN '1900-01-01' AND '2079-06-06')
+				THEN (
+						SELECT
+							uId
+						FROM [sma_MST_RequestStatus]
+						WHERE [status] = 'Received'
+					)
+			ELSE NULL
+		END											  AS MedPrvStatusDate
+	   ,NULL										  AS OrderAffidavit
+	   ,	--bit
+		''											  AS FollowUpNotes
+	   ,	--Retreival Provider Notes
+		'tab2: ' + CONVERT(VARCHAR(50), UD.tablistid) AS SAGA
+	--select *
+	FROM NeosBrianWhite..neosUsertab2 UD
+	JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = ud.[Type of Record]
+	LEFT JOIN NeosBrianWhite..value_code vc
+		ON vc.id = ud.[value Code]
+	LEFT JOIN NeosBrianWhite..mini_general_dir me
+		ON me.id = ud.[method]
+	JOIN user_tab2_MedicalProvider_Helper MAP
+		ON MAP.case_id = CONVERT(VARCHAR(50), UD.caseSid)
+			AND MAP.tab_id = CONVERT(VARCHAR(50), UD.tablistid)
+	LEFT JOIN IndvOrgContacts_Indexed iocalt
+		ON iocalt.saga_ref = CONVERT(VARCHAR(50), ud.[Alternate Provider])
+	JOIN [sma_TRN_Hospitals] H
+		ON H.hosnContactID = MAP.ProviderCID
+			AND H.hosnContactCtg = MAP.ProviderCTG
+			AND H.hosnCaseID = MAP.casnCaseID
 GO
 
 

@@ -1,52 +1,120 @@
 USE SANeosBrianWhite
 GO
 
-if exists (select * from sys.tables where name = 'InsuredHelper')
-begin
-	drop table InsuredHelper
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.tables
+		WHERE name = 'InsuredHelper'
+	)
+BEGIN
+	DROP TABLE InsuredHelper
+END
 
-create table InsuredHelper (Insured varchar(100), wordct int, firstname varchar(30), middle varchar(30), lastname varchar(80), company varchar(100))
+CREATE TABLE InsuredHelper (
+	Insured VARCHAR(100)
+   ,wordct INT
+   ,firstname VARCHAR(30)
+   ,middle VARCHAR(30)
+   ,lastname VARCHAR(80)
+   ,company VARCHAR(100)
+)
 
-INSERT INTO InsuredHelper (Insured, wordct)
-SELECT DISTINCT insured, dbo.WordCount(Insured)
-FROM [NeosBrianWhite].[dbo].[insurance] INS
-WHERE isnull(insured,'')<>''
+INSERT INTO InsuredHelper
+	(
+	Insured
+   ,wordct
+	)
+	SELECT DISTINCT
+		insured
+	   ,dbo.WordCount(Insured)
+	FROM [NeosBrianWhite].[dbo].[insurance] INS
+	WHERE ISNULL(insured, '') <> ''
 
 
-update InsuredHelper 
-set company = Insured
-where wordct not in (2,3,4) 
+UPDATE InsuredHelper
+SET company = Insured
+WHERE wordct NOT IN (2, 3, 4)
 
-update InsuredHelper 
-set company = Insured
-from InsuredHelper
-where company is null
-	and (insured like '%inc%' or insured like '%llc%' or insured like '%freight%' or insured like '%auto%'
-	or insured like '%solution%' or insured like '%hauler%' or insured like '% and %'  or insured like '%realty%' 
-	or insured like '%apartment%' or insured like '% LP%' or insured like '% truck%' or insured like '% & %' 
-	or insured like '%pizza%' or insured like '%company%' or insured like '%plaza%' or insured like '%trust%'
-	or insured like '% by %' or insured like '%construction%' or insured like '%transfer%' or insured like '%supermercado%'
-	or insured like '%management%' or insured like '%partner%' or insured like '%.com%' or insured like '%insurance%'
-	or insured like '%commercial%' or insured like '%county%' or insured like '%school%' or insured like '%health%'
-	or insured like '% car %' or insured like '%academy%' or insured like '% mart' or insured like '%insured%'
-	or insured like '%[0-9]%' or insured like '%grocery%' or insured like '%church%' or insured like '%depot%'
-	or insured like '%assistance%' or insured like '%hospital%' or insured like '%marriott%' or insured like '%corporation%'
-	or insured like '%suite%' or insured like '%transport%' or insured like '%underground%' or insured like '%plumbing%'
-	or insured like '%claim%' or insured like '%police%' or insured like '%sausage%' or insured like '%southwest%'
-	or insured like '%houston%' or insured like '%moving%' or insured like '%market%' or insured like '%children%' 
-	or insured like '%wheelhouse%' or insured like '%LTD%' or insured like '% UM %' or insured like '%coverage%'
-	or insured like '% pip %' or insured like '%rental%' or insured like '%holding%' or insured like '%laboratories%'
-	or insured like '%service%' or insured like '%diagnostic%' or insured like '%enterprise%' or insured like '%L.P.%'
-	or insured like 'The %' or insured like '%texas%' or insured like '%complete%' )
+UPDATE InsuredHelper
+SET company = Insured
+FROM InsuredHelper
+WHERE company IS NULL
+AND (insured LIKE '%inc%'
+OR insured LIKE '%llc%'
+OR insured LIKE '%freight%'
+OR insured LIKE '%auto%'
+OR insured LIKE '%solution%'
+OR insured LIKE '%hauler%'
+OR insured LIKE '% and %'
+OR insured LIKE '%realty%'
+OR insured LIKE '%apartment%'
+OR insured LIKE '% LP%'
+OR insured LIKE '% truck%'
+OR insured LIKE '% & %'
+OR insured LIKE '%pizza%'
+OR insured LIKE '%company%'
+OR insured LIKE '%plaza%'
+OR insured LIKE '%trust%'
+OR insured LIKE '% by %'
+OR insured LIKE '%construction%'
+OR insured LIKE '%transfer%'
+OR insured LIKE '%supermercado%'
+OR insured LIKE '%management%'
+OR insured LIKE '%partner%'
+OR insured LIKE '%.com%'
+OR insured LIKE '%insurance%'
+OR insured LIKE '%commercial%'
+OR insured LIKE '%county%'
+OR insured LIKE '%school%'
+OR insured LIKE '%health%'
+OR insured LIKE '% car %'
+OR insured LIKE '%academy%'
+OR insured LIKE '% mart'
+OR insured LIKE '%insured%'
+OR insured LIKE '%[0-9]%'
+OR insured LIKE '%grocery%'
+OR insured LIKE '%church%'
+OR insured LIKE '%depot%'
+OR insured LIKE '%assistance%'
+OR insured LIKE '%hospital%'
+OR insured LIKE '%marriott%'
+OR insured LIKE '%corporation%'
+OR insured LIKE '%suite%'
+OR insured LIKE '%transport%'
+OR insured LIKE '%underground%'
+OR insured LIKE '%plumbing%'
+OR insured LIKE '%claim%'
+OR insured LIKE '%police%'
+OR insured LIKE '%sausage%'
+OR insured LIKE '%southwest%'
+OR insured LIKE '%houston%'
+OR insured LIKE '%moving%'
+OR insured LIKE '%market%'
+OR insured LIKE '%children%'
+OR insured LIKE '%wheelhouse%'
+OR insured LIKE '%LTD%'
+OR insured LIKE '% UM %'
+OR insured LIKE '%coverage%'
+OR insured LIKE '% pip %'
+OR insured LIKE '%rental%'
+OR insured LIKE '%holding%'
+OR insured LIKE '%laboratories%'
+OR insured LIKE '%service%'
+OR insured LIKE '%diagnostic%'
+OR insured LIKE '%enterprise%'
+OR insured LIKE '%L.P.%'
+OR insured LIKE 'The %'
+OR insured LIKE '%texas%'
+OR insured LIKE '%complete%')
 GO
 
 UPDATE InsuredHelper
-SET firstname = dbo.FirstName_FromText(insured), 
-	middle = dbo.MiddleName_FromText(Insured), 
-	lastname = dbo.LastName_FromText(Insured)
+SET firstname = dbo.FirstName_FromText(insured)
+   ,middle = dbo.MiddleName_FromText(Insured)
+   ,lastname = dbo.LastName_FromText(Insured)
 FROM InsuredHelper
-WHERE company is null
+WHERE company IS NULL
 GO
 
 ---------------------------------------------
@@ -56,41 +124,112 @@ GO
 ALTER TABLE [sma_MST_IndvContacts] DISABLE TRIGGER ALL
 GO
 --
-INSERT INTO [sma_MST_IndvContacts] (
-	[cinbPrimary],[cinnContactTypeID],[cinnContactSubCtgID],[cinsPrefix],[cinsFirstName],[cinsMiddleName],[cinsLastName],[cinsSuffix],[cinsNickName],[cinbStatus],[cinsSSNNo],[cindBirthDate],
-	[cinsComments],[cinnContactCtg],[cinnRefByCtgID],[cinnReferredBy],[cindDateOfDeath],[cinsCVLink],[cinnMaritalStatusID],[cinnGender],[cinsBirthPlace],[cinnCountyID],[cinsCountyOfResidence],
-	[cinbFlagForPhoto],[cinsPrimaryContactNo],[cinsHomePhone],[cinsWorkPhone],[cinsMobile],[cinbPreventMailing],[cinnRecUserID],[cindDtCreated],[cinnModifyUserID],[cindDtModified],[cinnLevelNo],
-	[cinsPrimaryLanguage],[cinsOtherLanguage],[cinbDeathFlag],[cinsCitizenship],[cinsHeight],[cinnWeight],[cinsReligion],[cindMarriageDate],[cinsMarriageLoc],[cinsDeathPlace],[cinsMaidenName],
-	[cinsOccupation],[saga],[cinsSpouse],[cinsGrade], [saga_ref]) 
-SELECT DISTINCT 
-	1			as [cinbPrimary],
-	10			as [cinnContactTypeID],
-	null,'',
-	Firstname	as [cinsFirstName],
-	middle		as [cinsMiddleName],
-	lastname	as [cinsLastName], 
-	null		as [cinsSuffix],
-	null		as [cinsNickName],
-	1			as [cinbStatus],
-	null		as [cinsSSNNo],
-	null		as [cindBirthDate],
-	null,
-	1			as [cinnContactCtg],
-	'','',null,'','',1,'',1,1,null,null,'','',null,0,
-	368			as [cinnRecUserID],
-	GETDATE()	as [cindDtCreated],
-	''			as [cinnModifyUserID],
-	null		as [cindDtModified],
-	0,'','','','',
-	null		as [cinsHeight],
-	null		as [cinnWeight],
-	'',Null,'','','','',
-	-1			as [saga],
-	''			as [cinsSpouse],
-	NULL		as [cinsGrade], 
-	insured		as [saga_ref]
-FROM InsuredHelper
-WHERE firstname IS NOT NULL
+INSERT INTO [sma_MST_IndvContacts]
+	(
+	[cinbPrimary]
+   ,[cinnContactTypeID]
+   ,[cinnContactSubCtgID]
+   ,[cinsPrefix]
+   ,[cinsFirstName]
+   ,[cinsMiddleName]
+   ,[cinsLastName]
+   ,[cinsSuffix]
+   ,[cinsNickName]
+   ,[cinbStatus]
+   ,[cinsSSNNo]
+   ,[cindBirthDate]
+   ,[cinsComments]
+   ,[cinnContactCtg]
+   ,[cinnRefByCtgID]
+   ,[cinnReferredBy]
+   ,[cindDateOfDeath]
+   ,[cinsCVLink]
+   ,[cinnMaritalStatusID]
+   ,[cinnGender]
+   ,[cinsBirthPlace]
+   ,[cinnCountyID]
+   ,[cinsCountyOfResidence]
+   ,[cinbFlagForPhoto]
+   ,[cinsPrimaryContactNo]
+   ,[cinsHomePhone]
+   ,[cinsWorkPhone]
+   ,[cinsMobile]
+   ,[cinbPreventMailing]
+   ,[cinnRecUserID]
+   ,[cindDtCreated]
+   ,[cinnModifyUserID]
+   ,[cindDtModified]
+   ,[cinnLevelNo]
+   ,[cinsPrimaryLanguage]
+   ,[cinsOtherLanguage]
+   ,[cinbDeathFlag]
+   ,[cinsCitizenship]
+   ,[cinsHeight]
+   ,[cinnWeight]
+   ,[cinsReligion]
+   ,[cindMarriageDate]
+   ,[cinsMarriageLoc]
+   ,[cinsDeathPlace]
+   ,[cinsMaidenName]
+   ,[cinsOccupation]
+   ,[saga]
+   ,[cinsSpouse]
+   ,[cinsGrade]
+   ,[saga_ref]
+	)
+	SELECT DISTINCT
+		1		  AS [cinbPrimary]
+	   ,10		  AS [cinnContactTypeID]
+	   ,NULL
+	   ,''
+	   ,Firstname AS [cinsFirstName]
+	   ,middle	  AS [cinsMiddleName]
+	   ,lastname  AS [cinsLastName]
+	   ,NULL	  AS [cinsSuffix]
+	   ,NULL	  AS [cinsNickName]
+	   ,1		  AS [cinbStatus]
+	   ,NULL	  AS [cinsSSNNo]
+	   ,NULL	  AS [cindBirthDate]
+	   ,NULL
+	   ,1		  AS [cinnContactCtg]
+	   ,''
+	   ,''
+	   ,NULL
+	   ,''
+	   ,''
+	   ,1
+	   ,''
+	   ,1
+	   ,1
+	   ,NULL
+	   ,NULL
+	   ,''
+	   ,''
+	   ,NULL
+	   ,0
+	   ,368		  AS [cinnRecUserID]
+	   ,GETDATE() AS [cindDtCreated]
+	   ,''		  AS [cinnModifyUserID]
+	   ,NULL	  AS [cindDtModified]
+	   ,0
+	   ,''
+	   ,''
+	   ,''
+	   ,''
+	   ,NULL	  AS [cinsHeight]
+	   ,NULL	  AS [cinnWeight]
+	   ,''
+	   ,NULL
+	   ,''
+	   ,''
+	   ,''
+	   ,''
+	   ,-1		  AS [saga]
+	   ,''		  AS [cinsSpouse]
+	   ,NULL	  AS [cinsGrade]
+	   ,insured	  AS [saga_ref]
+	FROM InsuredHelper
+	WHERE firstname IS NOT NULL
 GO
 
 --
@@ -98,30 +237,39 @@ ALTER TABLE [sma_MST_IndvContacts] ENABLE TRIGGER ALL
 GO
 
 
-INSERT INTO [sma_MST_OrgContacts] (
-		[consName],
-		[consWorkPhone],
-		[consComments],
-		[connContactCtg],
-		[connContactTypeID],	
-		[connRecUserID],		
-		[condDtCreated],
-		[conbStatus],			
-		[saga],
-		[saga_ref]
+INSERT INTO [sma_MST_OrgContacts]
+	(
+	[consName]
+   ,[consWorkPhone]
+   ,[consComments]
+   ,[connContactCtg]
+   ,[connContactTypeID]
+   ,[connRecUserID]
+   ,[condDtCreated]
+   ,[conbStatus]
+   ,[saga]
+   ,[saga_ref]
 	)
-SELECT 
-    company			as [consName],
-    NULL			as [consWorkPhone],
-	''				as [consComments],
-    2				as [connContactCtg],
-    (select octnOrigContactTypeID FROM [sma_MST_OriginalContactTypes] where octsDscrptn='General' and octnContactCtgID=2) as [connContactTypeID],
-    368				as [connRecUserID],
-    getdate()		as [condDtCreated],
-    1				as [conbStatus],		-- Hardcode Status as ACTIVE
-    -1				as [saga],
-	Insured			as [saga_ref]
---SELECT *
-FROM InsuredHelper
-WHERE Company IS NOT NULL
+	SELECT
+		company	  AS [consName]
+	   ,NULL	  AS [consWorkPhone]
+	   ,''		  AS [consComments]
+	   ,2		  AS [connContactCtg]
+	   ,(
+			SELECT
+				octnOrigContactTypeID
+			FROM [sma_MST_OriginalContactTypes]
+			WHERE octsDscrptn = 'General'
+				AND octnContactCtgID = 2
+		)		  
+		AS [connContactTypeID]
+	   ,368		  AS [connRecUserID]
+	   ,GETDATE() AS [condDtCreated]
+	   ,1		  AS [conbStatus]
+	   ,		-- Hardcode Status as ACTIVE
+		-1		  AS [saga]
+	   ,Insured	  AS [saga_ref]
+	--SELECT *
+	FROM InsuredHelper
+	WHERE Company IS NOT NULL
 GO

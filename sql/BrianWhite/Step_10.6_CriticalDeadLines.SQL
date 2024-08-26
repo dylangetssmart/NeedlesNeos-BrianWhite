@@ -1,6 +1,6 @@
 
-use [SANeosBrianWhite]
-go
+USE [SANeosBrianWhite]
+GO
 /*
 alter table [sma_TRN_CriticalDeadlines] disable trigger all
 delete [sma_TRN_CriticalDeadlines]
@@ -14,31 +14,60 @@ ALTER TABLE [sma_TRN_CriticalDeadlines] DISABLE TRIGGER ALL
 -----
 
 ----(0)----- 
-INSERT INTO [sma_MST_CriticalDeadlineTypes] ( cdtsDscrptn, cdtbActive ) 
-SELECT DISTINCT [label], 1
-FROM NeosBrianWhite..[date_labels]
-EXCEPT
-SELECT cdtsDscrptn,cdtbActive from [sma_MST_CriticalDeadlineTypes]
-WHERE cdtbActive=1
+INSERT INTO [sma_MST_CriticalDeadlineTypes]
+	(
+	cdtsDscrptn
+   ,cdtbActive
+	)
+	SELECT DISTINCT
+		[label]
+	   ,1
+	FROM NeosBrianWhite..[date_labels]
+	EXCEPT
+	SELECT
+		cdtsDscrptn
+	   ,cdtbActive
+	FROM [sma_MST_CriticalDeadlineTypes]
+	WHERE cdtbActive = 1
 
 
 ----(1)-----
 INSERT INTO [sma_TRN_CriticalDeadlines]
-(   [crdnCaseID],[crdnCriticalDeadlineTypeID],[crddDueDate],[crdsRequestFrom],[ResponderUID] )
-SELECT 
-	CAS.casnCaseID			as [crdnCaseID],
-	(select cdtnCriticalTypeID FROM [sma_MST_CriticalDeadlineTypes] where cdtbActive = 1 and cdtsDscrptn=dl.[label])  
-							as [crdnCriticalDeadlineTypeID],
-	case when C.casedate between '1900-01-01' and '2079-06-01' then C.casedate
-	   else null end	    as [crddDueDate],
-	convert(varchar,aci.UniqueContactId) + ';' 		as [crdsRequestFrom],
-	convert(varchar,aci.UniqueContactId)			as [ResponderUID]
-FROM [NeosBrianWhite]..[case_dates] C 
-JOIN [NeosBrianWhite]..date_labels dl on c.datelabelid = dl.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga= convert(varchar(50), c.casesid)
-LEFT JOIN sma_TRN_Plaintiff p on p.plnnCaseID = cas.casncaseid 
-JOIN sma_MST_AllContactInfo aci on ContactCtg=plnnContactCtg and ContactId=plnnContactID  
-WHERE isnull(c.casedate,'') <>''
+	(
+	[crdnCaseID]
+   ,[crdnCriticalDeadlineTypeID]
+   ,[crddDueDate]
+   ,[crdsRequestFrom]
+   ,[ResponderUID]
+	)
+	SELECT
+		CAS.casnCaseID								AS [crdnCaseID]
+	   ,(
+			SELECT
+				cdtnCriticalTypeID
+			FROM [sma_MST_CriticalDeadlineTypes]
+			WHERE cdtbActive = 1
+				AND cdtsDscrptn = dl.[label]
+		)											
+		AS [crdnCriticalDeadlineTypeID]
+	   ,CASE
+			WHEN C.casedate BETWEEN '1900-01-01' AND '2079-06-01'
+				THEN C.casedate
+			ELSE NULL
+		END											AS [crddDueDate]
+	   ,CONVERT(VARCHAR, aci.UniqueContactId) + ';' AS [crdsRequestFrom]
+	   ,CONVERT(VARCHAR, aci.UniqueContactId)		AS [ResponderUID]
+	FROM [NeosBrianWhite]..[case_dates] C
+	JOIN [NeosBrianWhite]..date_labels dl
+		ON c.datelabelid = dl.id
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), c.casesid)
+	LEFT JOIN sma_TRN_Plaintiff p
+		ON p.plnnCaseID = cas.casncaseid
+	JOIN sma_MST_AllContactInfo aci
+		ON ContactCtg = plnnContactCtg
+			AND ContactId = plnnContactID
+	WHERE ISNULL(c.casedate, '') <> ''
 
 
 -----
@@ -51,9 +80,9 @@ GO
 ALTER TABLE sma_TRN_CriticalDeadlines DISABLE TRIGGER ALL
 GO
 
-UPDATE [sma_TRN_CriticalDeadlines] 
-SET crddCompliedDate=getdate()
-WHERE crddDueDate < getdate()
+UPDATE [sma_TRN_CriticalDeadlines]
+SET crddCompliedDate = GETDATE()
+WHERE crddDueDate < GETDATE()
 GO
 
 ALTER TABLE sma_TRN_CriticalDeadlines ENABLE TRIGGER ALL

@@ -11,51 +11,80 @@ alter table [sma_TRN_SOLs] enable trigger all
 ALTER TABLE [sma_TRN_SOLs] DISABLE TRIGGER ALL
 GO
 INSERT INTO [sma_TRN_SOLs]
-(
-	[solnCaseID],
-	[solnSOLTypeID],
-	[soldSOLDate],
-	[soldDateComplied],
-	[soldSnCFilingDate],
-	[soldServiceDate],
-	[solnDefendentID],
-	[soldToProcessServerDt],
-	[soldRcvdDate],
-	[solsType],
-     [solsComments],
-     [solnRecUserID],
-     [soldDtCreated],
-     [solnModifyUserID],
-     [soldDtModified]
+	(
+	[solnCaseID]
+   ,[solnSOLTypeID]
+   ,[soldSOLDate]
+   ,[soldDateComplied]
+   ,[soldSnCFilingDate]
+   ,[soldServiceDate]
+   ,[solnDefendentID]
+   ,[soldToProcessServerDt]
+   ,[soldRcvdDate]
+   ,[solsType]
+   ,[solsComments]
+   ,[solnRecUserID]
+   ,[soldDtCreated]
+   ,[solnModifyUserID]
+   ,[soldDtModified]
 
-)
-SELECT DISTINCT
-    CAS.casnCaseID		as [solnCaseID],
-    (select sldnSOLDetID From sma_MST_SOLDetails where sldnSOLTypeID = 16 and sldnCaseTypeID = -1 and sldsDorP = 'D' )		as [solnSOLTypeID],
-    case when ( CKL.due_date not between '1900-01-01' and '2079-12-31' )  then null else CKL.due_date end as [soldSOLDate],
-    case when CKL.[status]='Done' then getdate()
-	   else null end	as [soldDateComplied],
-    null			    as [soldSnCFilingDate],
-    null			    as [soldServiceDate],
-    D.defnDefendentID	as [solnDefendentID],
-    null				as [soldToProcessServerDt],
-    null			    as [soldRcvdDate],
-    'D'					as [solsType],
-    isnull('description : ' + nullif(CKL.[description],'') + CHAR(13) ,'') +
-   -- isnull('staff assigned : ' + nullif(CKL.[staff_assigned],'') + CHAR(13) ,'') 
-    ''				    as [solsComments],
-    (SELECT usrnUserID FROM sma_MST_Users WHERE saga=CKL.staffassignedid)			     
-						as [solnRecUserID],
-    getdate()		    as [soldDtCreated],
-    null			    as [solnModifyUserID],
-    null			    as [soldDtModified]
---SELECT *
-  FROM [sma_TRN_Defendants] D
-  JOIN [sma_TRN_Cases] CAS on CAS.casnCaseID = D.defnCaseID and D.defbIsPrimary=1
- --JOIN [sma_MST_SOLDetails] S on S.sldnCaseTypeID=CAS.casnOrgCaseTypeID and S.sldnStateID=CAS.casnStateID and S.sldnDefRole=D.defnSubRole
-  JOIN [NeosBrianWhite].[dbo].[case_checklist] CKL on convert(varchar(50),CKL.casesid) = CAS.Neos_Saga
-  WHERE CKL.due_date between '1900-01-01' and '2079-06-06'
-	and (select lim FROM [NeosBrianWhite].[dbo].[checklist_dir] where ckl.checklistdirid = id)= 1
+	)
+	SELECT DISTINCT
+		CAS.casnCaseID	  AS [solnCaseID]
+	   ,(
+			SELECT
+				sldnSOLDetID
+			FROM sma_MST_SOLDetails
+			WHERE sldnSOLTypeID = 16
+				AND sldnCaseTypeID = -1
+				AND sldsDorP = 'D'
+		)				  
+		AS [solnSOLTypeID]
+	   ,CASE
+			WHEN (CKL.due_date NOT BETWEEN '1900-01-01' AND '2079-12-31')
+				THEN NULL
+			ELSE CKL.due_date
+		END				  AS [soldSOLDate]
+	   ,CASE
+			WHEN CKL.[status] = 'Done'
+				THEN GETDATE()
+			ELSE NULL
+		END				  AS [soldDateComplied]
+	   ,NULL			  AS [soldSnCFilingDate]
+	   ,NULL			  AS [soldServiceDate]
+	   ,D.defnDefendentID AS [solnDefendentID]
+	   ,NULL			  AS [soldToProcessServerDt]
+	   ,NULL			  AS [soldRcvdDate]
+	   ,'D'				  AS [solsType]
+	   ,ISNULL('description : ' + NULLIF(CKL.[description], '') + CHAR(13), '') +
+		-- isnull('staff assigned : ' + nullif(CKL.[staff_assigned],'') + CHAR(13) ,'') 
+		''				  AS [solsComments]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_MST_Users
+			WHERE saga = CKL.staffassignedid
+		)				  
+		AS [solnRecUserID]
+	   ,GETDATE()		  AS [soldDtCreated]
+	   ,NULL			  AS [solnModifyUserID]
+	   ,NULL			  AS [soldDtModified]
+	--SELECT *
+	FROM [sma_TRN_Defendants] D
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.casnCaseID = D.defnCaseID
+			AND D.defbIsPrimary = 1
+	--JOIN [sma_MST_SOLDetails] S on S.sldnCaseTypeID=CAS.casnOrgCaseTypeID and S.sldnStateID=CAS.casnStateID and S.sldnDefRole=D.defnSubRole
+	JOIN [NeosBrianWhite].[dbo].[case_checklist] CKL
+		ON CONVERT(VARCHAR(50), CKL.casesid) = CAS.Neos_Saga
+	WHERE CKL.due_date BETWEEN '1900-01-01' AND '2079-06-06'
+		AND (
+			SELECT
+				lim
+			FROM [NeosBrianWhite].[dbo].[checklist_dir]
+			WHERE ckl.checklistdirid = id
+		)
+		= 1
 GO
 
 ALTER TABLE [sma_TRN_SOLs] ENABLE TRIGGER ALL

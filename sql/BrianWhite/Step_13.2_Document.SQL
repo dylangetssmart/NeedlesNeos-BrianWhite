@@ -1,6 +1,6 @@
 
-use [SANeosBrianWhite]
-go
+USE [SANeosBrianWhite]
+GO
 
 /*
 alter table [sma_TRN_Documents] disable trigger all
@@ -53,35 +53,48 @@ GO
 */
 
 ---(0)---
-INSERT INTO [sma_MST_ScannedDocCategories] ( sctgsCategoryName )
-(
-SELECT DISTINCT
-    cat.[name] as sctgsCategoryName 
+INSERT INTO [sma_MST_ScannedDocCategories]
+	(
+	sctgsCategoryName
+	)
+	(
+	SELECT DISTINCT
+		cat.[name] AS sctgsCategoryName
 	FROM [NeosBrianWhite].[dbo].[documents] doc
-	JOIN [NeosBrianWhite].[dbo].[document_category] cat on doc.doc_category_id = cat.id
-    UNION
-SELECT 'Other'
-)
-    EXCEPT 
-SELECT sctgsCategoryName FROM [sma_MST_ScannedDocCategories]
+	JOIN [NeosBrianWhite].[dbo].[document_category] cat
+		ON doc.doc_category_id = cat.id
+	UNION
+	SELECT
+		'Other'
+	)
+	EXCEPT
+	SELECT
+		sctgsCategoryName
+	FROM [sma_MST_ScannedDocCategories]
 GO
 
 ALTER TABLE [dbo].[sma_TRN_Documents]
-ALTER column [docsToContact] [varchar](120) NULL
+ALTER COLUMN [docsToContact] [VARCHAR](120) NULL
 GO
 
 ----
 
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Documents'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Documents')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_Documents] ADD [saga] [varchar](50) NULL; 
-END 
+	ALTER TABLE [sma_TRN_Documents] ADD [saga] [VARCHAR](50) NULL;
+END
 GO
 ----
 
 ALTER TABLE [sma_TRN_Documents] DISABLE TRIGGER ALL
 GO
-SET QUOTED_IDENTIFIER  ON 
+SET QUOTED_IDENTIFIER ON
 
 ---(1)---
 
@@ -94,48 +107,126 @@ alter table [sma_TRN_Documents] enable trigger all
 */
 
 INSERT INTO [sma_TRN_Documents]
-([docnCaseID],[docsDocumentName],[docsDocumentPath],[docsDocumentData],[docnCategoryID],[docnSubCategoryID],[docnFromContactCtgID]
-,[docnFromContactID],[docsToContact],[docsDocType],[docnTemplateID],[docbAttachFlag],[docsDescrptn],[docnAuthor],[docsDocsrflag]
-,[docnRecUserID],[docdDtCreated],[docnModifyUserID],[docdDtModified],[docnLevelNo],[ctgnCategoryID],[sctnSubCategoryID],[sctssSubSubCategoryID]
-,[sctsssSubSubSubCategoryID],[docnMedProvContactctgID],[docnMedProvContactID],[docnComments],[docnReasonReject],[docsReviewerContactId]
-,[docsReviewDate],[docsDocumentAnalysisResultId],[docsIsReviewed],[docsToContactID],[docsToContactCtgID],[docdLastUpdated],[docnPriority],[saga])
+	(
+	[docnCaseID]
+   ,[docsDocumentName]
+   ,[docsDocumentPath]
+   ,[docsDocumentData]
+   ,[docnCategoryID]
+   ,[docnSubCategoryID]
+   ,[docnFromContactCtgID]
+   ,[docnFromContactID]
+   ,[docsToContact]
+   ,[docsDocType]
+   ,[docnTemplateID]
+   ,[docbAttachFlag]
+   ,[docsDescrptn]
+   ,[docnAuthor]
+   ,[docsDocsrflag]
+   ,[docnRecUserID]
+   ,[docdDtCreated]
+   ,[docnModifyUserID]
+   ,[docdDtModified]
+   ,[docnLevelNo]
+   ,[ctgnCategoryID]
+   ,[sctnSubCategoryID]
+   ,[sctssSubSubCategoryID]
+   ,[sctsssSubSubSubCategoryID]
+   ,[docnMedProvContactctgID]
+   ,[docnMedProvContactID]
+   ,[docnComments]
+   ,[docnReasonReject]
+   ,[docsReviewerContactId]
+   ,[docsReviewDate]
+   ,[docsDocumentAnalysisResultId]
+   ,[docsIsReviewed]
+   ,[docsToContactID]
+   ,[docsToContactCtgID]
+   ,[docdLastUpdated]
+   ,[docnPriority]
+   ,[saga]
+	)
 
-SELECT 
-    CAS.casnCaseID						as [docnCaseID], 
-    doc.[file_name]						as [docsDocumentName],
-    odi.web_url							as [docsDocumentPath],
-    ''									as [docsDocumentData],
-    null								as [docnCategoryID],
-    null								as [docnSubCategoryID],
-    auth.CTG							as [docnFromContactCtgID],
-    auth.CID							as [docnFromContactID],
-    null								as [docsToContact],
-    'Doc'								as [docsDocType],
-    null								as [docnTemplateID],
-    null								as [docbAttachFlag],
-    doc.[file_name]						as [docsDescrptn],
-    0									as [docnAuthor],
-    ''									as [docsDocsrflag],
-    (select usrnUserID from sma_mst_users where saga = doc.staffcreatedid)	as [docnRecUserID],
-    doc.date_created					as [docdDtCreated],
-    (select usrnUserID from sma_mst_users where saga = doc.staffmodifiedid)	as [docnModifyUserID],
-    doc.date_modified					as [docdDtModified],
-    ''									as [docnLevelNo],
-    case
-	   when exists (select * FROM sma_MST_ScannedDocCategories where sctgsCategoryName = cat.[name]) 
-		  then (select sctgnCategoryID FROM sma_MST_ScannedDocCategories where sctgsCategoryName = cat.[name])
-	   else (select sctgnCategoryID FROM sma_MST_ScannedDocCategories where sctgsCategoryName='Other/Misc')
-    end									as [ctgnCategoryID],
-    null								as [sctnSubCategoryID],
-    '','','','','','',null,null,null,null,null,null,GETDATE(),
-    3									as [docnPriority],  -- normal priority
-    convert(varchar(50),doc.id)			as [saga]
---SELECT *
-FROM [NeosBrianWhite].[dbo].[documents] DOC
-JOIN [NeosBrianWhite].[dbo].[one_drive_items] odi on doc.onedriveitemid = odi.id
-LEFT JOIN [NeosBrianWhite].[dbo].[document_category] cat on doc.doc_category_id = cat.id
-LEFT JOIN IndvOrgContacts_Indexed auth on auth.saga_ref = convert(varchar(50),doc.author)
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = convert(varchar(50),DOC.cases_id)
+	SELECT
+		CAS.casnCaseID				 AS [docnCaseID]
+	   ,doc.[file_name]				 AS [docsDocumentName]
+	   ,odi.web_url					 AS [docsDocumentPath]
+	   ,''							 AS [docsDocumentData]
+	   ,NULL						 AS [docnCategoryID]
+	   ,NULL						 AS [docnSubCategoryID]
+	   ,auth.CTG					 AS [docnFromContactCtgID]
+	   ,auth.CID					 AS [docnFromContactID]
+	   ,NULL						 AS [docsToContact]
+	   ,'Doc'						 AS [docsDocType]
+	   ,NULL						 AS [docnTemplateID]
+	   ,NULL						 AS [docbAttachFlag]
+	   ,doc.[file_name]				 AS [docsDescrptn]
+	   ,0							 AS [docnAuthor]
+	   ,''							 AS [docsDocsrflag]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = doc.staffcreatedid
+		)							 
+		AS [docnRecUserID]
+	   ,doc.date_created			 AS [docdDtCreated]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = doc.staffmodifiedid
+		)							 
+		AS [docnModifyUserID]
+	   ,doc.date_modified			 AS [docdDtModified]
+	   ,''							 AS [docnLevelNo]
+	   ,CASE
+			WHEN EXISTS (
+					SELECT
+						*
+					FROM sma_MST_ScannedDocCategories
+					WHERE sctgsCategoryName = cat.[name]
+				)
+				THEN (
+						SELECT
+							sctgnCategoryID
+						FROM sma_MST_ScannedDocCategories
+						WHERE sctgsCategoryName = cat.[name]
+					)
+			ELSE (
+					SELECT
+						sctgnCategoryID
+					FROM sma_MST_ScannedDocCategories
+					WHERE sctgsCategoryName = 'Other/Misc'
+				)
+		END							 AS [ctgnCategoryID]
+	   ,NULL						 AS [sctnSubCategoryID]
+	   ,''
+	   ,''
+	   ,''
+	   ,''
+	   ,''
+	   ,''
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,GETDATE()
+	   ,3							 AS [docnPriority]
+	   ,  -- normal priority
+		CONVERT(VARCHAR(50), doc.id) AS [saga]
+	--SELECT *
+	FROM [NeosBrianWhite].[dbo].[documents] DOC
+	JOIN [NeosBrianWhite].[dbo].[one_drive_items] odi
+		ON doc.onedriveitemid = odi.id
+	LEFT JOIN [NeosBrianWhite].[dbo].[document_category] cat
+		ON doc.doc_category_id = cat.id
+	LEFT JOIN IndvOrgContacts_Indexed auth
+		ON auth.saga_ref = CONVERT(VARCHAR(50), doc.author)
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), DOC.cases_id)
 GO
 
 

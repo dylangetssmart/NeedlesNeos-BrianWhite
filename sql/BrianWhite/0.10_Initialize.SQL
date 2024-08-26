@@ -23,53 +23,66 @@ GO
  ******************************************************/
 
 -----
-ALTER TABLE [sma_MST_OrgContacts] ALTER COLUMN [saga] varchar(100)
+ALTER TABLE [sma_MST_OrgContacts] ALTER COLUMN [saga] VARCHAR(100)
 GO
-ALTER TABLE [sma_MST_IndvContacts] ALTER COLUMN [cinsGrade] varchar(60)
+ALTER TABLE [sma_MST_IndvContacts] ALTER COLUMN [cinsGrade] VARCHAR(60)
 GO
 
 -----
 
-IF OBJECT_ID (N'dbo.myvarchar', N'FN') IS NOT NULL
-    DROP FUNCTION myvarchar;
+IF OBJECT_ID(N'dbo.myvarchar', N'FN') IS NOT NULL
+	DROP FUNCTION myvarchar;
 GO
-CREATE FUNCTION dbo.myvarchar(@DateParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.myvarchar (@DateParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 
 BEGIN
-    DECLARE @ret varchar(100);
-	select @ret=@DateParameter;
-    RETURN @ret;
+	DECLARE @ret VARCHAR(100);
+	SELECT
+		@ret = @DateParameter;
+	RETURN @ret;
 END;
 GO
 
 
-IF OBJECT_ID (N'dbo.get_firstword', N'FN') IS NOT NULL
-    DROP FUNCTION get_firstword;
+IF OBJECT_ID(N'dbo.get_firstword', N'FN') IS NOT NULL
+	DROP FUNCTION get_firstword;
 GO
-CREATE FUNCTION dbo.get_firstword(@WordParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.get_firstword (@WordParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 
 BEGIN
-    DECLARE @ret varchar(100);
-	SELECT @ret=(SELECT TOP 1 DATA FROM dbo.split(RTRIM(LTRIM(convert(varchar,@WordParameter))) ,' ') ORDER BY ID ASC);
-    RETURN @ret;
+	DECLARE @ret VARCHAR(100);
+	SELECT
+		@ret = (
+			SELECT TOP 1
+				DATA
+			FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @WordParameter))), ' ')
+			ORDER BY ID ASC
+		);
+	RETURN @ret;
 END;
 GO
 
-IF OBJECT_ID (N'dbo.get_lastword', N'FN') IS NOT NULL
-    DROP FUNCTION get_lastword;
+IF OBJECT_ID(N'dbo.get_lastword', N'FN') IS NOT NULL
+	DROP FUNCTION get_lastword;
 GO
-CREATE FUNCTION dbo.get_lastword(@WordParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.get_lastword (@WordParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 
 BEGIN
-    DECLARE @ret varchar(100);
-	SELECT @ret=(select top 1 data from dbo.split(RTRIM(LTRIM(convert(varchar,@WordParameter))) ,' ') ORDER BY ID  DESC);
-    RETURN @ret;
+	DECLARE @ret VARCHAR(100);
+	SELECT
+		@ret = (
+			SELECT TOP 1
+				data
+			FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @WordParameter))), ' ')
+			ORDER BY ID DESC
+		);
+	RETURN @ret;
 END;
 GO
 
@@ -80,65 +93,76 @@ Two words - individual FirstName LastName
 Three words with the second one as single letter with the period - FirstName M. LastName
 Everything else - Organization
 */
-IF OBJECT_ID (N'dbo.GetContactCtg', N'FN') IS NOT NULL
-    DROP FUNCTION GetContactCtg;
+IF OBJECT_ID(N'dbo.GetContactCtg', N'FN') IS NOT NULL
+	DROP FUNCTION GetContactCtg;
 GO
-CREATE FUNCTION dbo.GetContactCtg(@name varchar(500) )
-RETURNS int 
-AS 
+CREATE FUNCTION dbo.GetContactCtg (@name VARCHAR(500))
+RETURNS INT
+AS
 BEGIN
-    DECLARE @ret int;
+	DECLARE @ret INT;
 
-	DECLARE @wc int=0;
-	SELECT @wc=count(*) from dbo.split(@name,' ') 
+	DECLARE @wc INT = 0;
+	SELECT
+		@wc = COUNT(*)
+	FROM dbo.split(@name, ' ')
 
 	IF @wc = 1
 	BEGIN
-		SET @ret=2;
-	END 
+		SET @ret = 2;
+	END
 
 	IF @wc = 2
 	BEGIN
-		SET @ret=1;
-	END 
+		SET @ret = 1;
+	END
 
-	IF @wc = 3 
+	IF @wc = 3
 	BEGIN
-		IF EXISTS (select * from dbo.split(@name,' ') where ID=2 and Data like '_.')
+		IF EXISTS (
+				SELECT
+					*
+				FROM dbo.split(@name, ' ')
+				WHERE ID = 2
+					AND Data LIKE '_.'
+			)
 		BEGIN
-			SET @ret=1;
+			SET @ret = 1;
 		END
-		ELSE BEGIN
-			SET @ret=2;
+		ELSE
+		BEGIN
+			SET @ret = 2;
 		END
 	END
 
-	IF @wc >= 4 
+	IF @wc >= 4
 	BEGIN
-		SET @ret=2;
+		SET @ret = 2;
 	END
 
-    RETURN @ret;
+	RETURN @ret;
 END;
 GO
 
-IF OBJECT_ID (N'dbo.MoneyToDecimal', N'FN') IS NOT NULL
-    DROP FUNCTION MoneyToDecimal;
+IF OBJECT_ID(N'dbo.MoneyToDecimal', N'FN') IS NOT NULL
+	DROP FUNCTION MoneyToDecimal;
 GO
-CREATE FUNCTION dbo.MoneyToDecimal(@WordParameter varchar(100) )
-RETURNS decimal(18,2) 
-AS 
+CREATE FUNCTION dbo.MoneyToDecimal (@WordParameter VARCHAR(100))
+RETURNS DECIMAL(18, 2)
+AS
 BEGIN
-    DECLARE @ret decimal(18,2);
-	if isnull(@WordParameter,'')<>''
+	DECLARE @ret DECIMAL(18, 2);
+	IF ISNULL(@WordParameter, '') <> ''
 	BEGIN
-		SELECT @ret=replace(replace(@WordParameter,'$',''),',','')
+		SELECT
+			@ret = REPLACE(REPLACE(@WordParameter, '$', ''), ',', '')
 	END
 	ELSE
 	BEGIN
-		SELECT @ret=0.0
+		SELECT
+			@ret = 0.0
 	END
-    RETURN @ret;
+	RETURN @ret;
 END;
 GO
 
@@ -162,17 +186,17 @@ END;
 GO
 */
 
-IF OBJECT_ID (N'dbo.my_smalldatetime', N'FN') IS NOT NULL
-    DROP FUNCTION my_smalldatetime;
+IF OBJECT_ID(N'dbo.my_smalldatetime', N'FN') IS NOT NULL
+	DROP FUNCTION my_smalldatetime;
 GO
-CREATE FUNCTION dbo.my_smalldatetime(@WordParameter varchar(100) )
-RETURNS smalldatetime 
-AS 
+CREATE FUNCTION dbo.my_smalldatetime (@WordParameter VARCHAR(100))
+RETURNS SMALLDATETIME
+AS
 
 BEGIN
-    DECLARE @ret smalldatetime;
-	set @ret = convert(smalldatetime,@WordParameter);
-    RETURN @ret;
+	DECLARE @ret SMALLDATETIME;
+	SET @ret = CONVERT(SMALLDATETIME, @WordParameter);
+	RETURN @ret;
 END
 GO
 
@@ -181,44 +205,47 @@ GO
 --select dbo.Integer2DateTime(75293, 75293 ); --2007-02-19 00:13:00
 --select dbo.Integer2DateTime(77246, 4254001 ); --2012-06-25 11:49:00
 --SELECT dbo.Integer2DateTime(36163,0); --1900-01-01 00:00:00
-IF OBJECT_ID (N'dbo.Integer2DateTime', N'FN') IS NOT NULL
-    DROP FUNCTION Integer2DateTime;
+IF OBJECT_ID(N'dbo.Integer2DateTime', N'FN') IS NOT NULL
+	DROP FUNCTION Integer2DateTime;
 GO
 
-CREATE FUNCTION dbo.Integer2DateTime( @intDate int, @intTime int )
-RETURNS smalldatetime 
-AS 
+CREATE FUNCTION dbo.Integer2DateTime (@intDate INT, @intTime INT)
+RETURNS SMALLDATETIME
+AS
 
 BEGIN
-	DECLARE @ret smalldatetime;
-	DECLARE @date date;
-	DECLARE @time time;
+	DECLARE @ret SMALLDATETIME;
+	DECLARE @date DATE;
+	DECLARE @time TIME;
 
-	SELECT @date = cast(dateadd(day,@intDate,'1800-12-28') as date)
+	SELECT
+		@date = CAST(DATEADD(DAY, @intDate, '1800-12-28') AS DATE)
 
-	SELECT @time = cast(dateadd(second,@intTime/100,'1800-12-28 00:00:00') as time)
+	SELECT
+		@time = CAST(DATEADD(SECOND, @intTime / 100, '1800-12-28 00:00:00') AS TIME)
 
-	SET @ret= @date + cast(@time as smalldatetime);
+	SET @ret = @date + CAST(@time AS SMALLDATETIME);
 
-    RETURN @ret;
+	RETURN @ret;
 END
 GO
 
 
-IF OBJECT_ID (N'dbo.Integer2Date', N'FN') IS NOT NULL
-    DROP FUNCTION Integer2Date;
+IF OBJECT_ID(N'dbo.Integer2Date', N'FN') IS NOT NULL
+	DROP FUNCTION Integer2Date;
 GO
 
-CREATE FUNCTION dbo.Integer2Date( @intDate int)
-RETURNS date 
-AS 
+CREATE FUNCTION dbo.Integer2Date (@intDate INT)
+RETURNS DATE
+AS
 
 BEGIN
-	DECLARE @date date;
+	DECLARE @date DATE;
 
-	SELECT @date = cast(dateadd(day,@intDate,'1800-12-28') as date)
+	SELECT
+		@date = CAST(DATEADD(DAY, @intDate, '1800-12-28') AS DATE)
 
-    RETURN @date;
+	RETURN @date;
 END
 GO
 
@@ -226,45 +253,48 @@ GO
 
 -- Unix Timestamp:
 
-IF OBJECT_ID (N'dbo.fn_ConvertToDateTime', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.fn_ConvertToDateTime;
+IF OBJECT_ID(N'dbo.fn_ConvertToDateTime', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.fn_ConvertToDateTime;
 GO
 
 CREATE FUNCTION dbo.fn_ConvertToDateTime (@Datetime BIGINT)
 RETURNS DATETIME
 AS
 BEGIN
-    DECLARE @LocalTimeOffset BIGINT
-           ,@AdjustedLocalDatetime BIGINT;
-    SET @LocalTimeOffset = DATEDIFF(second,GETDATE(),GETUTCDATE())
-    SET @AdjustedLocalDatetime = @Datetime - @LocalTimeOffset
-    RETURN (SELECT DATEADD(second,@AdjustedLocalDatetime, CAST('1970-01-01 00:00:00' AS datetime)))
+	DECLARE @LocalTimeOffset BIGINT
+		   ,@AdjustedLocalDatetime BIGINT;
+	SET @LocalTimeOffset = DATEDIFF(SECOND, GETDATE(), GETUTCDATE())
+	SET @AdjustedLocalDatetime = @Datetime - @LocalTimeOffset
+	RETURN (
+		SELECT
+			DATEADD(SECOND, @AdjustedLocalDatetime, CAST('1970-01-01 00:00:00' AS DATETIME))
+	)
 END;
 
 GO
 ---example:
 ---select dbo.LeftWord('WE 2013/12/3') -- WE
 
-IF OBJECT_ID (N'dbo.LeftWord', N'FN') IS NOT NULL
-    DROP FUNCTION LeftWord;
+IF OBJECT_ID(N'dbo.LeftWord', N'FN') IS NOT NULL
+	DROP FUNCTION LeftWord;
 GO
 
-CREATE FUNCTION dbo.LeftWord( @string varchar(MAX) )
-RETURNS varchar(MAX) 
-AS 
+CREATE FUNCTION dbo.LeftWord (@string VARCHAR(MAX))
+RETURNS VARCHAR(MAX)
+AS
 BEGIN
-declare @Ret varchar(MAX);
+	DECLARE @Ret VARCHAR(MAX);
 
-SEt @string=rtrim(ltrim(@string))
+	SET @string = RTRIM(LTRIM(@string))
 
-IF (CHARINDEX(' ', @string) = 0 ) 
-BEGIN
-	SET @Ret=@string
-END
-ELSE
-BEGIN
-	SET @Ret=LEFT(@string, CHARINDEX(' ', @string)-1)
-END
+	IF (CHARINDEX(' ', @string) = 0)
+	BEGIN
+		SET @Ret = @string
+	END
+	ELSE
+	BEGIN
+		SET @Ret = LEFT(@string, CHARINDEX(' ', @string) - 1)
+	END
 	RETURN @Ret
 END
 
@@ -273,35 +303,44 @@ GO
 
 ------------------
 
-IF OBJECT_ID (N'dbo.FirstName_FromText', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.FirstName_FromText;
+IF OBJECT_ID(N'dbo.FirstName_FromText', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.FirstName_FromText;
 GO
 
-CREATE FUNCTION dbo.FirstName_FromText( @StringParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.FirstName_FromText (@StringParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 BEGIN
 
-	DECLARE @Result varchar(100)='';
-    DECLARE @WordCount int;
+	DECLARE @Result VARCHAR(100) = '';
+	DECLARE @WordCount INT;
 
-	IF CHARINDEX(',',@StringParameter) > 0
+	IF CHARINDEX(',', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,',') WHERE ID=2
-		--RETURN @Result
+		SELECT
+			@StringParameter = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ',')
+		WHERE ID = 2
+	--RETURN @Result
 	END
 
 
-	IF CHARINDEX('&',@StringParameter) > 0
+	IF CHARINDEX('&', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=substring(@StringParameter,0, CHARINDEX('&',@StringParameter))
+		SELECT
+			@StringParameter = SUBSTRING(@StringParameter, 0, CHARINDEX('&', @StringParameter))
 	END
 
-	SELECT @WordCount=count(Data) from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') 
+	SELECT
+		@WordCount = COUNT(Data)
+	FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
 
 	IF @WordCount >= 1
 	BEGIN
-		SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=1
+		SELECT
+			@Result = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 1
 	END
 
 	RETURN @Result;
@@ -309,33 +348,50 @@ END
 GO
 
 --
-IF OBJECT_ID (N'dbo.MiddleName_FromText', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.MiddleName_FromText;
+IF OBJECT_ID(N'dbo.MiddleName_FromText', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.MiddleName_FromText;
 GO
 
-CREATE FUNCTION dbo.MiddleName_FromText( @StringParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.MiddleName_FromText (@StringParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 BEGIN
 
-	DECLARE @Result varchar(100)='';
-    DECLARE @WordCount int;
+	DECLARE @Result VARCHAR(100) = '';
+	DECLARE @WordCount INT;
 
-	IF CHARINDEX('&',@StringParameter) > 0
+	IF CHARINDEX('&', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=substring(@StringParameter,0, CHARINDEX('&',@StringParameter))
+		SELECT
+			@StringParameter = SUBSTRING(@StringParameter, 0, CHARINDEX('&', @StringParameter))
 	END
 
-	SELECT @WordCount=count(Data) from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') 
+	SELECT
+		@WordCount = COUNT(Data)
+	FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
 
-	IF @WordCount >= 3 and CHARINDEX(',',@StringParameter) = 0
+	IF @WordCount >= 3
+		AND CHARINDEX(',', @StringParameter) = 0
 	BEGIN
-		SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=2
+		SELECT
+			@Result = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 2
 	END
 
-	IF @WordCount >= 3 and CHARINDEX(',',@StringParameter) > 0
+	IF @WordCount >= 3
+		AND CHARINDEX(',', @StringParameter) > 0
 	BEGIN
-		SELECT @Result=Data from dbo.split( (select Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,',') where id = 2), ' ' ) WHERE id = 2
+		SELECT
+			@Result = Data
+		FROM dbo.split((
+			SELECT
+				Data
+			FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ',')
+			WHERE id = 2
+		)
+		, ' ')
+		WHERE id = 2
 	END
 
 	RETURN @Result;
@@ -343,46 +399,63 @@ END
 GO
 
 --
-IF OBJECT_ID (N'dbo.LastName_FromText', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.LastName_FromText;
+IF OBJECT_ID(N'dbo.LastName_FromText', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.LastName_FromText;
 GO
 
-CREATE FUNCTION dbo.LastName_FromText( @StringParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.LastName_FromText (@StringParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 BEGIN
 
-	DECLARE @Marker varchar(100);
-	DECLARE @Result varchar(100)=''
-    DECLARE @WordCount int;
+	DECLARE @Marker VARCHAR(100);
+	DECLARE @Result VARCHAR(100) = ''
+	DECLARE @WordCount INT;
 
-	IF CHARINDEX(',',@StringParameter) > 0
+	IF CHARINDEX(',', @StringParameter) > 0
 	BEGIN
-		SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,',') WHERE ID=1
+		SELECT
+			@Result = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ',')
+		WHERE ID = 1
 		RETURN @Result
 	END
 
-	IF CHARINDEX('&',@StringParameter) > 0
+	IF CHARINDEX('&', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=substring(@StringParameter,0, CHARINDEX('&',@StringParameter))
+		SELECT
+			@StringParameter = SUBSTRING(@StringParameter, 0, CHARINDEX('&', @StringParameter))
 	END
 
-	SELECT @WordCount=count(Data) from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') 
+	SELECT
+		@WordCount = COUNT(Data)
+	FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
 
 	IF @WordCount > 3
 	BEGIN
-		SELECT @Marker=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=3
-		SELECT @Result=SUBSTRING( @StringParameter ,CHARINDEX ( @Marker,@StringParameter),len(@StringParameter))
-	END
-	ELSE IF @WordCount = 3
-	BEGIN
-		SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=3
+		SELECT
+			@Marker = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 3
+		SELECT
+			@Result = SUBSTRING(@StringParameter, CHARINDEX(@Marker, @StringParameter), LEN(@StringParameter))
 	END
 	ELSE
-	BEGIN 
+	IF @WordCount = 3
+	BEGIN
+		SELECT
+			@Result = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 3
+	END
+	ELSE
+	BEGIN
 		IF @WordCount = 2
 		BEGIN
-			SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=2
+			SELECT
+				@Result = Data
+			FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+			WHERE ID = 2
 		END
 	END
 	RETURN @Result
@@ -392,29 +465,35 @@ GO
 
 ------
 
-IF OBJECT_ID (N'dbo.Dworkin_FirstName_FromText', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.Dworkin_FirstName_FromText;
+IF OBJECT_ID(N'dbo.Dworkin_FirstName_FromText', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.Dworkin_FirstName_FromText;
 GO
 
-CREATE FUNCTION dbo.Dworkin_FirstName_FromText( @StringParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.Dworkin_FirstName_FromText (@StringParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 BEGIN
 
-	DECLARE @Result varchar(100)='';
-    DECLARE @WordCount int;
+	DECLARE @Result VARCHAR(100) = '';
+	DECLARE @WordCount INT;
 
 
-	IF CHARINDEX('&',@StringParameter) > 0
+	IF CHARINDEX('&', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=substring(@StringParameter,0, CHARINDEX('&',@StringParameter))
+		SELECT
+			@StringParameter = SUBSTRING(@StringParameter, 0, CHARINDEX('&', @StringParameter))
 	END
 
-	SELECT @WordCount=count(Data) from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') 
+	SELECT
+		@WordCount = COUNT(Data)
+	FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
 
 	IF @WordCount >= 1
 	BEGIN
-		SELECT @Result=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=1
+		SELECT
+			@Result = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 1
 	END
 
 	RETURN @Result;
@@ -424,31 +503,38 @@ GO
 
 ------
 
-IF OBJECT_ID (N'dbo.Dworkin_LastName_FromText', N'FN') IS NOT NULL
-    DROP FUNCTION dbo.Dworkin_LastName_FromText;
+IF OBJECT_ID(N'dbo.Dworkin_LastName_FromText', N'FN') IS NOT NULL
+	DROP FUNCTION dbo.Dworkin_LastName_FromText;
 GO
 
-CREATE FUNCTION dbo.Dworkin_LastName_FromText( @StringParameter varchar(100) )
-RETURNS varchar(100) 
-AS 
+CREATE FUNCTION dbo.Dworkin_LastName_FromText (@StringParameter VARCHAR(100))
+RETURNS VARCHAR(100)
+AS
 BEGIN
 
-	DECLARE @Marker varchar(100);
-	DECLARE @Result varchar(100)=''
-    DECLARE @WordCount int;
+	DECLARE @Marker VARCHAR(100);
+	DECLARE @Result VARCHAR(100) = ''
+	DECLARE @WordCount INT;
 
 
-	IF CHARINDEX('&',@StringParameter) > 0
+	IF CHARINDEX('&', @StringParameter) > 0
 	BEGIN
-		SELECT @StringParameter=substring(@StringParameter,0, CHARINDEX('&',@StringParameter))
+		SELECT
+			@StringParameter = SUBSTRING(@StringParameter, 0, CHARINDEX('&', @StringParameter))
 	END
 
-	SELECT @WordCount=count(Data) from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') 
+	SELECT
+		@WordCount = COUNT(Data)
+	FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
 
 	IF @WordCount >= 2
 	BEGIN
-		select @Marker=Data from dbo.split(RTRIM(LTRIM(convert(varchar,@StringParameter))) ,' ') WHERE ID=2
-		select @Result=SUBSTRING( @StringParameter ,CHARINDEX ( @Marker,@StringParameter),len(@StringParameter))
+		SELECT
+			@Marker = Data
+		FROM dbo.split(RTRIM(LTRIM(CONVERT(VARCHAR, @StringParameter))), ' ')
+		WHERE ID = 2
+		SELECT
+			@Result = SUBSTRING(@StringParameter, CHARINDEX(@Marker, @StringParameter), LEN(@StringParameter))
 	END
 	RETURN @Result
 
@@ -458,46 +544,46 @@ GO
 
 
 
-IF OBJECT_ID (N'dbo.AllExceptLeftWord', N'FN') IS NOT NULL
-    DROP FUNCTION AllExceptLeftWord;
+IF OBJECT_ID(N'dbo.AllExceptLeftWord', N'FN') IS NOT NULL
+	DROP FUNCTION AllExceptLeftWord;
 GO
 
-CREATE FUNCTION dbo.AllExceptLeftWord( @string varchar(MAX) )
-RETURNS varchar(MAX) 
-AS 
+CREATE FUNCTION dbo.AllExceptLeftWord (@string VARCHAR(MAX))
+RETURNS VARCHAR(MAX)
+AS
 BEGIN
-declare @Ret varchar(MAX);
+	DECLARE @Ret VARCHAR(MAX);
 
-SEt @string=rtrim(ltrim(@string))
+	SET @string = RTRIM(LTRIM(@string))
 
-IF (CHARINDEX(' ', @string) = 0 ) 
-BEGIN
-	set @Ret=@string
-END
-ELSE
-BEGIN
-	SET @Ret=ltrim(rtrim(SUBSTRING(@string, CHARINDEX(' ', @string), len(@string))))
-END
+	IF (CHARINDEX(' ', @string) = 0)
+	BEGIN
+		SET @Ret = @string
+	END
+	ELSE
+	BEGIN
+		SET @Ret = LTRIM(RTRIM(SUBSTRING(@string, CHARINDEX(' ', @string), LEN(@string))))
+	END
 	RETURN @Ret
 END
 
 GO
 
 
-IF OBJECT_ID (N'dbo.WordCount', N'FN') IS NOT NULL
-    DROP FUNCTION WordCount;
+IF OBJECT_ID(N'dbo.WordCount', N'FN') IS NOT NULL
+	DROP FUNCTION WordCount;
 GO
 
-CREATE FUNCTION dbo.WordCount( @string varchar(MAX) )
-RETURNS int
+CREATE FUNCTION dbo.WordCount (@string VARCHAR(MAX))
+RETURNS INT
 AS
 BEGIN
-	DECLARE @ret int;
-	SET @string=rtrim(ltrim(@string))
+	DECLARE @ret INT;
+	SET @string = RTRIM(LTRIM(@string))
 
 	SET @ret = LEN(@String) - LEN(REPLACE(@String, ' ', '')) + 1
 
-	return @Ret
+	RETURN @Ret
 
 END
 GO

@@ -21,275 +21,372 @@ alter table [sma_TRN_SpecialDamageAmountPaid] enable trigger all
 --select distinct code, description from [NeosBrianWhite].[dbo].[value] order by code
 -----------
 
-alter table [sma_TRN_Hospitals] disable trigger all
+ALTER TABLE [sma_TRN_Hospitals] DISABLE TRIGGER ALL
 GO
-alter table [sma_TRN_SpDamages] disable trigger all
+ALTER TABLE [sma_TRN_SpDamages] DISABLE TRIGGER ALL
 GO
-alter table [sma_TRN_SpecialDamageAmountPaid] disable trigger all
+ALTER TABLE [sma_TRN_SpecialDamageAmountPaid] DISABLE TRIGGER ALL
 GO
 
-
----(0)---
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Hospitals'))
-begin
-    ALTER TABLE [sma_TRN_Hospitals] ADD [saga] [varchar](100) NULL; 
-end
-GO
 
 ---(0)---
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga_bill_id' AND Object_ID = Object_ID(N'sma_TRN_SpDamages'))
-begin
-    ALTER TABLE [sma_TRN_SpDamages] ADD [saga_bill_id] [varchar](100) NULL; 
-end
-GO
-
----(0)---
-if exists (select * from sys.objects where name='value_tab_MedicalProvider_Helper' and type='U')
-begin
-	drop table value_tab_MedicalProvider_Helper
-end 
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Hospitals')
+	)
+BEGIN
+	ALTER TABLE [sma_TRN_Hospitals] ADD [saga] [VARCHAR](100) NULL;
+END
 GO
 
 ---(0)---
-create table value_tab_MedicalProvider_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-    case_id		    varchar(50),
-    value_id		varchar(50),
-    ProviderNameId	varchar(50),
-    ProviderName	varchar(200),
-    ProviderCID	    int,
-    ProviderCTG	    int,
-    ProviderAID	    int,
-    casnCaseID		int,
-    PlaintiffID	    int,
-CONSTRAINT IOC_Clustered_Index_value_tab_MedicalProvider_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
-GO
-
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_case_id ON [value_tab_MedicalProvider_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_value_id ON [value_tab_MedicalProvider_Helper] (value_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_ProviderNameId ON [value_tab_MedicalProvider_Helper] (ProviderNameId);   
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga_bill_id'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_SpDamages')
+	)
+BEGIN
+	ALTER TABLE [sma_TRN_SpDamages] ADD [saga_bill_id] [VARCHAR](100) NULL;
+END
 GO
 
 ---(0)---
-INSERT INTO value_tab_MedicalProvider_Helper ( case_id,value_id,ProviderNameId,ProviderName,ProviderCID,ProviderCTG,ProviderAID,casnCaseID,PlaintiffID )
-SELECT
-    convert(varchar(50),V.casesid)		as case_id,	-- needles case
-    convert(varchar(50),V.id)			as tab_id,		-- needles records TAB item
-    convert(varchar(50),V.namesid)		as ProviderNamesId,  
-    IOC.Name		as ProviderName,
-    IOC.CID		    as ProviderCID,  
-    IOC.CTG		    as ProviderCTG,
-    IOC.AID		    as ProviderAID,
-    CAS.casnCaseID	as casnCaseID,
-    null			as PlaintiffID
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),V.namesid)
-WHERE vc.code in ( 'MEDICAL')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'value_tab_MedicalProvider_Helper'
+			AND type = 'U'
+	)
+BEGIN
+	DROP TABLE value_tab_MedicalProvider_Helper
+END
+GO
+
+---(0)---
+CREATE TABLE value_tab_MedicalProvider_Helper (
+	TableIndex [INT] IDENTITY (1, 1) NOT NULL
+   ,case_id VARCHAR(50)
+   ,value_id VARCHAR(50)
+   ,ProviderNameId VARCHAR(50)
+   ,ProviderName VARCHAR(200)
+   ,ProviderCID INT
+   ,ProviderCTG INT
+   ,ProviderAID INT
+   ,casnCaseID INT
+   ,PlaintiffID INT
+   ,CONSTRAINT IOC_Clustered_Index_value_tab_MedicalProvider_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_case_id ON [value_tab_MedicalProvider_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_value_id ON [value_tab_MedicalProvider_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_MedicalProvider_Helper_ProviderNameId ON [value_tab_MedicalProvider_Helper] (ProviderNameId);
+GO
+
+---(0)---
+INSERT INTO value_tab_MedicalProvider_Helper
+	(
+	case_id
+   ,value_id
+   ,ProviderNameId
+   ,ProviderName
+   ,ProviderCID
+   ,ProviderCTG
+   ,ProviderAID
+   ,casnCaseID
+   ,PlaintiffID
+	)
+	SELECT
+		CONVERT(VARCHAR(50), V.casesid) AS case_id
+	   ,	-- needles case
+		CONVERT(VARCHAR(50), V.id)		AS tab_id
+	   ,		-- needles records TAB item
+		CONVERT(VARCHAR(50), V.namesid) AS ProviderNamesId
+	   ,IOC.Name						AS ProviderName
+	   ,IOC.CID							AS ProviderCID
+	   ,IOC.CTG							AS ProviderCTG
+	   ,IOC.AID							AS ProviderAID
+	   ,CAS.casnCaseID					AS casnCaseID
+	   ,NULL							AS PlaintiffID
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+		ON v.valuecodeid = vc.id
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+	JOIN IndvOrgContacts_Indexed IOC
+		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), V.namesid)
+	WHERE vc.code IN ('MEDICAL')
 GO
 ---(0)---
-DBCC DBREINDEX('value_tab_MedicalProvider_Helper',' ',90)  WITH NO_INFOMSGS 
+DBCC DBREINDEX ('value_tab_MedicalProvider_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 
 ---(0)--- value_id may associate with secondary plaintiff
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
-begin
-    drop table value_tab_Multi_Party_Helper_Temp
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
+BEGIN
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
+END
 GO
 
-SELECT 
-    V.casesid		    as cid,	
-    V.id				as vid,
-    T.plnnPlaintiffID
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Plaintiff] t on t.plnnCaseID=CAS.casnCaseID and t.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON v.valuecodeid = vc.id
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Plaintiff] t
+	ON t.plnnCaseID = CAS.casnCaseID
+		AND t.saga_party = v.partyid
 
 --JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 
-update value_tab_MedicalProvider_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
+UPDATE value_tab_MedicalProvider_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+FROM value_tab_Multi_Party_Helper_Temp A
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 ---(0)--- value_id may associate with defendant. steve malman make it associates to primary plaintiff 
-IF EXISTS (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
 BEGIN
-    DROP TABLE value_tab_Multi_Party_Helper_Temp
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
 END
 GO
 
-SELECT 
-    V.casesid		    as cid,	
-    V.id				as vid,
-    ( select plnnPlaintiffID from [sma_TRN_Plaintiff] where plnnCaseID=CAS.casnCaseID and plnbIsPrimary=1) as plnnPlaintiffID 
-    into value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,(
+		SELECT
+			plnnPlaintiffID
+		FROM [sma_TRN_Plaintiff]
+		WHERE plnnCaseID = CAS.casnCaseID
+			AND plnbIsPrimary = 1
+	)		  
+	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on v.valuecodeid = vc.id
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Defendants] d on d.defnCaseID = cas.casncaseid and d.saga_party = v.partyid
+JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	ON v.valuecodeid = vc.id
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Defendants] d
+	ON d.defnCaseID = cas.casncaseid
+		AND d.saga_party = v.partyid
 
 --JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(Varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
 
-UPDATE value_tab_MedicalProvider_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-WHERE case_id=A.cid and value_id=A.vid
+UPDATE value_tab_MedicalProvider_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+FROM value_tab_Multi_Party_Helper_Temp A
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 
 ---(1)---
 INSERT INTO [sma_TRN_Hospitals]
- (	[hosnCaseID], 
-	[hosnContactID], 
-	[hosnContactCtg],
-	[hosnAddressID], 
-	[hossMedProType], 
-	[hosdStartDt],
-	[hosdEndDt],
-	[hosnPlaintiffID],
-	[hosnComments], 
-	[hosnHospitalChart], 
-	[hosnRecUserID],
-	[hosdDtCreated], 
-	[hosnModifyUserID],
-	[hosdDtModified],
-	[saga]
-)
-SELECT 
-    A.casnCaseID		   as [hosnCaseID], 
-    A.ProviderCID		   as [hosnContactID],
-    A.ProviderCTG		   as [hosnContactCtg],
-    A.ProviderAID		   as [hosnAddressID], 
-    'M'					   as [hossMedProType],
-    null				   as [hosdStartDt],
-    null				   as [hosdEndDt],
-    A.PlaintiffID		   as hosnPlaintiffID,
-    null				   as [hosnComments],
-    null				   as [hosnHospitalChart],
-    368				       as [hosnRecUserID],
-    getdate()			   as [hosdDtCreated],
-    null				   as [hosnModifyUserID],
-    null				   as [hosdDtModified],
-    'value'			       as [saga]
-FROM
-(
-select -- (Note: make sure no duplicate provider per case )
-    ROW_NUMBER() over(partition by MAP.ProviderCID,MAP.ProviderCTG,MAP.casnCaseID,MAP.PlaintiffID order by V.id ) as RowNumber,
-    MAP.PlaintiffID,
-    MAP.casnCaseID,
-    MAP.ProviderCID,
-    MAP.ProviderCTG,
-    MAP.ProviderAID
-from [NeosBrianWhite].[dbo].[value_Indexed] V
-inner join value_tab_MedicalProvider_Helper MAP on MAP.case_id= convert(varchar(50),V.casesid) and MAP.value_id= convert(varchar(50),V.id)
-) A where A.RowNumber=1 ---Note: No merging. got to be the first script to populate Medical Provider
+	(
+	[hosnCaseID]
+   ,[hosnContactID]
+   ,[hosnContactCtg]
+   ,[hosnAddressID]
+   ,[hossMedProType]
+   ,[hosdStartDt]
+   ,[hosdEndDt]
+   ,[hosnPlaintiffID]
+   ,[hosnComments]
+   ,[hosnHospitalChart]
+   ,[hosnRecUserID]
+   ,[hosdDtCreated]
+   ,[hosnModifyUserID]
+   ,[hosdDtModified]
+   ,[saga]
+	)
+	SELECT
+		A.casnCaseID  AS [hosnCaseID]
+	   ,A.ProviderCID AS [hosnContactID]
+	   ,A.ProviderCTG AS [hosnContactCtg]
+	   ,A.ProviderAID AS [hosnAddressID]
+	   ,'M'			  AS [hossMedProType]
+	   ,NULL		  AS [hosdStartDt]
+	   ,NULL		  AS [hosdEndDt]
+	   ,A.PlaintiffID AS hosnPlaintiffID
+	   ,NULL		  AS [hosnComments]
+	   ,NULL		  AS [hosnHospitalChart]
+	   ,368			  AS [hosnRecUserID]
+	   ,GETDATE()	  AS [hosdDtCreated]
+	   ,NULL		  AS [hosnModifyUserID]
+	   ,NULL		  AS [hosdDtModified]
+	   ,'value'		  AS [saga]
+	FROM (
+		SELECT -- (Note: make sure no duplicate provider per case )
+			ROW_NUMBER() OVER (PARTITION BY MAP.ProviderCID, MAP.ProviderCTG, MAP.casnCaseID, MAP.PlaintiffID ORDER BY V.id) AS RowNumber
+		   ,MAP.PlaintiffID
+		   ,MAP.casnCaseID
+		   ,MAP.ProviderCID
+		   ,MAP.ProviderCTG
+		   ,MAP.ProviderAID
+		FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+		INNER JOIN value_tab_MedicalProvider_Helper MAP
+			ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
+			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
+	) A
+	WHERE A.RowNumber = 1 ---Note: No merging. got to be the first script to populate Medical Provider
 GO
 
 ---(2)--- (Medical Provider Bill section)
-insert into [sma_TRN_SpDamages]
-(
-     [spdsRefTable]
-    ,[spdnRecordID]
-    ,[spdnBillAmt]
-    ,[spddNegotiatedBillAmt]
-    ,[spddDateFrom]
-    ,[spddDateTo]
-    ,[spddDamageSubType]
-    ,[spdnVisitId]
-    ,[spdsComments]
-    ,[spdnRecUserID]
-    ,[spddDtCreated]
-    ,[spdnModifyUserID]
-    ,[spddDtModified]
-    ,[spdnBalance]
-    ,[spdbLienConfirmed]
-    ,[spdbDocAttached]
-    ,[saga_bill_id]
-)
-select 
-    'Hospitals'			as spdsRefTable,
-    H.hosnHospitalID	as spdnRecordID,
-    V.total_value		as spdnBillAmt,
-    (V.total_value - V.reduction)	as spddNegotiatedBillAmt,
-    case  when V.[start_date] between '1900-01-01' and '2079-06-06' then convert(date,V.[start_date]) else NULL end	
-						as spddDateFrom,
-    case  when V.[stop_date] between '1900-01-01' and '2079-06-06' then convert(date,V.[stop_date]) else NULL end	
-						as spddDateTo,
-    null				as spddDamageSubType,
-    null				as spdnVisitId,  
-    isnull('value tab medical bill. memo - '+ nullif(memo,''),'') as spdsComments,
-    368					as spdnRecordID,
-    getdate()			as spddDtCreated,
-    null				as spdnModifyUserID,
-    null				as spddDtModified,
-    V.due				as spdnBalance,
-    0					as spdbLienConfirmed,
-    0					as spdbDocAttached,
-    V.id				as saga_bill_id  -- one bill one value
-from [NeosBrianWhite].[dbo].[value_Indexed] V  
-JOIN value_tab_MedicalProvider_Helper MAP on MAP.case_id=convert(varchar(50),V.casesid) and MAP.value_id=convert(varchar(50),V.id)
-JOIN [sma_TRN_Hospitals] H on H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnCaseID=MAP.casnCaseID and H.hosnPlaintiffID=MAP.PlaintiffID
+INSERT INTO [sma_TRN_SpDamages]
+	(
+	[spdsRefTable]
+   ,[spdnRecordID]
+   ,[spdnBillAmt]
+   ,[spddNegotiatedBillAmt]
+   ,[spddDateFrom]
+   ,[spddDateTo]
+   ,[spddDamageSubType]
+   ,[spdnVisitId]
+   ,[spdsComments]
+   ,[spdnRecUserID]
+   ,[spddDtCreated]
+   ,[spdnModifyUserID]
+   ,[spddDtModified]
+   ,[spdnBalance]
+   ,[spdbLienConfirmed]
+   ,[spdbDocAttached]
+   ,[saga_bill_id]
+	)
+	SELECT
+		'Hospitals'														 AS spdsRefTable
+	   ,H.hosnHospitalID												 AS spdnRecordID
+	   ,V.total_value													 AS spdnBillAmt
+	   ,(V.total_value - V.reduction)									 AS spddNegotiatedBillAmt
+	   ,CASE
+			WHEN V.[start_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN CONVERT(DATE, V.[start_date])
+			ELSE NULL
+		END																 
+		AS spddDateFrom
+	   ,CASE
+			WHEN V.[stop_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN CONVERT(DATE, V.[stop_date])
+			ELSE NULL
+		END																 
+		AS spddDateTo
+	   ,NULL															 AS spddDamageSubType
+	   ,NULL															 AS spdnVisitId
+	   ,ISNULL('value tab medical bill. memo - ' + NULLIF(memo, ''), '') AS spdsComments
+	   ,368																 AS spdnRecordID
+	   ,GETDATE()														 AS spddDtCreated
+	   ,NULL															 AS spdnModifyUserID
+	   ,NULL															 AS spddDtModified
+	   ,V.due															 AS spdnBalance
+	   ,0																 AS spdbLienConfirmed
+	   ,0																 AS spdbDocAttached
+	   ,V.id															 AS saga_bill_id  -- one bill one value
+	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	JOIN value_tab_MedicalProvider_Helper MAP
+		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
+			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
+	JOIN [sma_TRN_Hospitals] H
+		ON H.hosnContactID = MAP.ProviderCID
+			AND H.hosnContactCtg = MAP.ProviderCTG
+			AND H.hosnCaseID = MAP.casnCaseID
+			AND H.hosnPlaintiffID = MAP.PlaintiffID
 GO
 
 ---(3)--- (Amount Paid section)  --Type=Client--
-insert into [sma_TRN_SpecialDamageAmountPaid]
-(
-       [AmountPaidDamageReferenceID]
-      ,[AmountPaidCollateralType]
-      ,[AmountPaidPaidByID]
-      ,[AmountPaidTotal]
-      ,[AmountPaidClaimSubmittedDt]
-      ,[AmountPaidDate]
-      ,[AmountPaidRecUserID]
-      ,[AmountPaidDtCreated]
-      ,[AmountPaidModifyUserID]
-      ,[AmountPaidDtModified]
-      ,[AmountPaidLevelNo]
-      ,[AmountPaidAdjustment]
-	 ,[AmountPaidComments]
-)
-select 
-    SPD.spdnSpDamageID		as [AmountPaidDamageReferenceID],
-    (select cltnCollateralTypeID from [dbo].[sma_MST_CollateralType] where cltsDscrptn='Client') as [AmountPaidCollateralType],
-	null					as [AmountPaidPaidByID],
-    VP.payment_amount as [AmountPaidTotal],
-    null					as [AmountPaidClaimSubmittedDt],
-	case
-		when VP.date_paid between '1900-01-01' and '2079-06-06' then VP.date_paid
-		else null			
-	end						as [AmountPaidDate],
-    368						as [AmountPaidRecUserID],
-    getdate()				as [AmountPaidDtCreated],
-    null					as [AmountPaidModifyUserID],
-    null					as [AmountPaidDtModified],
-    null					as [AmountPaidLevelNo],
-    null					as [AmountPaidAdjustment],
-    isnull('paid by:' + nullif(payBy.[name],'') + CHAR(13),'') + 
-    isnull('paid to:' + nullif(payTo.[Name],'') + CHAR(13),'') + 
-	''						as [AmountPaidComments]
-from [NeosBrianWhite]..[value_Indexed] V
-JOIN value_tab_MedicalProvider_Helper MAP on MAP.case_id=convert(varchar(50),V.casesid) and MAP.value_id=convert(varchar(50),V.id)
-JOIN [sma_TRN_SpDamages] SPD on SPD.saga_bill_id= convert(varchar(50),V.id)
-JOIN [NeosBrianWhite]..[value_payment] VP on VP.valueid = v.id -- multiple payment per value_id
-LEFT JOIN IndvOrgContacts_Indexed payBy on payby.SAGA_ref = convert(varchar(50),vp.paidbyID)
-LEFT JOIN IndvOrgContacts_Indexed payTo on payTo.SAGA_ref = convert(varchar(50),vp.paidToID)
+INSERT INTO [sma_TRN_SpecialDamageAmountPaid]
+	(
+	[AmountPaidDamageReferenceID]
+   ,[AmountPaidCollateralType]
+   ,[AmountPaidPaidByID]
+   ,[AmountPaidTotal]
+   ,[AmountPaidClaimSubmittedDt]
+   ,[AmountPaidDate]
+   ,[AmountPaidRecUserID]
+   ,[AmountPaidDtCreated]
+   ,[AmountPaidModifyUserID]
+   ,[AmountPaidDtModified]
+   ,[AmountPaidLevelNo]
+   ,[AmountPaidAdjustment]
+   ,[AmountPaidComments]
+	)
+	SELECT
+		SPD.spdnSpDamageID AS [AmountPaidDamageReferenceID]
+	   ,(
+			SELECT
+				cltnCollateralTypeID
+			FROM [dbo].[sma_MST_CollateralType]
+			WHERE cltsDscrptn = 'Client'
+		)				   
+		AS [AmountPaidCollateralType]
+	   ,NULL			   AS [AmountPaidPaidByID]
+	   ,VP.payment_amount  AS [AmountPaidTotal]
+	   ,NULL			   AS [AmountPaidClaimSubmittedDt]
+	   ,CASE
+			WHEN VP.date_paid BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN VP.date_paid
+			ELSE NULL
+		END				   AS [AmountPaidDate]
+	   ,368				   AS [AmountPaidRecUserID]
+	   ,GETDATE()		   AS [AmountPaidDtCreated]
+	   ,NULL			   AS [AmountPaidModifyUserID]
+	   ,NULL			   AS [AmountPaidDtModified]
+	   ,NULL			   AS [AmountPaidLevelNo]
+	   ,NULL			   AS [AmountPaidAdjustment]
+	   ,ISNULL('paid by:' + NULLIF(payBy.[name], '') + CHAR(13), '') +
+		ISNULL('paid to:' + NULLIF(payTo.[Name], '') + CHAR(13), '') +
+		''				   AS [AmountPaidComments]
+	FROM [NeosBrianWhite]..[value_Indexed] V
+	JOIN value_tab_MedicalProvider_Helper MAP
+		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
+			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
+	JOIN [sma_TRN_SpDamages] SPD
+		ON SPD.saga_bill_id = CONVERT(VARCHAR(50), V.id)
+	JOIN [NeosBrianWhite]..[value_payment] VP
+		ON VP.valueid = v.id -- multiple payment per value_id
+	LEFT JOIN IndvOrgContacts_Indexed payBy
+		ON payby.SAGA_ref = CONVERT(VARCHAR(50), vp.paidbyID)
+	LEFT JOIN IndvOrgContacts_Indexed payTo
+		ON payTo.SAGA_ref = CONVERT(VARCHAR(50), vp.paidToID)
 GO
 
 
 ---(Appendix)--- Update hospital TotalBill from Bill section
 UPDATE [sma_TRN_Hospitals]
-SET hosnTotalBill = (SELECT SUM(spdnBillAmt) FROM sma_TRN_SpDamages WHERE sma_TRN_SpDamages.spdsRefTable='Hospitals' AND sma_TRN_SpDamages.spdnRecordID = hosnHospitalID)
+SET hosnTotalBill = (
+	SELECT
+		SUM(spdnBillAmt)
+	FROM sma_TRN_SpDamages
+	WHERE sma_TRN_SpDamages.spdsRefTable = 'Hospitals'
+		AND sma_TRN_SpDamages.spdnRecordID = hosnHospitalID
+)
 GO
 
 -----------

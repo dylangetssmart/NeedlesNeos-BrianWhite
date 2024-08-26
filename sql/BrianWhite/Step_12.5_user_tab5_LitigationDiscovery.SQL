@@ -7,95 +7,180 @@ FROM NeosBrianWhite..NeosUserTab5 u
 JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Litigation Document]
 */
 
-IF NOT EXISTS (Select * From sys.tables t join sys.columns c on t.object_id = c.object_id where t.name = 'sma_TRN_LitigationDiscovery' and c.name = 'saga')
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.tables t
+		JOIN sys.columns c
+			ON t.object_id = c.object_id
+		WHERE t.name = 'sma_TRN_LitigationDiscovery'
+			AND c.name = 'saga'
+	)
 BEGIN
 	ALTER TABLE sma_TRN_LitigationDiscovery
-	ADD saga varchar(50)
+	ADD saga VARCHAR(50)
 END
 GO
 
 ALTER TABLE sma_TRN_LitigationDiscovery
-ALTER COLUMN SAGA varchar(50)
+ALTER COLUMN SAGA VARCHAR(50)
 GO
 --------------------------------------
 --LITIGATION DISCOVERY TYPE
 --------------------------------------
-INSERT INTO sma_MST_DiscoveryType (dstsDescription, dstsDescriptionType)
-SELECT DISTINCT g.code, g.code
-FROM NeosBrianWhite..NeosUserTab5 u
-JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Litigation Document]
-WHERE isnull([Litigation Document],'') <>'' 
-EXCEPT
-SELECT dstsDescription, dstsDescriptionType FROM sma_MST_DiscoveryType
+INSERT INTO sma_MST_DiscoveryType
+	(
+	dstsDescription
+   ,dstsDescriptionType
+	)
+	SELECT DISTINCT
+		g.code
+	   ,g.code
+	FROM NeosBrianWhite..NeosUserTab5 u
+	JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = u.[Litigation Document]
+	WHERE ISNULL([Litigation Document], '') <> ''
+	EXCEPT
+	SELECT
+		dstsDescription
+	   ,dstsDescriptionType
+	FROM sma_MST_DiscoveryType
 GO
 
 --------------------------------------
 --INSERT SERVICE TYPES
 --------------------------------------
-INSERT INTO sma_MST_ServiceTypes (sctsCode, sctsDscrptn)
-SELECT NULL,'Unknown'
-EXCEPT SELECT sctsCode, sctsDscrptn FROM sma_MST_ServiceTypes
+INSERT INTO sma_MST_ServiceTypes
+	(
+	sctsCode
+   ,sctsDscrptn
+	)
+	SELECT
+		NULL
+	   ,'Unknown'
+	EXCEPT
+	SELECT
+		sctsCode
+	   ,sctsDscrptn
+	FROM sma_MST_ServiceTypes
 
 --sp_help sma_TRN_LitigationDiscovery
 --------------------------------------------
 --INSERT LITIGATION DISCOVERY
 --------------------------------------------
-INSERT INTO sma_TRN_LitigationDiscovery (caseid, EnteredDt, typeid, MethodOfService, ServedByID, ResDescription, DemandOrder,
-	OrderDt, OnDate, OnBeforeDt, WithinDays, FromDt, DtToComply, AppointmentID, RecUserID, ModifyUserID, DtModified, lidnRespondentType, saga)
-SELECT DISTINCT
-		cas.casnCaseID				as caseid, 
-		NULL						as EnteredDt, 
-		(select dstnDiscoveryTypeID From sma_MST_DiscoveryType where dstsDescription = g.Code)	as typeid, 
-		(select sctnSrvcTypeID From sma_MST_ServiceTypes where sctsDscrptn = 'Unknown')						as MethodOfService, 
-		NULL						as ServedByID, 
-		isnull('Filed Date: '+ nullif(convert(varchar(max),u.[Filed Date]),''),'') +char(13) +
-		isnull('Note: '+ nullif(convert(varchar(max),u.[Note]),''),'') +char(13) +
-		isnull('All Counsel Copied: '+ nullif(convert(varchar(max),u.[All Counsel Copied]),''),'') +char(13) +
-		isnull('Answered Date: '+ nullif(convert(varchar(max),u.[Answered Date]),''),'') +char(13) +
-		isnull('Document Name: '+ nullif(convert(varchar(max),u.[Document Name]),''),'') +char(13) +
-		isnull('Filing Party: '+ nullif(convert(varchar(max),ioc.[name]),''),'') +char(13) +
-		isnull('Party Receiving: '+ nullif(convert(varchar(max),iocr.[name]),''),'') +char(13) +
-		isnull('Medical Provider: '+ nullif(convert(varchar(max),iocp.[name]),''),'') +char(13) +
-		isnull('Received Date: '+ nullif(convert(varchar(max),u.[Received Date]),''),'') +char(13) +
-		isnull('Service Date: '+ nullif(convert(varchar(max),u.[Service Date]),''),'') +char(13) +
-		''							as ResDescription,   --2000
-		1							as DemandOrder,		--1=Demand; 2=Order
-		[Service Date]				as OrderDt, 
-		Case when u.[Service Date] between '1/1/1900' and '6/6/2079' then u.[Service Date] else NULL end	as OnDate, 
-		NULL						as OnBeforeDt, 
-		NULL						as WithinDays,
-		NULL						as FromDt, 
-		case when u.[Due Date] between '1/1/1900' and '6/6/2079' then u.[Due Date] else NULL end		as DtToComply,
-		NULL						as AppointmentID, 
-		368							as RecUserID, 
-		NULL						as ModifyUserID, 
-		NULL						as DtModified,
-		NULL						as lidnRespondentType, 
-		'Tab5: '+convert(varchar(50),tablistid)	as saga
---select *
-FROM NeosBrianWhite..NeosUserTab5 u
-JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Litigation Document]
-JOIN sma_trn_Cases cas on CAS.Neos_saga = convert(varchar(50),u.casesid)
-LEFT JOIN IndvorgContacts_Indexed ioc on ioc.saga_ref = convert(varchar(50),u.[Filing Party])
-LEFT JOIN IndvorgContacts_Indexed iocp on iocp.saga_ref = convert(varchar(50),u.[Medical Provider])
-LEFT JOIN IndvorgContacts_Indexed iocr on iocr.saga_ref = convert(varchar(50),u.[Party Receiving])
-WHERE isnull([litigation document],'') <>''
-	or isnull([document name],'') <> ''
+INSERT INTO sma_TRN_LitigationDiscovery
+	(
+	caseid
+   ,EnteredDt
+   ,typeid
+   ,MethodOfService
+   ,ServedByID
+   ,ResDescription
+   ,DemandOrder
+   ,OrderDt
+   ,OnDate
+   ,OnBeforeDt
+   ,WithinDays
+   ,FromDt
+   ,DtToComply
+   ,AppointmentID
+   ,RecUserID
+   ,ModifyUserID
+   ,DtModified
+   ,lidnRespondentType
+   ,saga
+	)
+	SELECT DISTINCT
+		cas.casnCaseID							   AS caseid
+	   ,NULL									   AS EnteredDt
+	   ,(
+			SELECT
+				dstnDiscoveryTypeID
+			FROM sma_MST_DiscoveryType
+			WHERE dstsDescription = g.Code
+		)										   
+		AS typeid
+	   ,(
+			SELECT
+				sctnSrvcTypeID
+			FROM sma_MST_ServiceTypes
+			WHERE sctsDscrptn = 'Unknown'
+		)										   
+		AS MethodOfService
+	   ,NULL									   AS ServedByID
+	   ,ISNULL('Filed Date: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Filed Date]), ''), '') + CHAR(13) +
+		ISNULL('Note: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Note]), ''), '') + CHAR(13) +
+		ISNULL('All Counsel Copied: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[All Counsel Copied]), ''), '') + CHAR(13) +
+		ISNULL('Answered Date: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Answered Date]), ''), '') + CHAR(13) +
+		ISNULL('Document Name: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Document Name]), ''), '') + CHAR(13) +
+		ISNULL('Filing Party: ' + NULLIF(CONVERT(VARCHAR(MAX), ioc.[name]), ''), '') + CHAR(13) +
+		ISNULL('Party Receiving: ' + NULLIF(CONVERT(VARCHAR(MAX), iocr.[name]), ''), '') + CHAR(13) +
+		ISNULL('Medical Provider: ' + NULLIF(CONVERT(VARCHAR(MAX), iocp.[name]), ''), '') + CHAR(13) +
+		ISNULL('Received Date: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Received Date]), ''), '') + CHAR(13) +
+		ISNULL('Service Date: ' + NULLIF(CONVERT(VARCHAR(MAX), u.[Service Date]), ''), '') + CHAR(13) +
+		''										   AS ResDescription
+	   ,   --2000
+		1										   AS DemandOrder
+	   ,		--1=Demand; 2=Order
+		[Service Date]							   AS OrderDt
+	   ,CASE
+			WHEN u.[Service Date] BETWEEN '1/1/1900' AND '6/6/2079'
+				THEN u.[Service Date]
+			ELSE NULL
+		END										   AS OnDate
+	   ,NULL									   AS OnBeforeDt
+	   ,NULL									   AS WithinDays
+	   ,NULL									   AS FromDt
+	   ,CASE
+			WHEN u.[Due Date] BETWEEN '1/1/1900' AND '6/6/2079'
+				THEN u.[Due Date]
+			ELSE NULL
+		END										   AS DtToComply
+	   ,NULL									   AS AppointmentID
+	   ,368										   AS RecUserID
+	   ,NULL									   AS ModifyUserID
+	   ,NULL									   AS DtModified
+	   ,NULL									   AS lidnRespondentType
+	   ,'Tab5: ' + CONVERT(VARCHAR(50), tablistid) AS saga
+	--select *
+	FROM NeosBrianWhite..NeosUserTab5 u
+	JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = u.[Litigation Document]
+	JOIN sma_trn_Cases cas
+		ON CAS.Neos_saga = CONVERT(VARCHAR(50), u.casesid)
+	LEFT JOIN IndvorgContacts_Indexed ioc
+		ON ioc.saga_ref = CONVERT(VARCHAR(50), u.[Filing Party])
+	LEFT JOIN IndvorgContacts_Indexed iocp
+		ON iocp.saga_ref = CONVERT(VARCHAR(50), u.[Medical Provider])
+	LEFT JOIN IndvorgContacts_Indexed iocr
+		ON iocr.saga_ref = CONVERT(VARCHAR(50), u.[Party Receiving])
+	WHERE ISNULL([litigation document], '') <> ''
+		OR ISNULL([document name], '') <> ''
 GO
 
 --------------------------
 --INSERT COMPLIED DATE
 --------------------------
-INSERT INTO sma_TRN_DiscoveryDepositionRespondents (DiscoveryID, RespondentID, CSWDt, RecUserID, DtCreated, CSW)
-SELECT
-		ld.DiscoveryID		as DiscoveryID,
-		null				as RespondentID,
-		[Answered Date]		as CSWDt,
-		368					as RecUserID,
-		getdate()			as DtCreated,
-		1					as CSW
-FROM NeosBrianWhite..NeosUserTab5 u
-JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Litigation Document]
-JOIN sma_TRN_LitigationDiscovery ld on ld.saga = 'Tab5: '+convert(varchar(50),tablistid)
-WHERE isnull(u.[Answered Date], '') <> ''
+INSERT INTO sma_TRN_DiscoveryDepositionRespondents
+	(
+	DiscoveryID
+   ,RespondentID
+   ,CSWDt
+   ,RecUserID
+   ,DtCreated
+   ,CSW
+	)
+	SELECT
+		ld.DiscoveryID  AS DiscoveryID
+	   ,NULL			AS RespondentID
+	   ,[Answered Date] AS CSWDt
+	   ,368				AS RecUserID
+	   ,GETDATE()		AS DtCreated
+	   ,1				AS CSW
+	FROM NeosBrianWhite..NeosUserTab5 u
+	JOIN NeosBrianWhite..mini_general_dir g
+		ON g.id = u.[Litigation Document]
+	JOIN sma_TRN_LitigationDiscovery ld
+		ON ld.saga = 'Tab5: ' + CONVERT(VARCHAR(50), tablistid)
+	WHERE ISNULL(u.[Answered Date], '') <> ''
 GO

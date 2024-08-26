@@ -37,109 +37,137 @@ or isnull(docket,'') <> ''
 
 
 ---(1)---
-INSERT INTO [sma_TRN_Courts] 
-( 
-	crtnCaseID,
-	crtnCourtID,
-	crtnCourtAddId,
-	crtnIsActive
+INSERT INTO [sma_TRN_Courts]
+	(
+	crtnCaseID
+   ,crtnCourtID
+   ,crtnCourtAddId
+   ,crtnIsActive
 	--crtnLevelNo 
-)
-SELECT  
-	A.casnCaseID	as crtnCaseID, 
-	A.CID		    as crtnCourtID, 
-	A.AID		    as crtnCourtAddId,  
-	1			    as crtnIsActive
-FROM (	SELECT 
-			CAS.casnCaseID,
-			IOC.CID,
-			IOC.AID
-			--C.judge_link
+	)
+	SELECT
+		A.casnCaseID AS crtnCaseID
+	   ,A.CID		 AS crtnCourtID
+	   ,A.AID		 AS crtnCourtAddId
+	   ,1			 AS crtnIsActive
+	FROM (
+		SELECT
+			CAS.casnCaseID
+		   ,IOC.CID
+		   ,IOC.AID
+		--C.judge_link
 		--select *
 		FROM [NeosBrianWhite].[dbo].[cases] C
-		JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50),C.id)
-		JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA = convert(varchar(50),C.court_Namesid)
-		WHERE isnull(convert(varchar(50),C.court_Namesid),'') <> ''
- 
-		UNION  
-		SELECT 
-			CAS.casnCaseID,
-			IOC.CID,
-			IOC.AID  
-			--C.judge_link
+		JOIN [sma_TRN_cases] CAS
+			ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
+		JOIN IndvOrgContacts_Indexed IOC
+			ON IOC.SAGA = CONVERT(VARCHAR(50), C.court_Namesid)
+		WHERE ISNULL(CONVERT(VARCHAR(50), C.court_Namesid), '') <> ''
+
+		UNION
+		SELECT
+			CAS.casnCaseID
+		   ,IOC.CID
+		   ,IOC.AID
+		--C.judge_link
 		FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
-		JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = C.id
-		JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA= '-1' and IOC.[Name]='Unidentified Court' 
-		WHERE isnull(convert(varchar(50),court_namesid),'')=''
-		and ( isnull(convert(varchar(50),judge_namesid),'')<>''
-				or isnull(docket,'') <> '' )
-) A
+		JOIN [sma_TRN_cases] CAS
+			ON CAS.Neos_Saga = C.id
+		JOIN IndvOrgContacts_Indexed IOC
+			ON IOC.SAGA = '-1'
+			AND IOC.[Name] = 'Unidentified Court'
+		WHERE ISNULL(CONVERT(VARCHAR(50), court_namesid), '') = ''
+			AND (ISNULL(CONVERT(VARCHAR(50), judge_namesid), '') <> ''
+			OR ISNULL(docket, '') <> '')
+	) A
 GO
 
 ---------------------------------------------------
 --UPDATE COURT CAPTION FIELDS
 ---------------------------------------------------
 UPDATE sma_TRN_Courts
-SET crtsPlaintiffCaption = c.[Plaintiff Caption],
-	crtsDefendantCaption = c.[Defendant Caption],
-	crtsComment = isnull('Type of Court : ' + nullif(convert(varchar(max),d.code) ,'') + CHAR(13),'') + ''
+SET crtsPlaintiffCaption = c.[Plaintiff Caption]
+   ,crtsDefendantCaption = c.[Defendant Caption]
+   ,crtsComment = ISNULL('Type of Court : ' + NULLIF(CONVERT(VARCHAR(MAX), d.code), '') + CHAR(13), '') + ''
 FROM NeosBrianWhite..NeosUserCase c
-LEFT JOIN NeosBrianWhite..mini_general_dir d on d.id = c.[type of court]
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50),C.casesid) 
-JOIN sma_trn_Courts crt on crt.crtnCaseID = cas.casnCaseID
+LEFT JOIN NeosBrianWhite..mini_general_dir d
+	ON d.id = c.[type of court]
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.casesid)
+JOIN sma_trn_Courts crt
+	ON crt.crtnCaseID = cas.casnCaseID
 GO
 
 --------------------
 --COURT DOCKET
 --------------------
-INSERT INTO [sma_TRN_CourtDocket] 
-( 
-	crdnCourtsID,
-	crdnIndexTypeID,
-	crdnDocketNo,
-	crdddate,
-	crdnPrice,
-	crdbActiveInActive,
-	crdsEfile,
-	crdsComments
-) 
-SELECT 
-    crtnPKCourtsID	    as crdnCourtsID,
-    (select idtnIndexTypeID from sma_MST_IndexType where idtsDscrptn='Docket Number') 
-						as crdnIndexTypeID,
-    case when isnull(C.docket,'')<>'' then left(C.docket,30)   
-	   else 'Case-' + CAS.cassCaseNumber
-    end					as crdnDocketNo, 
-	NULL				as crdddate,
-	0  					as crdnPrice,
-	1					as crdbActiveInActive,
-	0					as crdsEfile,
-    'Docket Number:' + left(C.docket,30) 
-						as crdsComments
-FROM [sma_TRN_Courts] CRT
-JOIN [sma_TRN_cases] CAS on CAS.casnCaseID=CRT.crtnCaseID 
-JOIN [NeosBrianWhite].[dbo].[cases_indexed] C on convert(varchar(50),c.id) = CAS.Neos_Saga
+INSERT INTO [sma_TRN_CourtDocket]
+	(
+	crdnCourtsID
+   ,crdnIndexTypeID
+   ,crdnDocketNo
+   ,crdddate
+   ,crdnPrice
+   ,crdbActiveInActive
+   ,crdsEfile
+   ,crdsComments
+	)
+	SELECT
+		crtnPKCourtsID AS crdnCourtsID
+	   ,(
+			SELECT
+				idtnIndexTypeID
+			FROM sma_MST_IndexType
+			WHERE idtsDscrptn = 'Docket Number'
+		)			   
+		AS crdnIndexTypeID
+	   ,CASE
+			WHEN ISNULL(C.docket, '') <> ''
+				THEN LEFT(C.docket, 30)
+			ELSE 'Case-' + CAS.cassCaseNumber
+		END			   AS crdnDocketNo
+	   ,NULL		   AS crdddate
+	   ,0			   AS crdnPrice
+	   ,1			   AS crdbActiveInActive
+	   ,0			   AS crdsEfile
+	   ,'Docket Number:' + LEFT(C.docket, 30)
+		AS crdsComments
+	FROM [sma_TRN_Courts] CRT
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.casnCaseID = CRT.crtnCaseID
+	JOIN [NeosBrianWhite].[dbo].[cases_indexed] C
+		ON CONVERT(VARCHAR(50), c.id) = CAS.Neos_Saga
 GO
 
 
 --------------------------
 --INSERT JUDGE
 --------------------------
-INSERT INTO [sma_trn_caseJudgeorClerk] 
-( 
-	crtDocketID,
-	crtJudgeorClerkContactID,
-	crtJudgeorClerkContactCtgID,
-	crtJudgeorClerkRoleID
-) 
-SELECT DISTINCT
-	CRD.crdnCourtDocketID	as crtDocketID,
-	IOC.CID				as crtJudgeorClerkContactID,
-	IOC.CTG				as crtJudgeorClerkContactCtgID,
-	(select octnOrigContactTypeID from sma_MST_OriginalContactTypes where octsDscrptn='Judge') as crtJudgeorClerkRoleID 
-FROM [sma_TRN_CourtDocket] CRD
-JOIN [sma_TRN_Courts] CRT on CRT.crtnPKCourtsID=CRD.crdnCourtsID  
-JOIN sma_trn_Cases cas on cas.casnCaseID = crt.crtnCaseID
-JOIN [NeosBrianWhite]..[cases_indexed] ci on convert(varchar(50),ci.id) = cas.Neos_Saga
-JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA = convert(varchar(50), ci.judge_namesid)
+INSERT INTO [sma_trn_caseJudgeorClerk]
+	(
+	crtDocketID
+   ,crtJudgeorClerkContactID
+   ,crtJudgeorClerkContactCtgID
+   ,crtJudgeorClerkRoleID
+	)
+	SELECT DISTINCT
+		CRD.crdnCourtDocketID AS crtDocketID
+	   ,IOC.CID				  AS crtJudgeorClerkContactID
+	   ,IOC.CTG				  AS crtJudgeorClerkContactCtgID
+	   ,(
+			SELECT
+				octnOrigContactTypeID
+			FROM sma_MST_OriginalContactTypes
+			WHERE octsDscrptn = 'Judge'
+		)					  
+		AS crtJudgeorClerkRoleID
+	FROM [sma_TRN_CourtDocket] CRD
+	JOIN [sma_TRN_Courts] CRT
+		ON CRT.crtnPKCourtsID = CRD.crdnCourtsID
+	JOIN sma_trn_Cases cas
+		ON cas.casnCaseID = crt.crtnCaseID
+	JOIN [NeosBrianWhite]..[cases_indexed] ci
+		ON CONVERT(VARCHAR(50), ci.id) = cas.Neos_Saga
+	JOIN IndvOrgContacts_Indexed IOC
+		ON IOC.SAGA = CONVERT(VARCHAR(50), ci.judge_namesid)
 

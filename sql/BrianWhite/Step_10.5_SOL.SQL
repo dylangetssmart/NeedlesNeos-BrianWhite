@@ -1,4 +1,4 @@
-use SANeosBrianWhite
+USE SANeosBrianWhite
 GO
 
 /*
@@ -16,66 +16,107 @@ alter table [sma_MST_SOLDetails] enable trigger all
 ---------------------------------------------------------------------------------
 --INSERT SOL 000 FOR CONVERSION ONLY - DO NOT ADD FOR EVERY SINGLE CASE TYPE
 ---------------------------------------------------------------------------------
-IF NOT EXISTS (select * from [sma_MST_SOLDetails] where sldnSOLTypeID = 16 and sldnCaseTypeID = -1 and sldsDorP= 'D')
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM [sma_MST_SOLDetails]
+		WHERE sldnSOLTypeID = 16
+			AND sldnCaseTypeID = -1
+			AND sldsDorP = 'D'
+	)
 BEGIN
 	INSERT INTO [dbo].[sma_MST_SOLDetails]
-			   ([sldnSOLTypeID]
-			   ,[sldnCaseTypeID]
-			   ,[sldnDefRole]
-			   ,[sldnStateID]
-			   ,[sldnYears]
-			   ,[sldnMonths]
-			   ,[sldnDays]
-			   ,[sldnSOLDays]
-			   ,[sldnRecUserID]
-			   ,[slddDtCreated]
-			   ,[sldnModifyUserID]
-			   ,[slddDtModified]
-			   ,[sldnLevelNo]
-			   ,[sldsDorP]
-			   ,[sldsSOLName]
-			   ,[sldbIsIncidDtEffect]
-			   ,[sldbDefualt]
-			   ,[sldnFromIncident])
-	SELECT 16,-1,-1,-1,0,0,0,null,368,getdate(),null,null,null,'D','SOL',0,0,0
+		(
+		[sldnSOLTypeID]
+	   ,[sldnCaseTypeID]
+	   ,[sldnDefRole]
+	   ,[sldnStateID]
+	   ,[sldnYears]
+	   ,[sldnMonths]
+	   ,[sldnDays]
+	   ,[sldnSOLDays]
+	   ,[sldnRecUserID]
+	   ,[slddDtCreated]
+	   ,[sldnModifyUserID]
+	   ,[slddDtModified]
+	   ,[sldnLevelNo]
+	   ,[sldsDorP]
+	   ,[sldsSOLName]
+	   ,[sldbIsIncidDtEffect]
+	   ,[sldbDefualt]
+	   ,[sldnFromIncident]
+		)
+		SELECT
+			16
+		   ,-1
+		   ,-1
+		   ,-1
+		   ,0
+		   ,0
+		   ,0
+		   ,NULL
+		   ,368
+		   ,GETDATE()
+		   ,NULL
+		   ,NULL
+		   ,NULL
+		   ,'D'
+		   ,'SOL'
+		   ,0
+		   ,0
+		   ,0
 END
 GO
 
 
 -----
-ALTER TABLE [sma_TRN_SOLs] disable trigger all
+ALTER TABLE [sma_TRN_SOLs] DISABLE TRIGGER ALL
 GO
 -----
 
 ----(2)----
 INSERT INTO [sma_TRN_SOLs]
-(
-	[solnCaseID],
-	[solnSOLTypeID],
-	[soldSOLDate],
-	[soldDateComplied],
-	[soldSnCFilingDate],
-	[soldServiceDate],
-	[solnDefendentID],
-	[soldToProcessServerDt],
-	[soldRcvdDate],
-	[solsType]
-)
-SELECT DISTINCT
-    D.defnCaseID		   as [solnCaseID],
-    (select sldnSOLDetID From sma_MST_SOLDetails where sldnSOLTypeID = 16 and sldnCaseTypeID = -1 and sldsDorP = 'D' ),			--[solnSOLTypeID],
-    case when ( C.[lim_date] not between '1900-01-01' and '2079-12-31' ) then null else C.[lim_date] end as [soldSOLDate],
-    null				   as [soldDateComplied],
-    NULL				   as [soldSnCFilingDate],
-    null				   as [soldServiceDate],
-    D.defnDefendentID	   as [solnDefendentID],
-    null				   as [soldToProcessServerDt],
-    null				   as [soldRcvdDate],
-    'D'					   as [solsType]
-FROM [NeosBrianWhite].[dbo].[cases_Indexed] C 
-JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = convert(varchar(50),C.id)
-JOIN [sma_TRN_Defendants] D on D.defnCaseID=CAS.casnCaseID 
-WHERE C.lim_date is not null
+	(
+	[solnCaseID]
+   ,[solnSOLTypeID]
+   ,[soldSOLDate]
+   ,[soldDateComplied]
+   ,[soldSnCFilingDate]
+   ,[soldServiceDate]
+   ,[solnDefendentID]
+   ,[soldToProcessServerDt]
+   ,[soldRcvdDate]
+   ,[solsType]
+	)
+	SELECT DISTINCT
+		D.defnCaseID	  AS [solnCaseID]
+	   ,(
+			SELECT
+				sldnSOLDetID
+			FROM sma_MST_SOLDetails
+			WHERE sldnSOLTypeID = 16
+				AND sldnCaseTypeID = -1
+				AND sldsDorP = 'D'
+		)
+	   ,			--[solnSOLTypeID],
+		CASE
+			WHEN (C.[lim_date] NOT BETWEEN '1900-01-01' AND '2079-12-31')
+				THEN NULL
+			ELSE C.[lim_date]
+		END				  AS [soldSOLDate]
+	   ,NULL			  AS [soldDateComplied]
+	   ,NULL			  AS [soldSnCFilingDate]
+	   ,NULL			  AS [soldServiceDate]
+	   ,D.defnDefendentID AS [solnDefendentID]
+	   ,NULL			  AS [soldToProcessServerDt]
+	   ,NULL			  AS [soldRcvdDate]
+	   ,'D'				  AS [solsType]
+	FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
+	JOIN [sma_TRN_Cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
+	JOIN [sma_TRN_Defendants] D
+		ON D.defnCaseID = CAS.casnCaseID
+	WHERE C.lim_date IS NOT NULL
 GO
 
 -----
@@ -85,8 +126,8 @@ GO
 
 
 ----(Appendix)----
-UPDATE sma_MST_SOLDetails 
-SET sldnFromIncident=0
-WHERE sldnFromIncident is NULL
-and sldnRecUserID=368
+UPDATE sma_MST_SOLDetails
+SET sldnFromIncident = 0
+WHERE sldnFromIncident IS NULL
+AND sldnRecUserID = 368
 

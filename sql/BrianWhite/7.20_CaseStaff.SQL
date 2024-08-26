@@ -15,10 +15,24 @@ JOIN NeosBrianWhite..staff_Role sr on sr.id = ms.staffroleid
 
 
 ----(0) staff roles ----
-INSERT INTO [sma_MST_SubRoleCode] ( srcsDscrptn, srcnRoleID )
-SELECT CASE WHEN [role] = 'Attorney' THEN 'Primary Attorney' else [role] end, 10
-FROM NeosBrianWhite..staff_Role
-EXCEPT SELECT srcsDscrptn, srcnRoleID from [sma_MST_SubRoleCode]
+INSERT INTO [sma_MST_SubRoleCode]
+	(
+	srcsDscrptn
+   ,srcnRoleID
+	)
+	SELECT
+		CASE
+			WHEN [role] = 'Attorney'
+				THEN 'Primary Attorney'
+			ELSE [role]
+		END
+	   ,10
+	FROM NeosBrianWhite..staff_Role
+	EXCEPT
+	SELECT
+		srcsDscrptn
+	   ,srcnRoleID
+	FROM [sma_MST_SubRoleCode]
 
 
 ----(1)-----
@@ -27,38 +41,59 @@ ALTER TABLE [sma_TRN_caseStaff] DISABLE TRIGGER ALL
 GO
 ---
 
-INSERT INTO sma_TRN_caseStaff 
-(
-       [cssnCaseID]
-      ,[cssnStaffID]
-      ,[cssnRoleID]
-      ,[csssComments]
-      ,[cssdFromDate]
-      ,[cssdToDate]
-      ,[cssnRecUserID]
-      ,[cssdDtCreated]
-      ,[cssnModifyUserID]
-      ,[cssdDtModified]
-      ,[cssnLevelNo]
-)
-SELECT DISTINCT
-	CAS.casnCaseID			  as [cssnCaseID],
-	U.usrnContactID		      as [cssnStaffID],
-	(select sbrnSubRoleId from sma_MST_SubRole where sbrsDscrptn=CASE WHEN [role] = 'Attorney' THEN 'Primary Attorney' else [role] end and sbrnRoleID=10 )	 as [cssnRoleID],
-	null					  as [csssComments],
-	null					  as cssdFromDate,
-	null					  as cssdToDate,
-	(Select usrnUserID from sma_mst_users where saga = cs.staffcreatedid)  as cssnRecUserID,
-	cs.date_created			  as [cssdDtCreated],
-	null					  as [cssnModifyUserID],
-	null					  as [cssdDtModified],
-	0					  as cssnLevelNo
---SELECT *
-FROM NeosBrianWhite..case_staff cs
-JOIN NeosBrianWhite..matter_staff ms on ms.id = cs.matterstaffid
-JOIN NeosBrianWhite..staff_Role sr on sr.id = ms.staffroleid
-JOIN [sma_TRN_cases] CAS on CAS.Neos_Saga = convert(varchar(50), cs.casesid)
-JOIN [sma_MST_Users] U on ( U.saga = convert(varchar(50), cs.staffid) )
+INSERT INTO sma_TRN_caseStaff
+	(
+	[cssnCaseID]
+   ,[cssnStaffID]
+   ,[cssnRoleID]
+   ,[csssComments]
+   ,[cssdFromDate]
+   ,[cssdToDate]
+   ,[cssnRecUserID]
+   ,[cssdDtCreated]
+   ,[cssnModifyUserID]
+   ,[cssdDtModified]
+   ,[cssnLevelNo]
+	)
+	SELECT DISTINCT
+		CAS.casnCaseID  AS [cssnCaseID]
+	   ,U.usrnContactID AS [cssnStaffID]
+	   ,(
+			SELECT
+				sbrnSubRoleId
+			FROM sma_MST_SubRole
+			WHERE sbrsDscrptn = CASE
+					WHEN [role] = 'Attorney'
+						THEN 'Primary Attorney'
+					ELSE [role]
+				END
+				AND sbrnRoleID = 10
+		)				
+		AS [cssnRoleID]
+	   ,NULL			AS [csssComments]
+	   ,NULL			AS cssdFromDate
+	   ,NULL			AS cssdToDate
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = cs.staffcreatedid
+		)				
+		AS cssnRecUserID
+	   ,cs.date_created AS [cssdDtCreated]
+	   ,NULL			AS [cssnModifyUserID]
+	   ,NULL			AS [cssdDtModified]
+	   ,0				AS cssnLevelNo
+	--SELECT *
+	FROM NeosBrianWhite..case_staff cs
+	JOIN NeosBrianWhite..matter_staff ms
+		ON ms.id = cs.matterstaffid
+	JOIN NeosBrianWhite..staff_Role sr
+		ON sr.id = ms.staffroleid
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), cs.casesid)
+	JOIN [sma_MST_Users] U
+		ON (U.saga = CONVERT(VARCHAR(50), cs.staffid))
 GO
 
 ---

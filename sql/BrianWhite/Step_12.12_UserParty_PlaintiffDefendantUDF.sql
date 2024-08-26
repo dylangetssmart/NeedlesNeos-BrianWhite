@@ -22,79 +22,107 @@ ORDER BY rol.[SA Party]
 --UDF DEFINITION
 -----------------------------------------
 INSERT INTO [sma_MST_UDFDefinition]
-(
-    [udfsUDFCtg]
-    ,[udfnRelatedPK]
-    ,[udfsUDFName]
-    ,[udfsScreenName]
-    ,[udfsType]
-    ,[udfsLength]
-    ,[udfbIsActive]
-    ,[udfnLevelNo]
-	,[UdfShortName]
-	,[udfsNewValues]
-    ,[udfnSortOrder]
-)
-SELECT DISTINCT
-	'C'					   as [udfsUDFCtg],
-    cas.casnOrgCaseTypeID  as [udfnRelatedPK],
-    nuf.field_title		   as [udfsUDFName],   
-    rol.[SA Party]		   as [udfsScreenName],
-    nuf.UDFType			   as [udfsType],
-    nuf.field_len		   as [udfsLength],
-    1					   as [udfbIsActive],
-	NULL				   as [udfnLevelNo],
-	'user_party_Data'+ ucf.[field_title]			as [udfshortName],
-	nuf.dropdownValues	   as [udfsNewValues],
-	DENSE_RANK() over( order by nuf.field_title)	as [udfnSortOrder]
---SELECT DISTINCT nuf.*
-FROM [NeosBrianWhite]..user_Party_data td
-JOIN [NeosBrianWhite]..Party_Indexed pty on pty.id = td.partyid
-JOIN [NeosBrianWhite]..party_role_list prl on prl.id = pty.partyrolelistid
-JOIN PartyRoles rol on rol.[Needles Roles] = prl.[role]
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
-JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
-JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50),pty.casesid)
-LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cas.casnOrgCaseTypeID and def.[udfsUDFName] = nuf.field_title and def.[udfsScreenName] = rol.[SA Party]
+	(
+	[udfsUDFCtg]
+   ,[udfnRelatedPK]
+   ,[udfsUDFName]
+   ,[udfsScreenName]
+   ,[udfsType]
+   ,[udfsLength]
+   ,[udfbIsActive]
+   ,[udfnLevelNo]
+   ,[UdfShortName]
+   ,[udfsNewValues]
+   ,[udfnSortOrder]
+	)
+	SELECT DISTINCT
+		'C'											 AS [udfsUDFCtg]
+	   ,cas.casnOrgCaseTypeID						 AS [udfnRelatedPK]
+	   ,nuf.field_title								 AS [udfsUDFName]
+	   ,rol.[SA Party]								 AS [udfsScreenName]
+	   ,nuf.UDFType									 AS [udfsType]
+	   ,nuf.field_len								 AS [udfsLength]
+	   ,1											 AS [udfbIsActive]
+	   ,NULL										 AS [udfnLevelNo]
+	   ,'user_party_Data' + ucf.[field_title]		 AS [udfshortName]
+	   ,nuf.dropdownValues							 AS [udfsNewValues]
+	   ,DENSE_RANK() OVER (ORDER BY nuf.field_title) AS [udfnSortOrder]
+	--SELECT DISTINCT nuf.*
+	FROM [NeosBrianWhite]..user_Party_data td
+	JOIN [NeosBrianWhite]..Party_Indexed pty
+		ON pty.id = td.partyid
+	JOIN [NeosBrianWhite]..party_role_list prl
+		ON prl.id = pty.partyrolelistid
+	JOIN PartyRoles rol
+		ON rol.[Needles Roles] = prl.[role]
+	JOIN [NeosBrianWhite]..user_case_fields ucf
+		ON ucf.id = td.usercasefieldid
+	JOIN NeedlesUserFields nuf
+		ON nuf.field_id = ucf.id
+	JOIN sma_trn_Cases cas
+		ON cas.Neos_Saga = CONVERT(VARCHAR(50), pty.casesid)
+	LEFT JOIN [sma_MST_UDFDefinition] def
+		ON def.[udfnRelatedPK] = cas.casnOrgCaseTypeID
+			AND def.[udfsUDFName] = nuf.field_title
+			AND def.[udfsScreenName] = rol.[SA Party]
 GO
 
 ---------------------------------
 --UDF VALUES
 ---------------------------------
 INSERT INTO [sma_TRN_UDFValues]
-(
-       [udvnUDFID]
-      ,[udvsScreenName]
-      ,[udvsUDFCtg]
-      ,[udvnRelatedID]
-      ,[udvnSubRelatedID]
-      ,[udvsUDFValue]
-      ,[udvnRecUserID]
-      ,[udvdDtCreated]
-      ,[udvnModifyUserID]
-      ,[udvdDtModified]
-      ,[udvnLevelNo]
-)
-SELECT DISTINCT
-	def.udfnUDFID 			as [udvnUDFID],
-	rol.[SA Party]			as [udvsScreenName],
-	'C'						as [udvsUDFCtg],
-	CAS.casnCaseID			as [udvnRelatedID],
-	isnull(Pl.plnnPlaintiffID, df.defnDefendentID)	as[udvnSubRelatedID],
-    case when ucf.field_Type = '14' then (select top 1 convert(varchar,UNQCID) from indvorgcontacts_Indexed where saga_ref = convert(varchar(50),td.[namesid])) else td.[data] end			as [udvsUDFValue],  
-	368						as [udvnRecUserID],
-	getdate()				as [udvdDtCreated],
-	null					as [udvnModifyUserID],
-	null					as [udvdDtModified],
-	null					as [udvnLevelNo]
-FROM [NeosBrianWhite]..user_Party_data td
-JOIN [NeosBrianWhite]..Party_Indexed pty on pty.id = td.partyid
-JOIN [NeosBrianWhite]..party_role_list prl on prl.id = convert(varchar(50),pty.partyrolelistid)
-JOIN PartyRoles rol on rol.[Needles Roles] = prl.[role]
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = convert(varchar(50),td.usercasefieldid)
---JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
-JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50),pty.casesid)
-LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cas.casnOrgCaseTypeID and def.[udfsUDFName] = ucf.field_title and def.[udfsScreenName] = rol.[SA Party]
-LEFT JOIN sma_trn_Plaintiff Pl on pl.saga_party = convert(varchar(50),pty.id)
-LEFT JOIN sma_trn_Defendants DF on DF.saga_party = convert(varchar(50),pty.id)
+	(
+	[udvnUDFID]
+   ,[udvsScreenName]
+   ,[udvsUDFCtg]
+   ,[udvnRelatedID]
+   ,[udvnSubRelatedID]
+   ,[udvsUDFValue]
+   ,[udvnRecUserID]
+   ,[udvdDtCreated]
+   ,[udvnModifyUserID]
+   ,[udvdDtModified]
+   ,[udvnLevelNo]
+	)
+	SELECT DISTINCT
+		def.udfnUDFID								   AS [udvnUDFID]
+	   ,rol.[SA Party]								   AS [udvsScreenName]
+	   ,'C'											   AS [udvsUDFCtg]
+	   ,CAS.casnCaseID								   AS [udvnRelatedID]
+	   ,ISNULL(Pl.plnnPlaintiffID, df.defnDefendentID) AS [udvnSubRelatedID]
+	   ,CASE
+			WHEN ucf.field_Type = '14'
+				THEN (
+						SELECT TOP 1
+							CONVERT(VARCHAR, UNQCID)
+						FROM indvorgcontacts_Indexed
+						WHERE saga_ref = CONVERT(VARCHAR(50), td.[namesid])
+					)
+			ELSE td.[data]
+		END											   AS [udvsUDFValue]
+	   ,368											   AS [udvnRecUserID]
+	   ,GETDATE()									   AS [udvdDtCreated]
+	   ,NULL										   AS [udvnModifyUserID]
+	   ,NULL										   AS [udvdDtModified]
+	   ,NULL										   AS [udvnLevelNo]
+	FROM [NeosBrianWhite]..user_Party_data td
+	JOIN [NeosBrianWhite]..Party_Indexed pty
+		ON pty.id = td.partyid
+	JOIN [NeosBrianWhite]..party_role_list prl
+		ON prl.id = CONVERT(VARCHAR(50), pty.partyrolelistid)
+	JOIN PartyRoles rol
+		ON rol.[Needles Roles] = prl.[role]
+	JOIN [NeosBrianWhite]..user_case_fields ucf
+		ON ucf.id = CONVERT(VARCHAR(50), td.usercasefieldid)
+	--JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
+	JOIN sma_trn_Cases cas
+		ON cas.Neos_Saga = CONVERT(VARCHAR(50), pty.casesid)
+	LEFT JOIN [sma_MST_UDFDefinition] def
+		ON def.[udfnRelatedPK] = cas.casnOrgCaseTypeID
+			AND def.[udfsUDFName] = ucf.field_title
+			AND def.[udfsScreenName] = rol.[SA Party]
+	LEFT JOIN sma_trn_Plaintiff Pl
+		ON pl.saga_party = CONVERT(VARCHAR(50), pty.id)
+	LEFT JOIN sma_trn_Defendants DF
+		ON DF.saga_party = CONVERT(VARCHAR(50), pty.id)
 GO

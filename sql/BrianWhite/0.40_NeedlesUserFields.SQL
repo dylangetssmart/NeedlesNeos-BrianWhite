@@ -1,4 +1,4 @@
-Use SANeosBrianWhite
+USE SANeosBrianWhite
 GO
 
 /******************************************
@@ -18,80 +18,129 @@ GO
  * 35	Y/N/?
  *****************************************/
 
-IF EXISTS (Select * From sys.tables where name = 'NeedlesUserFields' and type = 'U')
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.tables
+		WHERE name = 'NeedlesUserFields'
+			AND type = 'U'
+	)
 BEGIN
-		DROP TABLE NeedlesUserFields
+	DROP TABLE NeedlesUserFields
 END
 -------------------------------------------
 --CREATE TABLE NEEDLES USER FIELDS
 -------------------------------------------
-CREATE TABLE NeedlesUserFields ( 
-		field_id varchar(50),
-		field_title varchar(30),
-		--column_name varchar(30),
-		field_Type int, --varchar(20),
-		field_len varchar(10),
-		mini_Dir varchar(50),
-		UDFType varchar(30),
-		DropDownValues varchar(max))
+CREATE TABLE NeedlesUserFields (
+	field_id VARCHAR(50)
+   ,field_title VARCHAR(30)
+   ,
+	--column_name varchar(30),
+	field_Type INT
+   , --varchar(20),
+	field_len VARCHAR(10)
+   ,mini_Dir VARCHAR(50)
+   ,UDFType VARCHAR(30)
+   ,DropDownValues VARCHAR(MAX)
+)
 -------------------------------------------------------------------
 --BUILD USER FIELDS PLUS DROP DOWNS FOR UDF DEFINITION PURPOSES
 -------------------------------------------------------------------
-INSERT INTO NeedlesUserFields (field_id, field_title, field_Type, field_len, mini_Dir, UDFType)
-SELECT ucf.id, field_title, field_type, 
-case when field_Type in (13, 16) then convert(varchar,field_len) + ',2'
-	else convert(varchar,field_len) end,
-	minidirlistid,
-case when field_Type in (1, 29,33,27) then 'Text'
-	when field_Type = 14 then 'Contact'  --for new SA version
-	when field_Type in (13,16) then 'Number'
-	when field_Type = 5 then 'CheckBox'
-	when field_Type IN (12, 35) then 'Dropdown'
-	when field_Type = 7 then 'Date'
-	when field_Type = 31 then 'Time'
-	else NULL end
---Select *
-FROM NeosBrianWhite..[user_case_fields] ucf
+INSERT INTO NeedlesUserFields
+	(
+	field_id
+   ,field_title
+   ,field_Type
+   ,field_len
+   ,mini_Dir
+   ,UDFType
+	)
+	SELECT
+		ucf.id
+	   ,field_title
+	   ,field_type
+	   ,CASE
+			WHEN field_Type IN (13, 16)
+				THEN CONVERT(VARCHAR, field_len) + ',2'
+			ELSE CONVERT(VARCHAR, field_len)
+		END
+	   ,minidirlistid
+	   ,CASE
+			WHEN field_Type IN (1, 29, 33, 27)
+				THEN 'Text'
+			WHEN field_Type = 14
+				THEN 'Contact'  --for new SA version
+			WHEN field_Type IN (13, 16)
+				THEN 'Number'
+			WHEN field_Type = 5
+				THEN 'CheckBox'
+			WHEN field_Type IN (12, 35)
+				THEN 'Dropdown'
+			WHEN field_Type = 7
+				THEN 'Date'
+			WHEN field_Type = 31
+				THEN 'Time'
+			ELSE NULL
+		END
+	--Select *
+	FROM NeosBrianWhite..[user_case_fields] ucf
 --LEFT JOIN NeosBrianWhite..[mini_dir_list] dl on ucf.minidirlistid = dl.id
 
 -----------------------------------------------------
 --CURSOR TO FILL IN DROP DOWN VALUES FOR MINI DIRS
 -----------------------------------------------------
-DECLARE @miniDir varchar(50),
-		@numberCt int,
-		@code varchar(30)
+DECLARE @miniDir VARCHAR(50)
+	   ,@numberCt INT
+	   ,@code VARCHAR(30)
 
-DECLARE userFields_cursor CURSOR FOR
-SELECT Mini_Dir from NeedlesUserFields where isnull(Mini_Dir,'') <> ''
+DECLARE userFields_cursor CURSOR FOR SELECT
+	Mini_Dir
+FROM NeedlesUserFields
+WHERE ISNULL(Mini_Dir, '') <> ''
 
 OPEN userFields_Cursor
 FETCH NEXT FROM userFields_Cursor INTO @miniDir
 WHILE @@FETCH_STATUS = 0
 BEGIN
 
-	SELECT identity(int,1,1) as Number, gd.code
-	INTO #values
-	--select *
-	FROM NeosBrianWhite..mini_general_dir gd
-	--JOIN NeosBrianWhite..mini_dir_list dl on gd.num_assigned = dl.dir_key
-	WHERE gd.minidirlistid = @miniDir  
+SELECT
+	IDENTITY(INT, 1, 1) AS Number
+   ,gd.code INTO #values
+--select *
+FROM NeosBrianWhite..mini_general_dir gd
+--JOIN NeosBrianWhite..mini_dir_list dl on gd.num_assigned = dl.dir_key
+WHERE gd.minidirlistid = @miniDir
 
-	SET @numberCt = (select max(number) from #values)
+SET @numberCt = (
+	SELECT
+		MAX(number)
+	FROM #values
+)
 
-	WHILE @numberCt >= 1
-	BEGIN
-		
-		SET @code = (select code from #values where Number = @numberCt)
+WHILE @numberCt >= 1
+BEGIN
 
-		UPDATE NeedlesUserFields
-		SET DropDownValues = case when dropDownValues is null then @code else DropDownValues + '~'+@code end
-		WHERE Mini_Dir = @miniDir
+SET @code = (
+	SELECT
+		code
+	FROM #values
+	WHERE Number = @numberCt
+)
 
-		SET @numberCt = @numberCt - 1
-		
-	END
-	
-	DROP TABLE #values
+UPDATE NeedlesUserFields
+SET DropDownValues =
+CASE
+	WHEN dropDownValues IS NULL
+		THEN @code
+	ELSE DropDownValues + '~' + @code
+END
+WHERE Mini_Dir = @miniDir
+
+SET @numberCt = @numberCt - 1
+
+END
+
+DROP TABLE #values
 
 FETCH NEXT FROM userFields_Cursor INTO @miniDir
 END

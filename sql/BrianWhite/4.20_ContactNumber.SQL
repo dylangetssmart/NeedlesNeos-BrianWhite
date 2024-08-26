@@ -10,31 +10,53 @@ alter table [sma_MST_ContactNumbers] enable trigger all
 
 
 ---(0)---
-INSERT INTO sma_MST_ContactNoType ( ctysDscrptn,ctynContactCategoryID, ctysDefaultTexting )
-SELECT 'Fax',1, 0
-UNION
-SELECT 'Other',1, 0
-UNION
-SELECT 'Home Phone',2, 0
-UNION
-SELECT 'Other',2, 0
-EXCEPT
-SELECT ctysDscrptn,ctynContactCategoryID, ctysDefaultTexting FROM sma_MST_ContactNoType 
+INSERT INTO sma_MST_ContactNoType
+	(
+	ctysDscrptn
+   ,ctynContactCategoryID
+   ,ctysDefaultTexting
+	)
+	SELECT
+		'Fax'
+	   ,1
+	   ,0
+	UNION
+	SELECT
+		'Other'
+	   ,1
+	   ,0
+	UNION
+	SELECT
+		'Home Phone'
+	   ,2
+	   ,0
+	UNION
+	SELECT
+		'Other'
+	   ,2
+	   ,0
+	EXCEPT
+	SELECT
+		ctysDscrptn
+	   ,ctynContactCategoryID
+	   ,ctysDefaultTexting
+	FROM sma_MST_ContactNoType
 
 
 ---(0)----
-IF OBJECT_ID (N'dbo.FormatPhone', N'FN') IS NOT NULL
-    DROP FUNCTION FormatPhone;
+IF OBJECT_ID(N'dbo.FormatPhone', N'FN') IS NOT NULL
+	DROP FUNCTION FormatPhone;
 GO
-CREATE FUNCTION dbo.FormatPhone(@phone varchar(MAX) )
-RETURNS varchar(MAX) 
-AS 
+CREATE FUNCTION dbo.FormatPhone (@phone VARCHAR(MAX))
+RETURNS VARCHAR(MAX)
+AS
 BEGIN
-    if len(@phone)=10 and ISNUMERIC(@phone)=1 
-    begin
-	   return '(' + Substring(@phone,1,3) + ') ' + Substring(@phone,4,3) + '-' + Substring(@phone,7,4) ---> this is good for perecman
-    end
-    return @phone;
+	IF LEN(@phone) = 10
+		AND ISNUMERIC(@phone) = 1
+	BEGIN
+		RETURN '(' + SUBSTRING(@phone, 1, 3) + ') ' + SUBSTRING(@phone, 4, 3) + '-' + SUBSTRING(@phone, 7, 4) ---> this is good for perecman
+	END
+	RETURN @phone;
 END;
 GO
 
@@ -44,181 +66,334 @@ GO
 ---
 
 INSERT INTO [sma_MST_ContactNumbers]
-(     
-       [cnnnContactCtgID],[cnnnContactID],[cnnnPhoneTypeID],[cnnsContactNumber],[cnnsExtension],[cnnbPrimary],[cnnbVisible],[cnnnAddressID],[cnnsLabelCaption]
-	   ,[cnnnRecUserID],[cnndDtCreated],[cnnnModifyUserID],[cnndDtModified],[cnnnLevelNo],[caseNo], [Comments]
-)
-SELECT 
-		C.cinnContactCtg			as cnnnContactCtgID,
-		C.cinnContactID				as cnnnContactID,
-		ctynContactNoTypeID			as cnnnPhoneTypeID,  
-		dbo.FormatPhone(n.number)	as cnnsContactNumber,
-		n.extension					as cnnsExtension,
-		case when n.sort_order = 1 then 1 else 0 end	as cnnbPrimary,
-		null						as cnnbVisible,
-		A.addnAddressID				as cnnnAddressID,
-		ct.ctysDscrptn				as cnnsLabelCaption,
-		(select usrnUserID from sma_mst_users where saga = staffcreatedid)	as cnnnRecUserID,
-		date_created				as cnndDtCreated,
-		368							as cnnnModifyUserID,
-		getdate()					as cnndDtModified,
-		null,null,	
-		isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
-		''	 						as [Comments]
---select *
-FROM [NeosBrianWhite].[dbo].[phone] N 
-JOIN [sma_MST_IndvContacts] C on C.saga_ref = convert(varchar(50),N.namesid)
-LEFT JOIN sma_MST_ContactNoType ct on ctynContactCategoryID=1 
-								and ct.ctysDscrptn = case when n.title = 'Mobile' then 'Cell' 
-														when n.title = 'Home' then 'Home Primary Phone'
-														when n.title = 'Business' then 'HQ/Main Office Phone'
-														when n.title = 'Fax' then 'Fax' 
-														else 'Other' end
-JOIN [sma_MST_Address] A on A.addnContactID=C.cinnContactID and A.addnContactCtgID=C.cinnContactCtg and A.addbPrimary=1 
-WHERE isnull(N.number,'') <> ''  
+	(
+	[cnnnContactCtgID]
+   ,[cnnnContactID]
+   ,[cnnnPhoneTypeID]
+   ,[cnnsContactNumber]
+   ,[cnnsExtension]
+   ,[cnnbPrimary]
+   ,[cnnbVisible]
+   ,[cnnnAddressID]
+   ,[cnnsLabelCaption]
+   ,[cnnnRecUserID]
+   ,[cnndDtCreated]
+   ,[cnnnModifyUserID]
+   ,[cnndDtModified]
+   ,[cnnnLevelNo]
+   ,[caseNo]
+   ,[Comments]
+	)
+	SELECT
+		C.cinnContactCtg		  AS cnnnContactCtgID
+	   ,C.cinnContactID			  AS cnnnContactID
+	   ,ctynContactNoTypeID		  AS cnnnPhoneTypeID
+	   ,dbo.FormatPhone(n.number) AS cnnsContactNumber
+	   ,n.extension				  AS cnnsExtension
+	   ,CASE
+			WHEN n.sort_order = 1
+				THEN 1
+			ELSE 0
+		END						  AS cnnbPrimary
+	   ,NULL					  AS cnnbVisible
+	   ,A.addnAddressID			  AS cnnnAddressID
+	   ,ct.ctysDscrptn			  AS cnnsLabelCaption
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = staffcreatedid
+		)						  
+		AS cnnnRecUserID
+	   ,date_created			  AS cnndDtCreated
+	   ,368						  AS cnnnModifyUserID
+	   ,GETDATE()				  AS cnndDtModified
+	   ,NULL
+	   ,NULL
+	   ,ISNULL('Phone Type: ' + NULLIF(CONVERT(VARCHAR, n.[title]), '') + CHAR(13), '') +
+		''						  AS [Comments]
+	--select *
+	FROM [NeosBrianWhite].[dbo].[phone] N
+	JOIN [sma_MST_IndvContacts] C
+		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesid)
+	LEFT JOIN sma_MST_ContactNoType ct
+		ON ctynContactCategoryID = 1
+			AND ct.ctysDscrptn = CASE
+				WHEN n.title = 'Mobile'
+					THEN 'Cell'
+				WHEN n.title = 'Home'
+					THEN 'Home Primary Phone'
+				WHEN n.title = 'Business'
+					THEN 'HQ/Main Office Phone'
+				WHEN n.title = 'Fax'
+					THEN 'Fax'
+				ELSE 'Other'
+			END
+	JOIN [sma_MST_Address] A
+		ON A.addnContactID = C.cinnContactID
+			AND A.addnContactCtgID = C.cinnContactCtg
+			AND A.addbPrimary = 1
+	WHERE ISNULL(N.number, '') <> ''
 
 --STAFF MAIN NUMBER
 INSERT INTO [sma_MST_ContactNumbers]
-(     
-       [cnnnContactCtgID],[cnnnContactID],[cnnnPhoneTypeID],[cnnsContactNumber],[cnnsExtension],[cnnbPrimary],[cnnbVisible],[cnnnAddressID],[cnnsLabelCaption]
-	   ,[cnnnRecUserID],[cnndDtCreated],[cnnnModifyUserID],[cnndDtModified],[cnnnLevelNo],[caseNo], [Comments]
-)
-SELECT 
-		C.cinnContactCtg			as cnnnContactCtgID,
-		C.cinnContactID				as cnnnContactID,
-		ctynContactNoTypeID			as cnnnPhoneTypeID,  
-		dbo.FormatPhone(n.phone_number)	as cnnsContactNumber,
-		n.extension					as cnnsExtension,
-		1							as cnnbPrimary,
-		null						as cnnbVisible,
-		A.addnAddressID				as cnnnAddressID,
-		ct.ctysDscrptn				as cnnsLabelCaption,
-		(select usrnUserID from sma_mst_users where saga = staffcreatedid)	as cnnnRecUserID,
-		date_created				as cnndDtCreated,
-		368							as cnnnModifyUserID,
-		getdate()					as cnndDtModified,
-		null,null,	
+	(
+	[cnnnContactCtgID]
+   ,[cnnnContactID]
+   ,[cnnnPhoneTypeID]
+   ,[cnnsContactNumber]
+   ,[cnnsExtension]
+   ,[cnnbPrimary]
+   ,[cnnbVisible]
+   ,[cnnnAddressID]
+   ,[cnnsLabelCaption]
+   ,[cnnnRecUserID]
+   ,[cnndDtCreated]
+   ,[cnnnModifyUserID]
+   ,[cnndDtModified]
+   ,[cnnnLevelNo]
+   ,[caseNo]
+   ,[Comments]
+	)
+	SELECT
+		C.cinnContactCtg				AS cnnnContactCtgID
+	   ,C.cinnContactID					AS cnnnContactID
+	   ,ctynContactNoTypeID				AS cnnnPhoneTypeID
+	   ,dbo.FormatPhone(n.phone_number) AS cnnsContactNumber
+	   ,n.extension						AS cnnsExtension
+	   ,1								AS cnnbPrimary
+	   ,NULL							AS cnnbVisible
+	   ,A.addnAddressID					AS cnnnAddressID
+	   ,ct.ctysDscrptn					AS cnnsLabelCaption
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = staffcreatedid
+		)								
+		AS cnnnRecUserID
+	   ,date_created					AS cnndDtCreated
+	   ,368								AS cnnnModifyUserID
+	   ,GETDATE()						AS cnndDtModified
+	   ,NULL
+	   ,NULL
+	   ,
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
-		''	 						as [Comments]
---select *
-FROM [NeosBrianWhite].[dbo].[staff] N 
-JOIN [sma_MST_IndvContacts] C on C.saga_ref = convert(varchar(50),N.id)
-LEFT JOIN sma_MST_ContactNoType ct on ctynContactCategoryID=1 
-								and ct.ctysDscrptn = 'HQ/Main Office Phone'
-JOIN [sma_MST_Address] A on A.addnContactID=C.cinnContactID and A.addnContactCtgID=C.cinnContactCtg and A.addbPrimary=1 
-WHERE isnull(N.phone_number,'') <> ''  
+		''								AS [Comments]
+	--select *
+	FROM [NeosBrianWhite].[dbo].[staff] N
+	JOIN [sma_MST_IndvContacts] C
+		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
+	LEFT JOIN sma_MST_ContactNoType ct
+		ON ctynContactCategoryID = 1
+			AND ct.ctysDscrptn = 'HQ/Main Office Phone'
+	JOIN [sma_MST_Address] A
+		ON A.addnContactID = C.cinnContactID
+			AND A.addnContactCtgID = C.cinnContactCtg
+			AND A.addbPrimary = 1
+	WHERE ISNULL(N.phone_number, '') <> ''
 
 
 
 --STAFF FAX NUMBER
 INSERT INTO [sma_MST_ContactNumbers]
-(     
-       [cnnnContactCtgID],[cnnnContactID],[cnnnPhoneTypeID],[cnnsContactNumber],[cnnsExtension],[cnnbPrimary],[cnnbVisible],[cnnnAddressID],[cnnsLabelCaption]
-	   ,[cnnnRecUserID],[cnndDtCreated],[cnnnModifyUserID],[cnndDtModified],[cnnnLevelNo],[caseNo], [Comments]
-)
-SELECT 
-		C.cinnContactCtg			as cnnnContactCtgID,
-		C.cinnContactID				as cnnnContactID,
-		ctynContactNoTypeID			as cnnnPhoneTypeID,  
-		dbo.FormatPhone(n.fax_number)	as cnnsContactNumber,
-		null						as cnnsExtension,
-		1							as cnnbPrimary,
-		null						as cnnbVisible,
-		A.addnAddressID				as cnnnAddressID,
-		ct.ctysDscrptn				as cnnsLabelCaption,
-		(select usrnUserID from sma_mst_users where saga = staffcreatedid)	as cnnnRecUserID,
-		date_created				as cnndDtCreated,
-		368							as cnnnModifyUserID,
-		getdate()					as cnndDtModified,
-		null,null,	
+	(
+	[cnnnContactCtgID]
+   ,[cnnnContactID]
+   ,[cnnnPhoneTypeID]
+   ,[cnnsContactNumber]
+   ,[cnnsExtension]
+   ,[cnnbPrimary]
+   ,[cnnbVisible]
+   ,[cnnnAddressID]
+   ,[cnnsLabelCaption]
+   ,[cnnnRecUserID]
+   ,[cnndDtCreated]
+   ,[cnnnModifyUserID]
+   ,[cnndDtModified]
+   ,[cnnnLevelNo]
+   ,[caseNo]
+   ,[Comments]
+	)
+	SELECT
+		C.cinnContactCtg			  AS cnnnContactCtgID
+	   ,C.cinnContactID				  AS cnnnContactID
+	   ,ctynContactNoTypeID			  AS cnnnPhoneTypeID
+	   ,dbo.FormatPhone(n.fax_number) AS cnnsContactNumber
+	   ,NULL						  AS cnnsExtension
+	   ,1							  AS cnnbPrimary
+	   ,NULL						  AS cnnbVisible
+	   ,A.addnAddressID				  AS cnnnAddressID
+	   ,ct.ctysDscrptn				  AS cnnsLabelCaption
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = staffcreatedid
+		)							  
+		AS cnnnRecUserID
+	   ,date_created				  AS cnndDtCreated
+	   ,368							  AS cnnnModifyUserID
+	   ,GETDATE()					  AS cnndDtModified
+	   ,NULL
+	   ,NULL
+	   ,
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
-		''	 						as [Comments]
---select *
-FROM [NeosBrianWhite].[dbo].[staff] N 
-JOIN [sma_MST_IndvContacts] C on C.saga_ref =convert(varchar(50), N.id)
-LEFT JOIN sma_MST_ContactNoType ct on ctynContactCategoryID=1 
-								and ct.ctysDscrptn = 'Fax'
-JOIN [sma_MST_Address] A on A.addnContactID=C.cinnContactID and A.addnContactCtgID=C.cinnContactCtg and A.addbPrimary=1 
-WHERE isnull(N.fax_number,'') <> ''  
+		''							  AS [Comments]
+	--select *
+	FROM [NeosBrianWhite].[dbo].[staff] N
+	JOIN [sma_MST_IndvContacts] C
+		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
+	LEFT JOIN sma_MST_ContactNoType ct
+		ON ctynContactCategoryID = 1
+			AND ct.ctysDscrptn = 'Fax'
+	JOIN [sma_MST_Address] A
+		ON A.addnContactID = C.cinnContactID
+			AND A.addnContactCtgID = C.cinnContactCtg
+			AND A.addbPrimary = 1
+	WHERE ISNULL(N.fax_number, '') <> ''
 
 
 --STAFF MOBILE NUMBER
 INSERT INTO [sma_MST_ContactNumbers]
-(     
-       [cnnnContactCtgID],[cnnnContactID],[cnnnPhoneTypeID],[cnnsContactNumber],[cnnsExtension],[cnnbPrimary],[cnnbVisible],[cnnnAddressID],[cnnsLabelCaption]
-	   ,[cnnnRecUserID],[cnndDtCreated],[cnnnModifyUserID],[cnndDtModified],[cnnnLevelNo],[caseNo], [Comments]
-)
-SELECT 
-		C.cinnContactCtg			as cnnnContactCtgID,
-		C.cinnContactID				as cnnnContactID,
-		ctynContactNoTypeID			as cnnnPhoneTypeID,  
-		dbo.FormatPhone(n.mobile_number)	as cnnsContactNumber,
-		null						as cnnsExtension,
-		1							as cnnbPrimary,
-		null						as cnnbVisible,
-		A.addnAddressID				as cnnnAddressID,
-		ct.ctysDscrptn				as cnnsLabelCaption,
-		(select usrnUserID from sma_mst_users where saga = staffcreatedid)	as cnnnRecUserID,
-		date_created				as cnndDtCreated,
-		368							as cnnnModifyUserID,
-		getdate()					as cnndDtModified,
-		null,null,	
+	(
+	[cnnnContactCtgID]
+   ,[cnnnContactID]
+   ,[cnnnPhoneTypeID]
+   ,[cnnsContactNumber]
+   ,[cnnsExtension]
+   ,[cnnbPrimary]
+   ,[cnnbVisible]
+   ,[cnnnAddressID]
+   ,[cnnsLabelCaption]
+   ,[cnnnRecUserID]
+   ,[cnndDtCreated]
+   ,[cnnnModifyUserID]
+   ,[cnndDtModified]
+   ,[cnnnLevelNo]
+   ,[caseNo]
+   ,[Comments]
+	)
+	SELECT
+		C.cinnContactCtg				 AS cnnnContactCtgID
+	   ,C.cinnContactID					 AS cnnnContactID
+	   ,ctynContactNoTypeID				 AS cnnnPhoneTypeID
+	   ,dbo.FormatPhone(n.mobile_number) AS cnnsContactNumber
+	   ,NULL							 AS cnnsExtension
+	   ,1								 AS cnnbPrimary
+	   ,NULL							 AS cnnbVisible
+	   ,A.addnAddressID					 AS cnnnAddressID
+	   ,ct.ctysDscrptn					 AS cnnsLabelCaption
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = staffcreatedid
+		)								 
+		AS cnnnRecUserID
+	   ,date_created					 AS cnndDtCreated
+	   ,368								 AS cnnnModifyUserID
+	   ,GETDATE()						 AS cnndDtModified
+	   ,NULL
+	   ,NULL
+	   ,
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
-		''	 						as [Comments]
---select *
-FROM [NeosBrianWhite].[dbo].[staff] N 
-JOIN [sma_MST_IndvContacts] C on C.saga_ref = convert(varchar(50),N.id)
-LEFT JOIN sma_MST_ContactNoType ct on ctynContactCategoryID=1 
-								and ct.ctysDscrptn = 'Cell'
-JOIN [sma_MST_Address] A on A.addnContactID=C.cinnContactID and A.addnContactCtgID=C.cinnContactCtg and A.addbPrimary=1 
-WHERE isnull(N.mobile_number,'') <> ''  
+		''								 AS [Comments]
+	--select *
+	FROM [NeosBrianWhite].[dbo].[staff] N
+	JOIN [sma_MST_IndvContacts] C
+		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
+	LEFT JOIN sma_MST_ContactNoType ct
+		ON ctynContactCategoryID = 1
+			AND ct.ctysDscrptn = 'Cell'
+	JOIN [sma_MST_Address] A
+		ON A.addnContactID = C.cinnContactID
+			AND A.addnContactCtgID = C.cinnContactCtg
+			AND A.addbPrimary = 1
+	WHERE ISNULL(N.mobile_number, '') <> ''
 
 ------------------------------------
 --ORG CONTACT PHONE NUMBERS 
 ------------------------------------
 INSERT INTO [sma_MST_ContactNumbers]
-(     
-       [cnnnContactCtgID],[cnnnContactID],[cnnnPhoneTypeID],[cnnsContactNumber],[cnnsExtension],[cnnbPrimary],[cnnbVisible],[cnnnAddressID],[cnnsLabelCaption]
-	   ,[cnnnRecUserID],[cnndDtCreated],[cnnnModifyUserID],[cnndDtModified],[cnnnLevelNo],[caseNo]
-)
-SELECT 
-		C.connContactCtg			as cnnnContactCtgID,
-		C.connContactID				as cnnnContactID,
-		ctynContactNoTypeID			as cnnnPhoneTypeID,   -- Office Phone 
-		dbo.FormatPhone(n.number)	as cnnsContactNumber,
-		extension					as cnnsExtension,
-		case when n.sort_order = 1 then 1 else 0 end	as cnnbPrimary,
-		null						as cnnbVisible,
-		A.addnAddressID				as cnnnAddressID,
-		ct.ctysDscrptn				as cnnsLabelCaption,
-		(select usrnUserID from sma_mst_users where saga = staffcreatedid)	as cnnnRecUserID,
-		date_created				as cnndDtCreated,
-		368							as cnnnModifyUserID,
-		getdate()					as cnndDtModified,
-		null,null 
-FROM [NeosBrianWhite].[dbo].[phone] N
-JOIN [sma_MST_OrgContacts] C on C.saga_ref = convert(varchar(50),N.namesid)
-LEFT JOIN sma_MST_ContactNoType ct on ctynContactCategoryID= 2
-								and ct.ctysDscrptn = case when n.title = 'Mobile' then 'Cell' 
-														when n.title = 'Home' then 'Home Phone'
-														when n.title = 'Business' then 'Office Phone'
-														when n.title = 'Fax' then 'Office Fax' 
-														else 'Other' end
-JOIN [sma_MST_Address] A on A.addnContactID=C.connContactID and A.addnContactCtgID=C.connContactCtg and A.addbPrimary=1
-WHERE isnull(n.number,'') <> ''
+	(
+	[cnnnContactCtgID]
+   ,[cnnnContactID]
+   ,[cnnnPhoneTypeID]
+   ,[cnnsContactNumber]
+   ,[cnnsExtension]
+   ,[cnnbPrimary]
+   ,[cnnbVisible]
+   ,[cnnnAddressID]
+   ,[cnnsLabelCaption]
+   ,[cnnnRecUserID]
+   ,[cnndDtCreated]
+   ,[cnnnModifyUserID]
+   ,[cnndDtModified]
+   ,[cnnnLevelNo]
+   ,[caseNo]
+	)
+	SELECT
+		C.connContactCtg		  AS cnnnContactCtgID
+	   ,C.connContactID			  AS cnnnContactID
+	   ,ctynContactNoTypeID		  AS cnnnPhoneTypeID
+	   ,   -- Office Phone 
+		dbo.FormatPhone(n.number) AS cnnsContactNumber
+	   ,extension				  AS cnnsExtension
+	   ,CASE
+			WHEN n.sort_order = 1
+				THEN 1
+			ELSE 0
+		END						  AS cnnbPrimary
+	   ,NULL					  AS cnnbVisible
+	   ,A.addnAddressID			  AS cnnnAddressID
+	   ,ct.ctysDscrptn			  AS cnnsLabelCaption
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = staffcreatedid
+		)						  
+		AS cnnnRecUserID
+	   ,date_created			  AS cnndDtCreated
+	   ,368						  AS cnnnModifyUserID
+	   ,GETDATE()				  AS cnndDtModified
+	   ,NULL
+	   ,NULL
+	FROM [NeosBrianWhite].[dbo].[phone] N
+	JOIN [sma_MST_OrgContacts] C
+		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesid)
+	LEFT JOIN sma_MST_ContactNoType ct
+		ON ctynContactCategoryID = 2
+			AND ct.ctysDscrptn = CASE
+				WHEN n.title = 'Mobile'
+					THEN 'Cell'
+				WHEN n.title = 'Home'
+					THEN 'Home Phone'
+				WHEN n.title = 'Business'
+					THEN 'Office Phone'
+				WHEN n.title = 'Fax'
+					THEN 'Office Fax'
+				ELSE 'Other'
+			END
+	JOIN [sma_MST_Address] A
+		ON A.addnContactID = C.connContactID
+			AND A.addnContactCtgID = C.connContactCtg
+			AND A.addbPrimary = 1
+	WHERE ISNULL(n.number, '') <> ''
 
 
 
 
- /*
- ---(Appendix) Finally, only one phone number as primary---
+/*
+---(Appendix) Finally, only one phone number as primary---
 UPDATE [sma_MST_ContactNumbers] set cnnbPrimary=0
 FROM (
-	SELECT 
-		ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
-		cnnnContactNumberID as ContactNumberID  
-	FROM [sma_MST_ContactNumbers] 
-	WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
+SELECT 
+	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
+	cnnnContactNumberID as ContactNumberID  
+FROM [sma_MST_ContactNumbers] 
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID
@@ -226,11 +401,11 @@ and A.ContactNumberID=cnnnContactNumberID
 
 UPDATE [sma_MST_ContactNumbers] set cnnbPrimary=0
 FROM (
-	SELECT 
-		ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
-		cnnnContactNumberID as ContactNumberID  
-	FROM [sma_MST_ContactNumbers] 
-	WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
+SELECT 
+	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
+	cnnnContactNumberID as ContactNumberID  
+FROM [sma_MST_ContactNumbers] 
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID

@@ -1,5 +1,5 @@
 
-use [SANeosBrianWhite]
+USE [SANeosBrianWhite]
 GO
 /*
 alter table [sma_TRN_CalendarAppointments] disable trigger all
@@ -14,102 +14,251 @@ alter table [sma_trn_AppointmentStaff] disable trigger all
 */
 
 ---(0)---
-INSERT INTO [sma_MST_ActivityType] ( attsDscrptn, attnActivityCtg )  
-SELECT A.ActivityType, (select atcnPKId FROM sma_MST_ActivityCategory where atcsDscrptn='Non-Case Related Appointment')
-FROM
-( SELECT DISTINCT 
-    [TYPE] as ActivityType 
-	FROM [NeosBrianWhite].[dbo].[calendar] CAL 
-	JOIN [NeosBrianWhite].[dbo].[appointment_type] ap on cal.appointmenttypeid = ap.id
-	WHERE isnull([TYPE],'') <> '' and isnull(convert(varchar(50),cal.casesid),'') = ''
-EXCEPT
-SELECT attsDscrptn as ActivityType FROM sma_MST_ActivityType 
-	WHERE attnActivityCtg = (select atcnPKId FROM sma_MST_ActivityCategory where atcsDscrptn='Non-Case Related Appointment')
-	and isnull(attsDscrptn,'') <> '' 
-) A
+INSERT INTO [sma_MST_ActivityType]
+	(
+	attsDscrptn
+   ,attnActivityCtg
+	)
+	SELECT
+		A.ActivityType
+	   ,(
+			SELECT
+				atcnPKId
+			FROM sma_MST_ActivityCategory
+			WHERE atcsDscrptn = 'Non-Case Related Appointment'
+		)
+	FROM (
+		SELECT DISTINCT
+			[TYPE] AS ActivityType
+		FROM [NeosBrianWhite].[dbo].[calendar] CAL
+		JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+			ON cal.appointmenttypeid = ap.id
+		WHERE ISNULL([TYPE], '') <> ''
+			AND ISNULL(CONVERT(VARCHAR(50), cal.casesid), '') = ''
+		EXCEPT
+		SELECT
+			attsDscrptn AS ActivityType
+		FROM sma_MST_ActivityType
+		WHERE attnActivityCtg = (
+				SELECT
+					atcnPKId
+				FROM sma_MST_ActivityCategory
+				WHERE atcsDscrptn = 'Non-Case Related Appointment'
+			)
+			AND ISNULL(attsDscrptn, '') <> ''
+	) A
 GO
 
 ---(0)---
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_CalendarAppointments'))
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_CalendarAppointments')
+	)
 BEGIN
-    ALTER TABLE [sma_TRN_CalendarAppointments] 
-	ADD [saga] [varchar](50) NULL; 
+	ALTER TABLE [sma_TRN_CalendarAppointments]
+	ADD [saga] [VARCHAR](50) NULL;
 END
 GO
 
 
 ----(1)-----
 INSERT INTO [sma_TRN_CalendarAppointments]
-(
-	[FromDate],
-	[ToDate],
-	[AllDayEvent],
-	[AppointmentTypeID],
-	[ActivityTypeID],
-	[CaseID],
-	[LocationContactID],
-	[LocationContactGtgID],
-	[JudgeID],
-	[Comments],
-	[StatusID],
-	[Address],
-	[Subject],
-	[RecurranceParentID],[AdjournedID],[RecUserID],[DtCreated],[ModifyUserID],[DtModified],[DepositionType],[Deponants],
-	[OriginalAppointmentID],[OriginalAdjournedID],[RecurrenceId],[WorkPlanItemId],[AutoUpdateAppId],[AutoUpdated],[AutoUpdateProviderId],[saga]
-)
+	(
+	[FromDate]
+   ,[ToDate]
+   ,[AllDayEvent]
+   ,[AppointmentTypeID]
+   ,[ActivityTypeID]
+   ,[CaseID]
+   ,[LocationContactID]
+   ,[LocationContactGtgID]
+   ,[JudgeID]
+   ,[Comments]
+   ,[StatusID]
+   ,[Address]
+   ,[Subject]
+   ,[RecurranceParentID]
+   ,[AdjournedID]
+   ,[RecUserID]
+   ,[DtCreated]
+   ,[ModifyUserID]
+   ,[DtModified]
+   ,[DepositionType]
+   ,[Deponants]
+   ,[OriginalAppointmentID]
+   ,[OriginalAdjournedID]
+   ,[RecurrenceId]
+   ,[WorkPlanItemId]
+   ,[AutoUpdateAppId]
+   ,[AutoUpdated]
+   ,[AutoUpdateProviderId]
+   ,[saga]
+	)
 
-SELECT 
-    case when CAL.[start_date] between '1900-01-01' and '2079-06-06' then cal.[start_date]
-	   else '1900-01-01' end																	as [FromDate],
-    case when CAL.[stop_date] between '1900-01-01' and '2079-06-06' then cal.stop_date
-	   else '1900-01-01' end																	as [ToDate],
-	cal.[all_Day_event]																			as [AllDayEvent],
-	(select ID FROM [sma_MST_CalendarAppointmentType] WHERE AppointmentType='Non-Case related Office') as [AppointmentTypeID],
-	case when isnull(ap.[type],'') <> '' then 
-			 (	select attnActivityTypeID from sma_MST_ActivityType 
-				where attnActivityCtg=(select atcnPKId FROM sma_MST_ActivityCategory where atcsDscrptn='Non-Case Related Appointment') 
-				and attsDscrptn =ap.[type] )
-	   else	 (	select attnActivityTypeID from [sma_MST_ActivityType] 
-				where attnActivityCtg=(select atcnPKId FROM sma_MST_ActivityCategory where atcsDscrptn='Non-Case Related Appointment') 
-				and attsDscrptn = 'Appointment' )
-	end					  as [ActivityTypeID], 
-	null				  as [CaseID],
-	null				  as [LocationContactID],
-	null				  as [LocationContactGtgID],
-    null				  as [JudgeID],
-	isnull('party name: ' + nullif(CAL.[party_name],'') + CHAR(13),'') +
-	isnull('short notes: ' + nullif(CAL.[short_notes],'') + CHAR(13),'') +
-	isnull('Location: ' + nullif(CAL.[Location],'') + CHAR(13),'') +
-	isnull('Docket: ' + nullif(CAL.[docket],'') + CHAR(13),'') +
-	''					  as [Comments],
-	case 
-		when stat.[name] = 'Canceled'	then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Canceled')
-		when stat.[name] = 'Done'		then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Completed')
-		when stat.[name] = 'No Show'	then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Open')
-		when stat.[name] = 'Open'		then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Open')
-		when stat.[name] = 'Postponed'	then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Adjourned')
-		when stat.[name] = 'Rescheduled' then (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Adjourned')
-		else (select [StatusId] from [sma_MST_AppointmentStatus] where [StatusName]='Open')
-	end					  as [StatusID],
-	cal.location		  as [Address],
-	left(CAL.subject,120) as [Subject],
-	null,null,
-	(Select usrnUserID From sma_mst_users where saga = convert(varchar(50),cal.staffcreatedid))		  as [RecUserID],
-	CAL.[date_created]		  as [DtCreated],
-	(Select usrnUserID From sma_mst_users where saga = convert(varchar(50),cal.staffmodifiedid))	  as [ModifyUserID],
-	cal.[date_created]		  as [DtModified],
-	null,null,null,null,null,null,null,null,null,
-     convert(varchar(50),CAL.id)	  as [SAGA]
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
-LEFT JOIN [NeosBrianWhite].[dbo].[appointment_type] ap on cal.appointmenttypeid = ap.id
-LEFT JOIN [NeosBrianWhite].[dbo].[appointment_status] stat on cal.appointmentstatusid = stat.id
-WHERE isnull(convert(varchar(50),CAL.casesid),'') = ''
+	SELECT
+		CASE
+			WHEN CAL.[start_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN cal.[start_date]
+			ELSE '1900-01-01'
+		END							 AS [FromDate]
+	   ,CASE
+			WHEN CAL.[stop_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN cal.stop_date
+			ELSE '1900-01-01'
+		END							 AS [ToDate]
+	   ,cal.[all_Day_event]			 AS [AllDayEvent]
+	   ,(
+			SELECT
+				ID
+			FROM [sma_MST_CalendarAppointmentType]
+			WHERE AppointmentType = 'Non-Case related Office'
+		)							 
+		AS [AppointmentTypeID]
+	   ,CASE
+			WHEN ISNULL(ap.[type], '') <> ''
+				THEN (
+						SELECT
+							attnActivityTypeID
+						FROM sma_MST_ActivityType
+						WHERE attnActivityCtg = (
+								SELECT
+									atcnPKId
+								FROM sma_MST_ActivityCategory
+								WHERE atcsDscrptn = 'Non-Case Related Appointment'
+							)
+							AND attsDscrptn = ap.[type]
+					)
+			ELSE (
+					SELECT
+						attnActivityTypeID
+					FROM [sma_MST_ActivityType]
+					WHERE attnActivityCtg = (
+							SELECT
+								atcnPKId
+							FROM sma_MST_ActivityCategory
+							WHERE atcsDscrptn = 'Non-Case Related Appointment'
+						)
+						AND attsDscrptn = 'Appointment'
+				)
+		END							 AS [ActivityTypeID]
+	   ,NULL						 AS [CaseID]
+	   ,NULL						 AS [LocationContactID]
+	   ,NULL						 AS [LocationContactGtgID]
+	   ,NULL						 AS [JudgeID]
+	   ,ISNULL('party name: ' + NULLIF(CAL.[party_name], '') + CHAR(13), '') +
+		ISNULL('short notes: ' + NULLIF(CAL.[short_notes], '') + CHAR(13), '') +
+		ISNULL('Location: ' + NULLIF(CAL.[Location], '') + CHAR(13), '') +
+		ISNULL('Docket: ' + NULLIF(CAL.[docket], '') + CHAR(13), '') +
+		''							 AS [Comments]
+	   ,CASE
+			WHEN stat.[name] = 'Canceled'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Canceled'
+					)
+			WHEN stat.[name] = 'Done'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Completed'
+					)
+			WHEN stat.[name] = 'No Show'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Open'
+					)
+			WHEN stat.[name] = 'Open'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Open'
+					)
+			WHEN stat.[name] = 'Postponed'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Adjourned'
+					)
+			WHEN stat.[name] = 'Rescheduled'
+				THEN (
+						SELECT
+							[StatusId]
+						FROM [sma_MST_AppointmentStatus]
+						WHERE [StatusName] = 'Adjourned'
+					)
+			ELSE (
+					SELECT
+						[StatusId]
+					FROM [sma_MST_AppointmentStatus]
+					WHERE [StatusName] = 'Open'
+				)
+		END							 AS [StatusID]
+	   ,cal.location				 AS [Address]
+	   ,LEFT(CAL.subject, 120)		 AS [Subject]
+	   ,NULL
+	   ,NULL
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = CONVERT(VARCHAR(50), cal.staffcreatedid)
+		)							 
+		AS [RecUserID]
+	   ,CAL.[date_created]			 AS [DtCreated]
+	   ,(
+			SELECT
+				usrnUserID
+			FROM sma_mst_users
+			WHERE saga = CONVERT(VARCHAR(50), cal.staffmodifiedid)
+		)							 
+		AS [ModifyUserID]
+	   ,cal.[date_created]			 AS [DtModified]
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,NULL
+	   ,CONVERT(VARCHAR(50), CAL.id) AS [SAGA]
+	FROM [NeosBrianWhite].[dbo].[calendar] CAL
+	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+		ON cal.appointmenttypeid = ap.id
+	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_status] stat
+		ON cal.appointmentstatusid = stat.id
+	WHERE ISNULL(CONVERT(VARCHAR(50), CAL.casesid), '') = ''
 
 ------(2)-----
-INSERT INTO [sma_trn_AppointmentStaff] ( [AppointmentId] ,[StaffContactId], StaffContactCtg ) 
-SELECT DISTINCT APP.AppointmentID, ind.cinnContactID, ind.cinnContactCtg
-FROM [sma_TRN_CalendarAppointments] APP
-JOIN [NeosBrianWhite].[dbo].[calendar] CAL on APP.saga=convert(varchar(50),CAL.id)
-CROSS APPLY (select [data] from dbo.Split(cal.staff,';') ) x
-LEFT JOIN sma_MST_IndvContacts ind on ind.cinsGrade = x.data
-WHERE isnull( convert(varchar(50),cal.casesid),'') = ''
+INSERT INTO [sma_trn_AppointmentStaff]
+	(
+	[AppointmentId]
+   ,[StaffContactId]
+   ,StaffContactCtg
+	)
+	SELECT DISTINCT
+		APP.AppointmentID
+	   ,ind.cinnContactID
+	   ,ind.cinnContactCtg
+	FROM [sma_TRN_CalendarAppointments] APP
+	JOIN [NeosBrianWhite].[dbo].[calendar] CAL
+		ON APP.saga = CONVERT(VARCHAR(50), CAL.id)
+	CROSS APPLY (
+		SELECT
+			[data]
+		FROM dbo.Split(cal.staff, ';')
+	) x
+	LEFT JOIN sma_MST_IndvContacts ind
+		ON ind.cinsGrade = x.data
+	WHERE ISNULL(CONVERT(VARCHAR(50), cal.casesid), '') = ''

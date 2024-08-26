@@ -17,219 +17,285 @@ delete from sma_TRN_SpDamages where spdsreftable='LostWages'
 */
 
 ---(0)---
-if not exists (SELECT * FROM sys.columns WHERE Name = N'saga' AND Object_ID = Object_ID(N'sma_TRN_Employment'))
-begin
-    ALTER TABLE [sma_TRN_Employment] 
-	ADD [saga] varchar(50) NULL; 
-end
+IF NOT EXISTS (
+		SELECT
+			*
+		FROM sys.columns
+		WHERE Name = N'saga'
+			AND Object_ID = OBJECT_ID(N'sma_TRN_Employment')
+	)
+BEGIN
+	ALTER TABLE [sma_TRN_Employment]
+	ADD [saga] VARCHAR(50) NULL;
+END
 GO
 
 ---(0)---
-if exists (select * from sys.objects where name='value_tab_Employment_Helper' and type='U')
-begin
-	drop table value_tab_Employment_Helper
-end 
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE name = 'value_tab_Employment_Helper'
+			AND type = 'U'
+	)
+BEGIN
+	DROP TABLE value_tab_Employment_Helper
+END
 GO
 
 ---(0)---
-create table value_tab_Employment_Helper (
-    TableIndex [int] IDENTITY(1,1) NOT NULL,
-    case_id		    varchar(50),
-    value_id		 varchar(50),
-    ProviderNameId	    varchar(50),
-    ProviderName	    varchar(200),
-    ProviderCID	    int,
-    ProviderCTG	    int,
-    ProviderAID	    int,
-    casnCaseID		    int,
-    PlaintiffID	    int,
-CONSTRAINT IOC_Clustered_Index_value_tab_Employment_Helper PRIMARY KEY CLUSTERED ( TableIndex )
-) ON [PRIMARY] 
+CREATE TABLE value_tab_Employment_Helper (
+	TableIndex [INT] IDENTITY (1, 1) NOT NULL
+   ,case_id VARCHAR(50)
+   ,value_id VARCHAR(50)
+   ,ProviderNameId VARCHAR(50)
+   ,ProviderName VARCHAR(200)
+   ,ProviderCID INT
+   ,ProviderCTG INT
+   ,ProviderAID INT
+   ,casnCaseID INT
+   ,PlaintiffID INT
+   ,CONSTRAINT IOC_Clustered_Index_value_tab_Employment_Helper PRIMARY KEY CLUSTERED (TableIndex)
+) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (case_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (value_id);   
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (ProviderNameId);   
-GO
-
----(0)---
-insert into value_tab_Employment_Helper ( case_id,value_id,ProviderNameId,ProviderName,ProviderCID,ProviderCTG,ProviderAID,casnCaseID,PlaintiffID )
-select
-    V.casesid		    as case_id,	-- needles case
-    V.id			    as value_id,		-- needles records TAB item
-    V.namesid		    as ProviderNameId,  
-    IOC.Name		    as ProviderName,
-    IOC.CID		    as ProviderCID,  
-    IOC.CTG		    as ProviderCTG,
-    IOC.AID		    as ProviderAID,
-    CAS.casnCaseID	    as casnCaseID,
-    null			    as PlaintiffID  
---select *
-from [NeosBrianWhite]..[value_Indexed] V
-JOIN [NeosBrianWhite]..[value_code] vc on vc.id = v.valuecodeid
-JOIN [sma_TRN_cases] CAS on CAS.neos_saga = convert(varchar(50),V.casesid)
-JOIN IndvOrgContacts_Indexed IOC on ioc.SAGA_ref = convert(varchar(50),v.namesid) --and isnull(convert(varchar(50),v.namesid),'')<>''
-WHERE vc.code in ( 'LOSTWAGE')
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (ProviderNameId);
 GO
 
 ---(0)---
-DBCC DBREINDEX('value_tab_Employment_Helper',' ',90)  WITH NO_INFOMSGS 
+INSERT INTO value_tab_Employment_Helper
+	(
+	case_id
+   ,value_id
+   ,ProviderNameId
+   ,ProviderName
+   ,ProviderCID
+   ,ProviderCTG
+   ,ProviderAID
+   ,casnCaseID
+   ,PlaintiffID
+	)
+	SELECT
+		V.casesid	   AS case_id
+	   ,	-- needles case
+		V.id		   AS value_id
+	   ,		-- needles records TAB item
+		V.namesid	   AS ProviderNameId
+	   ,IOC.Name	   AS ProviderName
+	   ,IOC.CID		   AS ProviderCID
+	   ,IOC.CTG		   AS ProviderCTG
+	   ,IOC.AID		   AS ProviderAID
+	   ,CAS.casnCaseID AS casnCaseID
+	   ,NULL		   AS PlaintiffID
+	--select *
+	FROM [NeosBrianWhite]..[value_Indexed] V
+	JOIN [NeosBrianWhite]..[value_code] vc
+		ON vc.id = v.valuecodeid
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.neos_saga = CONVERT(VARCHAR(50), V.casesid)
+	JOIN IndvOrgContacts_Indexed IOC
+		ON ioc.SAGA_ref = CONVERT(VARCHAR(50), v.namesid) --and isnull(convert(varchar(50),v.namesid),'')<>''
+	WHERE vc.code IN ('LOSTWAGE')
+GO
+
+---(0)---
+DBCC DBREINDEX ('value_tab_Employment_Helper', ' ', 90) WITH NO_INFOMSGS
 GO
 
 
 ---(0)---
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
-begin
-    drop table value_tab_Multi_Party_Helper_Temp
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
+BEGIN
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
+END
 GO
 
-select 
-    V.casesid		    as cid,	
-    V.id			    as vid,
-    T.plnnPlaintiffID
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 --SELECT *
-from NeosBrianWhite..[value_Indexed] V
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Plaintiff] t on t.plnnCaseID=CAS.casnCaseID and t.saga_party = v.partyid
+FROM NeosBrianWhite..[value_Indexed] V
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Plaintiff] t
+	ON t.plnnCaseID = CAS.casnCaseID
+		AND t.saga_party = v.partyid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref = convert(varchar(50),V.partyid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 GO
 
-update value_tab_Employment_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
+UPDATE value_tab_Employment_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+FROM value_tab_Multi_Party_Helper_Temp A
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 
-if exists (select * from sys.objects where Name='value_tab_Multi_Party_Helper_Temp')
-begin
-    drop table value_tab_Multi_Party_Helper_Temp
-end
+IF EXISTS (
+		SELECT
+			*
+		FROM sys.objects
+		WHERE Name = 'value_tab_Multi_Party_Helper_Temp'
+	)
+BEGIN
+	DROP TABLE value_tab_Multi_Party_Helper_Temp
+END
 GO
 
-select 
-    V.casesid		    as cid,	
-    V.id			    as vid,
-    ( select plnnPlaintiffID from [sma_TRN_Plaintiff] where plnnCaseID=CAS.casnCaseID and plnbIsPrimary=1) as plnnPlaintiffID 
-INTO value_tab_Multi_Party_Helper_Temp   
+SELECT
+	V.casesid AS cid
+   ,V.id	  AS vid
+   ,(
+		SELECT
+			plnnPlaintiffID
+		FROM [sma_TRN_Plaintiff]
+		WHERE plnnCaseID = CAS.casnCaseID
+			AND plnbIsPrimary = 1
+	)		  
+	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 --SELECT *
-from NeosBrianWhite.[dbo].[value_Indexed] V
-JOIN [sma_TRN_cases] CAS on CAS.Neos_saga = convert(varchar(50),V.casesid)
-JOIN [sma_TRN_Defendants] d on d.defnCaseID = cas.casncaseid and d.saga_party = v.partyid
+FROM NeosBrianWhite.[dbo].[value_Indexed] V
+JOIN [sma_TRN_cases] CAS
+	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
+JOIN [sma_TRN_Defendants] d
+	ON d.defnCaseID = cas.casncaseid
+		AND d.saga_party = v.partyid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref = V.party_id
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
 
-update value_tab_Employment_Helper set PlaintiffID=A.plnnPlaintiffID
-from value_tab_Multi_Party_Helper_Temp A
-where case_id=A.cid and value_id=A.vid
+UPDATE value_tab_Employment_Helper
+SET PlaintiffID = A.plnnPlaintiffID
+FROM value_tab_Multi_Party_Helper_Temp A
+WHERE case_id = A.cid
+AND value_id = A.vid
 GO
 
 
 ---(1)---
 INSERT INTO [dbo].[sma_TRN_Employment]
-(
-    empnPlaintiffID,
-    empnEmprAddressID,
-    empnEmployerID,
-    empnEmpUnion,
-    empsJobTitle,
-    empsCompensationComments,
-    empnAverageWeeklyWage,
-    empnSalaryAmt,
-    empbOnTheJob,
-    empbWCClaim,
-    empdDateHired,
-    empsComments,
-    saga
-)
+	(
+	empnPlaintiffID
+   ,empnEmprAddressID
+   ,empnEmployerID
+   ,empnEmpUnion
+   ,empsJobTitle
+   ,empsCompensationComments
+   ,empnAverageWeeklyWage
+   ,empnSalaryAmt
+   ,empbOnTheJob
+   ,empbWCClaim
+   ,empdDateHired
+   ,empsComments
+   ,saga
+	)
 
-SELECT  --MAP.case_id,
-    MAP.PlaintiffID		   as empnPlaintiffID,
-    MAP.ProviderAID		   as empnEmprAddressID,
-    MAP.ProviderCID		   as empnEmployerID,
-    null				   as empnEmpUnion,
-    null				   as empsJobTitle,
-    V.memo				  as empsCompensationComments,
-    null				   as empnAverageWeeklyWage,
-    null				   as empnSalaryAmt,
-    null				   as empbOnTheJob,
-    null				   as empbWCClaim,
-    null				   as empdDateHired,
-    null				   as empsComments,
-    v.id				   as saga
---select *
-FROM [NeosBrianWhite]..[value_Indexed] V
-JOIN value_tab_Employment_Helper MAP on MAP.case_id = V.casesid and MAP.value_id = V.id
+	SELECT  --MAP.case_id,
+		MAP.PlaintiffID AS empnPlaintiffID
+	   ,MAP.ProviderAID AS empnEmprAddressID
+	   ,MAP.ProviderCID AS empnEmployerID
+	   ,NULL			AS empnEmpUnion
+	   ,NULL			AS empsJobTitle
+	   ,V.memo			AS empsCompensationComments
+	   ,NULL			AS empnAverageWeeklyWage
+	   ,NULL			AS empnSalaryAmt
+	   ,NULL			AS empbOnTheJob
+	   ,NULL			AS empbWCClaim
+	   ,NULL			AS empdDateHired
+	   ,NULL			AS empsComments
+	   ,v.id			AS saga
+	--select *
+	FROM [NeosBrianWhite]..[value_Indexed] V
+	JOIN value_tab_Employment_Helper MAP
+		ON MAP.case_id = V.casesid
+			AND MAP.value_id = V.id
 
 ---(2)---
 INSERT INTO [sma_TRN_LostWages]
-(
-       [ltwnEmploymentID]
-      ,[ltwsType]
-      ,[ltwdFrmDt]
-      ,[ltwdToDt]
-      ,[ltwnAmount]
-      ,[ltwnAmtPaid]
-      ,[ltwnLoss]
-      ,[ltwdMDConfReqDt]
-      ,[ltwdMDConfDt]
-      ,[ltwdEmpVerfReqDt]
-      ,[ltwdEmpVerfRcvdDt]
-      ,[ltwnRecUserID]
-      ,[ltwdDtCreated]
-      ,[ltwnModifyUserID]
-      ,[ltwdDtModified]
-      ,[ltwnLevelNo]
-)
-SELECT
-    EM.empnEmploymentID				as [ltwnEmploymentID],
-    (select wgtnWagesTypeID from [dbo].[sma_MST_WagesTypes] where wgtsDscrptn='Salary')	as [ltwsType],
-    case
-	   when v.[start_date] between '1900-01-01' and '2079-06-06' then v.[start_date]
-	   else null  end				as [ltwdFrmDt],
-    case
-	   when v.[stop_date] between '1900-01-01' and '2079-06-06' then v.[stop_date]
-	   else null  end				as [ltwdToDt],
-    null							as [ltwnAmount],
-    null							as [ltwnAmtPaid],
-    V.total_value					as [ltwnLoss],
-    null							as [ltwdMDConfReqDt],
-    null							as [ltwdMDConfDt],
-    null							as [ltwdEmpVerfReqDt],
-    null							as [ltwdEmpVerfRcvdDt],
-    368								as [ltwnRecUserID],
-    getdate()						as [ltwdDtCreated],
-    null							as [ltwnModifyUserID],
-    null							as [ltwdDtModified],
-    null							as [ltwnLevelNo]
-FROM [NeosBrianWhite]..[value_Indexed] V
-JOIN [sma_TRN_Employment] EM on EM.saga=convert(varchar(50),v.id)
+	(
+	[ltwnEmploymentID]
+   ,[ltwsType]
+   ,[ltwdFrmDt]
+   ,[ltwdToDt]
+   ,[ltwnAmount]
+   ,[ltwnAmtPaid]
+   ,[ltwnLoss]
+   ,[ltwdMDConfReqDt]
+   ,[ltwdMDConfDt]
+   ,[ltwdEmpVerfReqDt]
+   ,[ltwdEmpVerfRcvdDt]
+   ,[ltwnRecUserID]
+   ,[ltwdDtCreated]
+   ,[ltwnModifyUserID]
+   ,[ltwdDtModified]
+   ,[ltwnLevelNo]
+	)
+	SELECT
+		EM.empnEmploymentID AS [ltwnEmploymentID]
+	   ,(
+			SELECT
+				wgtnWagesTypeID
+			FROM [dbo].[sma_MST_WagesTypes]
+			WHERE wgtsDscrptn = 'Salary'
+		)					
+		AS [ltwsType]
+	   ,CASE
+			WHEN v.[start_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN v.[start_date]
+			ELSE NULL
+		END					AS [ltwdFrmDt]
+	   ,CASE
+			WHEN v.[stop_date] BETWEEN '1900-01-01' AND '2079-06-06'
+				THEN v.[stop_date]
+			ELSE NULL
+		END					AS [ltwdToDt]
+	   ,NULL				AS [ltwnAmount]
+	   ,NULL				AS [ltwnAmtPaid]
+	   ,V.total_value		AS [ltwnLoss]
+	   ,NULL				AS [ltwdMDConfReqDt]
+	   ,NULL				AS [ltwdMDConfDt]
+	   ,NULL				AS [ltwdEmpVerfReqDt]
+	   ,NULL				AS [ltwdEmpVerfRcvdDt]
+	   ,368					AS [ltwnRecUserID]
+	   ,GETDATE()			AS [ltwdDtCreated]
+	   ,NULL				AS [ltwnModifyUserID]
+	   ,NULL				AS [ltwdDtModified]
+	   ,NULL				AS [ltwnLevelNo]
+	FROM [NeosBrianWhite]..[value_Indexed] V
+	JOIN [sma_TRN_Employment] EM
+		ON EM.saga = CONVERT(VARCHAR(50), v.id)
 GO
 
 
 INSERT INTO [sma_TRN_SpDamages]
-(
-     spdsRefTable
-    ,spdnRecordID
-    ,spdnRecUserID
-    ,spddDtCreated
-    ,spdnLevelNo
-    ,spdnBillAmt
-    ,spddDateFrom
-    ,spddDateTo
-)
-SELECT DISTINCT 
-    'LostWages'	    as spdsRefTable,
-    ltwnLostWagesID	    as spdnRecordID,
-    368			    as spdnRecUserID,
-    getdate()		    as spddDtCreated,
-    0			    as spdnLevelNo,
-    ltwnLoss		    as spdnBillAmt,
-    ltwdFrmDt		    as spddDateFrom,
-    ltwdToDt		    as spddDateTo
-FROM sma_TRN_LostWages 
+	(
+	spdsRefTable
+   ,spdnRecordID
+   ,spdnRecUserID
+   ,spddDtCreated
+   ,spdnLevelNo
+   ,spdnBillAmt
+   ,spddDateFrom
+   ,spddDateTo
+	)
+	SELECT DISTINCT
+		'LostWages'		AS spdsRefTable
+	   ,ltwnLostWagesID AS spdnRecordID
+	   ,368				AS spdnRecUserID
+	   ,GETDATE()		AS spddDtCreated
+	   ,0				AS spdnLevelNo
+	   ,ltwnLoss		AS spdnBillAmt
+	   ,ltwdFrmDt		AS spddDateFrom
+	   ,ltwdToDt		AS spddDateTo
+	FROM sma_TRN_LostWages
 GO
 

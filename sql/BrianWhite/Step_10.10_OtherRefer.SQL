@@ -11,26 +11,28 @@ alter table [sma_TRN_OtherReferral] enable trigger all
 --(1)--
 
 INSERT INTO [sma_TRN_OtherReferral]
-(
-      [otrnCaseID],
-      [otrnRefContactCtg],
-      [otrnRefContactID],
-      [otrnRefAddressID],
-      [otrnPlaintiffID],
-      [otrsComments],
-      [otrnUserID],
-      [otrdDtCreated]
-)
-SELECT
-    CAS.casnCaseID	as [otrnCaseID],
-    IOC.CTG		    as [otrnRefContactCtg],
-    IOC.CID		    as [otrnRefContactID],
-    IOC.AID			as [otrnRefAddressID],
-    -1			    as [otrnPlaintiffID],
-    null			as [otrsComments],
-    368			    as [otrnUserID], 
-    getdate()		as [otrdDtCreated] 
-FROM [NeosBrianWhite].[dbo].[cases_indexed] C
-JOIN [sma_TRN_cases] CAS on CAS.cassCaseNumber = C.casenum
-JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref=convert(varchar(50),C.referredby_namesid) 
-WHERE isnull(convert(varchar(50),C.referredby_namesid), '') <>''
+	(
+	[otrnCaseID]
+   ,[otrnRefContactCtg]
+   ,[otrnRefContactID]
+   ,[otrnRefAddressID]
+   ,[otrnPlaintiffID]
+   ,[otrsComments]
+   ,[otrnUserID]
+   ,[otrdDtCreated]
+	)
+	SELECT
+		CAS.casnCaseID AS [otrnCaseID]
+	   ,IOC.CTG		   AS [otrnRefContactCtg]
+	   ,IOC.CID		   AS [otrnRefContactID]
+	   ,IOC.AID		   AS [otrnRefAddressID]
+	   ,-1			   AS [otrnPlaintiffID]
+	   ,NULL		   AS [otrsComments]
+	   ,368			   AS [otrnUserID]
+	   ,GETDATE()	   AS [otrdDtCreated]
+	FROM [NeosBrianWhite].[dbo].[cases_indexed] C
+	JOIN [sma_TRN_cases] CAS
+		ON CAS.cassCaseNumber = C.casenum
+	JOIN [IndvOrgContacts_Indexed] IOC
+		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), C.referredby_namesid)
+	WHERE ISNULL(CONVERT(VARCHAR(50), C.referredby_namesid), '') <> ''
