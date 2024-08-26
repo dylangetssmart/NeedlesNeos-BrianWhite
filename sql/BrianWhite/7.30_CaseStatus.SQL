@@ -91,10 +91,10 @@ INSERT INTO [sma_TRN_CaseStatus]
 					WHERE csssDescription = CL.[description]
 				)
 				THEN (
-						SELECT
-							cssnStatusID
+						SELECT TOP 1 cssnStatusID
 						FROM sma_MST_CaseStatus
 						WHERE csssDescription = CL.[description]
+						ORDER BY cssnStatusID
 					)
 			ELSE (
 					SELECT
