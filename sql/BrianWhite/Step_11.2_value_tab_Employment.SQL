@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -59,9 +59,9 @@ CREATE TABLE value_tab_Employment_Helper (
 ) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (case_id);
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (value_id);
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON SANeosBrianWhite.[dbo].[value_tab_Employment_Helper] (ProviderNameId);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (ProviderNameId);
 GO
 
 ---(0)---
@@ -90,8 +90,8 @@ INSERT INTO value_tab_Employment_Helper
 	   ,CAS.casnCaseID AS casnCaseID
 	   ,NULL		   AS PlaintiffID
 	--select *
-	FROM [NeosBrianWhite]..[value_Indexed] V
-	JOIN [NeosBrianWhite]..[value_code] vc
+	FROM [BrianWhiteNeos]..[value_Indexed] V
+	JOIN [BrianWhiteNeos]..[value_code] vc
 		ON vc.id = v.valuecodeid
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -122,7 +122,7 @@ SELECT
    ,V.id	  AS vid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 --SELECT *
-FROM NeosBrianWhite..[value_Indexed] V
+FROM BrianWhiteNeos..[value_Indexed] V
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
 JOIN [sma_TRN_Plaintiff] t
@@ -163,7 +163,7 @@ SELECT
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
 --SELECT *
-FROM NeosBrianWhite.[dbo].[value_Indexed] V
+FROM BrianWhiteNeos.[dbo].[value_Indexed] V
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
 JOIN [sma_TRN_Defendants] d
@@ -214,7 +214,7 @@ INSERT INTO [dbo].[sma_TRN_Employment]
 	   ,NULL			AS empsComments
 	   ,v.id			AS saga
 	--select *
-	FROM [NeosBrianWhite]..[value_Indexed] V
+	FROM [BrianWhiteNeos]..[value_Indexed] V
 	JOIN value_tab_Employment_Helper MAP
 		ON MAP.case_id = V.casesid
 			AND MAP.value_id = V.id
@@ -270,7 +270,7 @@ INSERT INTO [sma_TRN_LostWages]
 	   ,NULL				AS [ltwnModifyUserID]
 	   ,NULL				AS [ltwdDtModified]
 	   ,NULL				AS [ltwnLevelNo]
-	FROM [NeosBrianWhite]..[value_Indexed] V
+	FROM [BrianWhiteNeos]..[value_Indexed] V
 	JOIN [sma_TRN_Employment] EM
 		ON EM.saga = CONVERT(VARCHAR(50), v.id)
 GO

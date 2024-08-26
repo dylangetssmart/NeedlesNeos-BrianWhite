@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -8,8 +8,8 @@ DBCC CHECKIDENT ('[sma_TRN_Hospitals]', RESEED, 0);
 alter table [sma_TRN_Hospitals] enable trigger all
 
 select distinct g.*
-from NeosBrianWhite..neosUsertab2 u
-LEFT JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Type of Record]
+from BrianWhiteNeos..neosUsertab2 u
+LEFT JOIN BrianWhiteNeos..mini_general_dir g on g.id = u.[Type of Record]
 where isnull(g.code,'') IN ('', 'Medical Records w/Affidavit','Billing Records w/Affidavit','Medical Record and Bill w/Affidavit',
 	'Record and Bill','Medical Record','Medical Record and Bill','Billing','Medical Bill','MRI Reports w/Affidavit','Authorization Request',
 	'MRI Billing Records w/Affidavit' )
@@ -80,8 +80,8 @@ INSERT INTO sma_MST_Request_RecordTypes
 	)
 	(SELECT DISTINCT
 		ISNULL(g.code, 'Other')
-	FROM NeosBrianWhite..neosUsertab2 u
-	LEFT JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab2 u
+	LEFT JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Type of Record]
 	WHERE ISNULL(g.code, '') IN ('', 'Medical Records w/Affidavit', 'Billing Records w/Affidavit', 'Medical Record and Bill w/Affidavit',
 		'Record and Bill', 'Medical Record', 'Medical Record and Bill', 'Billing', 'Medical Bill', 'MRI Reports w/Affidavit', 'Authorization Request',
@@ -171,8 +171,8 @@ INSERT INTO user_tab2_MedicalProvider_Helper
 	   ,IOC.CTG			  AS ProviderCTG
 	   ,IOC.AID			  AS ProviderAID
 	   ,CAS.casnCaseID	  AS casnCaseID
-	FROM NeosBrianWhite..neosUsertab2 u
-	LEFT JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab2 u
+	LEFT JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Type of Record]
 	JOIN [IndvOrgContacts_Indexed] IOC
 		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), u.[Provider Name])
@@ -243,7 +243,7 @@ INSERT INTO [sma_TRN_Hospitals]
 	   ,NULL		AS [hosdDtModified]
 	   ,'tab2'		AS [saga]
 	--'tab2:'+convert(varchar,UD.tab_id)	as [saga]
-	FROM NeosBrianWhite..neosUsertab2 d
+	FROM BrianWhiteNeos..neosUsertab2 d
 	JOIN user_tab2_MedicalProvider_Helper MAP
 		ON MAP.case_id = CONVERT(VARCHAR(50), D.casesid)
 			AND MAP.tab_id = CONVERT(VARCHAR(50), D.tablistid)
@@ -351,12 +351,12 @@ INSERT INTO [sma_trn_MedicalProviderRequest]
 	   ,	--Retreival Provider Notes
 		'tab2: ' + CONVERT(VARCHAR(50), UD.tablistid) AS SAGA
 	--select *
-	FROM NeosBrianWhite..neosUsertab2 UD
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab2 UD
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = ud.[Type of Record]
-	LEFT JOIN NeosBrianWhite..value_code vc
+	LEFT JOIN BrianWhiteNeos..value_code vc
 		ON vc.id = ud.[value Code]
-	LEFT JOIN NeosBrianWhite..mini_general_dir me
+	LEFT JOIN BrianWhiteNeos..mini_general_dir me
 		ON me.id = ud.[method]
 	JOIN user_tab2_MedicalProvider_Helper MAP
 		ON MAP.case_id = CONVERT(VARCHAR(50), UD.caseSid)
@@ -374,7 +374,7 @@ GO
 --------------------------------------------------------------------------
 ------------------------------ MEDICAL VISITS -----------------------------
 --------------------------------------------------------------------------
-insert into  [SANeosBrianWhite].[dbo].[sma_TRN_Visits]
+insert into  [BrianWhiteSANeos].[dbo].[sma_TRN_Visits]
 (
        [vissRefTable]
       ,[visnRecordID]
@@ -406,16 +406,16 @@ select
     NULL				   as [visdDtModified],
     D.Treatment_Received		   as [vissTreatmentPlan],
     null				   as [vissComments]
-from [NeosBrianWhite].[dbo].[user_tab2_data] D
+from [BrianWhiteNeos].[dbo].[user_tab2_data] D
 inner join user_tab2_MedicalProvider_Helper MAP on MAP.tab_ID=D.tab_id
-inner join [SANeosBrianWhite].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
+inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
 WHERE isnull(Treatment_Received,'')<> '' or
 isnull(findings,'')<>''
 
 --------------------------------------------------------------------------
 ------------------------------ MEDICAL BILLS -----------------------------
 --------------------------------------------------------------------------
-insert into [SANeosBrianWhite].[dbo].[sma_TRN_SpDamages]
+insert into [BrianWhiteSANeos].[dbo].[sma_TRN_SpDamages]
 (
      [spdsRefTable]
     ,[spdnRecordID]
@@ -467,9 +467,9 @@ select
     0						as spdbDocAttached,
     'tab2:' + convert(varchar,D.tab_id)	
 							as saga_bill_id  -- one bill one value
-from [NeosBrianWhite].[dbo].[user_tab2_data] D
+from [BrianWhiteNeos].[dbo].[user_tab2_data] D
 inner join user_tab2_MedicalProvider_Helper MAP on MAP.tab_id=D.tab_id
-inner join [SANeosBrianWhite].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
+inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
 
 
 ---(Appendix)--- Update hospital TotalBill from Bill section

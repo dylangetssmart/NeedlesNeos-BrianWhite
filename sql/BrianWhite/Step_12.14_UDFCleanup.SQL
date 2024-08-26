@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 ALTER TABLE sma_trn_udfvalues DISABLE TRIGGER ALL

@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_PoliceReports] disable trigger all
@@ -13,8 +13,8 @@ ALTER COLUMN porsComments VARCHAR(MAX)
 GO
 /*
 select distinct [police dept], n.fullname_lastfirst, u.officer--, u.Badge
-from NeosBrianWhite..NeosUserTab6 u
-JOIN NeosBrianWhite..names n on u.[police dept] = convert(varchar(50),n.id)
+from BrianWhiteNeos..NeosUserTab6 u
+JOIN BrianWhiteNeos..names n on u.[police dept] = convert(varchar(50),n.id)
 WHERE isnull([police dept],'') <>''
 and isnull(officer,'') NOT IN ('','N/A','?','NONE')
 */
@@ -59,7 +59,7 @@ INSERT INTO Officer_Helper
 	   ,A.addnAddressID														 AS OfficerAID
 	   ,CONVERT(VARCHAR, cinnContactCtg) + CONVERT(VARCHAR, i.cinnContactID) AS officerUNQCID
 	   ,I.cinsGrade
-	FROM NeosBrianWhite..NeosUserTab6 P   --BRIAN WHITE POLICE DATA COMES FROM TAB6, NOT THE POLICE TABLE
+	FROM BrianWhiteNeos..NeosUserTab6 P   --BRIAN WHITE POLICE DATA COMES FROM TAB6, NOT THE POLICE TABLE
 	JOIN [sma_MST_IndvContacts] I
 		ON I.cinsGrade = P.officer
 			AND I.cinsPrefix = 'Officer'
@@ -145,7 +145,7 @@ INSERT INTO Police_Helper
 			WHERE H.cinsGrade = pd.officer
 		)									   
 		AS officerUNQCID
-	FROM NeosBrianWhite..NeosUserTab6 pd
+	FROM BrianWhiteNeos..NeosUserTab6 pd
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), pd.casesid)
 	JOIN [IndvOrgContacts_Indexed] IOC
@@ -188,7 +188,7 @@ INSERT INTO [sma_TRN_PoliceReports]
 	   ,MAP.PoliceCTG				AS [pornPOCtgID]
 	   ,MAP.PoliceAID				AS [pornPOAddressID]
 	--select max(len([statement context]))
-	FROM NeosBrianWhite..NeosUserTab6 p
+	FROM BrianWhiteNeos..NeosUserTab6 p
 	JOIN Police_Helper MAP
 		ON MAP.case_num = CONVERT(VARCHAR(50), P.casesid)
 	WHERE ISNULL([Police Dept], '') <> ''
@@ -239,7 +239,7 @@ INSERT INTO sma_TRN_UDFValues
 	   ,p.Badge		   AS udvsUDFValue
 	   ,368			   AS udvnRecUserID
 	   ,GETDATE()	   AS udvdDtCreated
-	FROM NeosBrianWhite..NeosUserTab6 p
+	FROM BrianWhiteNeos..NeosUserTab6 p
 	JOIN Police_Helper MAP
 		ON MAP.case_num = CONVERT(VARCHAR(50), P.casesid)
 	WHERE ISNULL(officer, '') NOT IN ('', 'N/A', '?', 'NONE')

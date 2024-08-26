@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 

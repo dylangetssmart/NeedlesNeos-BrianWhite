@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -26,8 +26,8 @@ INSERT INTO sma_MST_CaseStatus
 	FROM (
 		SELECT DISTINCT
 			[description] AS [name]
-		FROM [NeosBrianWhite].[dbo].[class] class
-		JOIN [NeosBrianWhite].[dbo].[cases] C
+		FROM [BrianWhiteNeos].[dbo].[class] class
+		JOIN [BrianWhiteNeos].[dbo].[cases] C
 			ON C.classid = class.[id]
 		UNION
 		SELECT
@@ -119,9 +119,9 @@ INSERT INTO [sma_TRN_CaseStatus]
 	   ,NULL
 	   ,NULL
 	FROM [sma_trn_cases] CAS
-	JOIN [NeosBrianWhite].[dbo].[cases] C
+	JOIN [BrianWhiteNeos].[dbo].[cases] C
 		ON CONVERT(VARCHAR(50), C.[id]) = CAS.Neos_saga
-	JOIN [NeosBrianWhite].[dbo].[class] CL
+	JOIN [BrianWhiteNeos].[dbo].[class] CL
 		ON C.classid = CL.id
 GO
 

@@ -1,21 +1,21 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 --truncate table [sma_TRN_Vehicles]
 
 /*
 select casesid, [Def 2 Veh Yr/Make/Model], [Def 2 License Plate], [Def 2 Vehicle Drivable]
-FROM NeosBrianWhite..neosuserTab6
+FROM BrianWhiteNeos..neosuserTab6
 WHERE isnull([Def 2 License Plate],'') <> ''
 or isnull([Def 2 Veh Yr/Make/Model],'') <> ''
 
 select casesid, [Def Vehicle Yr/Make/Model], [Def License Plate], [Def Vehicle Drivable],[Def on Cell Phone]
-FROM NeosBrianWhite..neosuserTab6
+FROM BrianWhiteNeos..neosuserTab6
 WHERE isnull([Def License Plate],'') <> ''
 or isnull([Def Vehicle Yr/Make/Model],'') <> ''
 
 select casesid, [Pl Vehicle Yr/Make/Model], [Plt on Cell Phone], [Pl Car Drivable],[Pl Description of Damage]
-FROM NeosBrianWhite..neosuserTab6
+FROM BrianWhiteNeos..neosuserTab6
 WHERE isnull([Pl Vehicle Yr/Make/Model],'') <> ''
 or isnull([Pl Description of Damage],'') <> ''
 */
@@ -236,7 +236,7 @@ INSERT INTO [sma_TRN_Vehicles]
 	   , 					--[vehdDtModified],
 		1						--[vehnLevelNo]
 	--Select ymm.[data], vm.vmksDscrptn, vmo.vmdsModelDscrptn
-	FROM NeosBrianWhite..neosuserTab6 ud
+	FROM BrianWhiteNeos..neosuserTab6 ud
 	JOIN sma_trn_Cases cas
 		ON cas.Neos_saga = CONVERT(VARCHAR(50), ud.casesid)
 	LEFT JOIN sma_TRN_Plaintiff p
@@ -452,7 +452,7 @@ INSERT INTO [sma_TRN_Vehicles]
 	   , 					--[vehdDtModified],
 		1						--[vehnLevelNo]
 	--Select max(len([Def License Plate]))
-	FROM NeosBrianWhite..neosuserTab6 ud
+	FROM BrianWhiteNeos..neosuserTab6 ud
 	JOIN sma_trn_Cases cas
 		ON cas.Neos_saga = CONVERT(VARCHAR(50), ud.casesid)
 	LEFT JOIN sma_TRN_Defendants d
@@ -667,7 +667,7 @@ INSERT INTO [sma_TRN_Vehicles]
 	   , 					--[vehdDtModified],
 		1						--[vehnLevelNo]
 	--Select *
-	FROM NeosBrianWhite..neosuserTab6 ud
+	FROM BrianWhiteNeos..neosuserTab6 ud
 	JOIN sma_trn_Cases cas
 		ON cas.Neos_saga = CONVERT(VARCHAR(50), ud.casesid)
 	LEFT JOIN (

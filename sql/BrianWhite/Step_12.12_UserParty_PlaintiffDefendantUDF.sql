@@ -1,13 +1,13 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
 SELECT pty.casesid as CasesID, td.partyid, pty.namesid as PartyNamesID, case when convert(varchar(50),td.[namesid]) IS NULL then td.[data] else convert(varchar(50),td.[namesid]) end as [data], ucf.field_title, prl.role, rol.[SA Party]
-	from [NeosBrianWhite]..user_Party_data td
-	JOIN [NeosBrianWhite]..Party_Indexed pty on pty.id = td.partyid
-	JOIN [NeosBrianWhite]..party_role_list prl on prl.id = pty.partyrolelistid
+	from [BrianWhiteNeos]..user_Party_data td
+	JOIN [BrianWhiteNeos]..Party_Indexed pty on pty.id = td.partyid
+	JOIN [BrianWhiteNeos]..party_role_list prl on prl.id = pty.partyrolelistid
 	JOIN PartyRoles rol on rol.[Needles Roles] = prl.[role]
-	JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+	JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 	WHERE field_Title in ('Accidents/Injuries', 'Agent for Service', 'Been Convicted of a Crime', 'Business Type', 'Client Insured?', 'Contact', 'Contact Address', 'Contact Phone', 'Currently Treating?', 
 					'Days Absent', 'Defendant Insured?', 'Details', 'Drivers License No.', 'Drivers License State', 'Education', 'Employer Name', 'Health Insurance?', 'Job Duties', 'Language', 'Marital Status', 
 					'Minor Children', 'Missed Time from Work', 'Name of Court', 'Name of Employer', 'Name of Spouse', 'Occupation', 'Other Employment', 'Parent/Guardian', 'Pending Bankruptcy?', 'Previous Complaints', 
@@ -48,14 +48,14 @@ INSERT INTO [sma_MST_UDFDefinition]
 	   ,nuf.dropdownValues							 AS [udfsNewValues]
 	   ,DENSE_RANK() OVER (ORDER BY nuf.field_title) AS [udfnSortOrder]
 	--SELECT DISTINCT nuf.*
-	FROM [NeosBrianWhite]..user_Party_data td
-	JOIN [NeosBrianWhite]..Party_Indexed pty
+	FROM [BrianWhiteNeos]..user_Party_data td
+	JOIN [BrianWhiteNeos]..Party_Indexed pty
 		ON pty.id = td.partyid
-	JOIN [NeosBrianWhite]..party_role_list prl
+	JOIN [BrianWhiteNeos]..party_role_list prl
 		ON prl.id = pty.partyrolelistid
 	JOIN PartyRoles rol
 		ON rol.[Needles Roles] = prl.[role]
-	JOIN [NeosBrianWhite]..user_case_fields ucf
+	JOIN [BrianWhiteNeos]..user_case_fields ucf
 		ON ucf.id = td.usercasefieldid
 	JOIN NeedlesUserFields nuf
 		ON nuf.field_id = ucf.id
@@ -105,14 +105,14 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL										   AS [udvnModifyUserID]
 	   ,NULL										   AS [udvdDtModified]
 	   ,NULL										   AS [udvnLevelNo]
-	FROM [NeosBrianWhite]..user_Party_data td
-	JOIN [NeosBrianWhite]..Party_Indexed pty
+	FROM [BrianWhiteNeos]..user_Party_data td
+	JOIN [BrianWhiteNeos]..Party_Indexed pty
 		ON pty.id = td.partyid
-	JOIN [NeosBrianWhite]..party_role_list prl
+	JOIN [BrianWhiteNeos]..party_role_list prl
 		ON prl.id = CONVERT(VARCHAR(50), pty.partyrolelistid)
 	JOIN PartyRoles rol
 		ON rol.[Needles Roles] = prl.[role]
-	JOIN [NeosBrianWhite]..user_case_fields ucf
+	JOIN [BrianWhiteNeos]..user_case_fields ucf
 		ON ucf.id = CONVERT(VARCHAR(50), td.usercasefieldid)
 	--JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
 	JOIN sma_trn_Cases cas

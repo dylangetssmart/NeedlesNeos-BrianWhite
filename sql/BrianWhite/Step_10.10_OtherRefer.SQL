@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_OtherReferral] disable trigger all
@@ -30,7 +30,7 @@ INSERT INTO [sma_TRN_OtherReferral]
 	   ,NULL		   AS [otrsComments]
 	   ,368			   AS [otrnUserID]
 	   ,GETDATE()	   AS [otrdDtCreated]
-	FROM [NeosBrianWhite].[dbo].[cases_indexed] C
+	FROM [BrianWhiteNeos].[dbo].[cases_indexed] C
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.cassCaseNumber = C.casenum
 	JOIN [IndvOrgContacts_Indexed] IOC

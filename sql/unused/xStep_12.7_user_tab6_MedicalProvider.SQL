@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 ALTER TABLE [sma_TRN_Hospitals] DISABLE TRIGGER ALL
@@ -38,8 +38,8 @@ SELECT
     null				as [hosnModifyUserID],
     null				as [hosdDtModified],
     'Tab6'			    as [saga]
-FROM [NeosBrianWhite]..User_Tab6_Matter m
-JOIN NeosBrianWhite..user_Tab6_Name n on m.ref_num = n.ref_num
+FROM [BrianWhiteNeos]..User_Tab6_Matter m
+JOIN BrianWhiteNeos..user_Tab6_Name n on m.ref_num = n.ref_num
 JOIN sma_trn_Cases cas on cas.casscasenumber = convert(varchar,n.case_ID)
 LEFT JOIN IndvOrgContacts_Indexed ioc on ioc.saga_ref = convert(varchar,n.[user_name])
 WHERE n.[user_name] <> 0
@@ -55,8 +55,8 @@ GO
 --INDIVIDUAL CONTACTS
 UPDATE sma_MST_IndvContacts 
 set cinnContactTypeID = (select octnOrigContactTypeID From sma_MST_OriginalContactTypes where octnContactCtgID = 1 and octsDscrptn = 'Doctor')
-FROM [NeosBrianWhite]..User_Tab6_Matter m
-JOIN NeosBrianWhite..user_Tab6_Name n on m.ref_num = n.ref_num
+FROM [BrianWhiteNeos]..User_Tab6_Matter m
+JOIN BrianWhiteNeos..user_Tab6_Name n on m.ref_num = n.ref_num
 --JOIN IndvOrgContacts_Indexed ioc on ioc.saga_ref = n.[user_name]
 JOIN sma_MST_IndvContacts ind on ind.saga = n.[user_name]
 WHERE n.[user_name] <> 0
@@ -65,8 +65,8 @@ and m.field_title = 'Ambulance/Rescue'
 --ORGANIZATION CONTACTS
 UPDATE sma_MST_orgContacts 
 set connContactTypeID = (select octnOrigContactTypeID From sma_MST_OriginalContactTypes where octnContactCtgID = 2 and octsDscrptn = 'Hospital')
-FROM [NeosBrianWhite]..User_Tab6_Matter m
-JOIN NeosBrianWhite..user_Tab6_Name n on m.ref_num = n.ref_num
+FROM [BrianWhiteNeos]..User_Tab6_Matter m
+JOIN BrianWhiteNeos..user_Tab6_Name n on m.ref_num = n.ref_num
 --JOIN IndvOrgContacts_Indexed ioc on ioc.saga = n.[user_name]
 JOIN sma_MST_orgContacts org on org.saga = n.[user_name]
 WHERE n.[user_name] <> 0
@@ -78,8 +78,8 @@ and m.field_title = 'Ambulance/Rescue'
 INSErT INTO sma_TRN_MedicalProviderSpecialitySubSpeciality (mdprvspeID, mdprvContactID, mdprvContactctgID)
 SELECT DISTINCT (select splID From sma_MST_MedicalProvideSpeciality where spDescription = 'Ambulance'),
 	ioc.cid, ioc.CTG
-FROM [NeosBrianWhite]..User_Tab6_Matter m
-JOIN NeosBrianWhite..user_Tab6_Name n on m.ref_num = n.ref_num
+FROM [BrianWhiteNeos]..User_Tab6_Matter m
+JOIN BrianWhiteNeos..user_Tab6_Name n on m.ref_num = n.ref_num
 JOIN IndvOrgContacts_Indexed ioc on ioc.saga = n.[user_name]
 WHERE n.[user_name] <> 0
 and m.field_title = 'Ambulance/Rescue'

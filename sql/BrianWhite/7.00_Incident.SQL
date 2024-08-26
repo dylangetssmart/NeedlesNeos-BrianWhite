@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -75,13 +75,13 @@ INSERT INTO [sma_TRN_Incidents]
 	   ,NULL											 AS [ModifyUserID]
 	   ,NULL											 AS [DtModified]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[cases] C
+	FROM [BrianWhiteNeos].[dbo].[cases] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_case_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_case_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'State of Suit'
 	) s
@@ -90,8 +90,8 @@ INSERT INTO [sma_TRN_Incidents]
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title IN ('Time of Accident', 'Time of Assault')
 	) a
@@ -100,8 +100,8 @@ INSERT INTO [sma_TRN_Incidents]
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title IN ('State')
 	) st

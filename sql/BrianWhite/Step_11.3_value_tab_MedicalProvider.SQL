@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_Hospitals] disable trigger all
@@ -18,7 +18,7 @@ DBCC CHECKIDENT ('[sma_TRN_SpecialDamageAmountPaid]', RESEED, 0);
 alter table [sma_TRN_SpecialDamageAmountPaid] enable trigger all
 */
 
---select distinct code, description from [NeosBrianWhite].[dbo].[value] order by code
+--select distinct code, description from [BrianWhiteNeos].[dbo].[value] order by code
 -----------
 
 ALTER TABLE [sma_TRN_Hospitals] DISABLE TRIGGER ALL
@@ -114,8 +114,8 @@ INSERT INTO value_tab_MedicalProvider_Helper
 	   ,IOC.AID							AS ProviderAID
 	   ,CAS.casnCaseID					AS casnCaseID
 	   ,NULL							AS PlaintiffID
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -144,8 +144,8 @@ SELECT
 	V.casesid AS cid
    ,V.id	  AS vid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -153,7 +153,7 @@ JOIN [sma_TRN_Plaintiff] t
 	ON t.plnnCaseID = CAS.casnCaseID
 		AND t.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 
@@ -187,8 +187,8 @@ SELECT
 			AND plnbIsPrimary = 1
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -196,7 +196,7 @@ JOIN [sma_TRN_Defendants] d
 	ON d.defnCaseID = cas.casncaseid
 		AND d.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(Varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
@@ -252,7 +252,7 @@ INSERT INTO [sma_TRN_Hospitals]
 		   ,MAP.ProviderCID
 		   ,MAP.ProviderCTG
 		   ,MAP.ProviderAID
-		FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+		FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
 		INNER JOIN value_tab_MedicalProvider_Helper MAP
 			ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
 			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
@@ -309,7 +309,7 @@ INSERT INTO [sma_TRN_SpDamages]
 	   ,0																 AS spdbLienConfirmed
 	   ,0																 AS spdbDocAttached
 	   ,V.id															 AS saga_bill_id  -- one bill one value
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
 	JOIN value_tab_MedicalProvider_Helper MAP
 		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
 			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
@@ -363,13 +363,13 @@ INSERT INTO [sma_TRN_SpecialDamageAmountPaid]
 	   ,ISNULL('paid by:' + NULLIF(payBy.[name], '') + CHAR(13), '') +
 		ISNULL('paid to:' + NULLIF(payTo.[Name], '') + CHAR(13), '') +
 		''				   AS [AmountPaidComments]
-	FROM [NeosBrianWhite]..[value_Indexed] V
+	FROM [BrianWhiteNeos]..[value_Indexed] V
 	JOIN value_tab_MedicalProvider_Helper MAP
 		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)
 			AND MAP.value_id = CONVERT(VARCHAR(50), V.id)
 	JOIN [sma_TRN_SpDamages] SPD
 		ON SPD.saga_bill_id = CONVERT(VARCHAR(50), V.id)
-	JOIN [NeosBrianWhite]..[value_payment] VP
+	JOIN [BrianWhiteNeos]..[value_payment] VP
 		ON VP.valueid = v.id -- multiple payment per value_id
 	LEFT JOIN IndvOrgContacts_Indexed payBy
 		ON payby.SAGA_ref = CONVERT(VARCHAR(50), vp.paidbyID)

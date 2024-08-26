@@ -1,10 +1,10 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
 SELECT td.casesid, case when convert(varchar(50),td.[namesid]) IS NULL then td.[data] else convert(varchar(50),td.[namesid]) end as [data], ucf.field_title
-	FROM [NeosBrianWhite]..user_case_data td
-	JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+	FROM [BrianWhiteNeos]..user_case_data td
+	JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 	WHERE field_Title in ('County of Suit', 'Defendant Caption','Judicial District','JURY','MDL Court','MDL Defendant Caption','MDL Docket',
 					'MDL Judge','MDL Plaintiff Caption','Mediator','NON JURY','Plaintiff','Plaintiff Caption','State of Suit','Sub-Category',
 					'Type of Court' )
@@ -40,8 +40,8 @@ SELECT DISTINCT
 	nuf.dropdownValues	   as [udfsNewValues],
 	DENSE_RANK() over( order by nuf.field_title)	as [udfnSortOrder]
 --SELECT DISTINCT nuf.*
-FROM [NeosBrianWhite]..user_case_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+FROM [BrianWhiteNeos]..user_case_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
 JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50),td.casesid)
 LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cas.casnOrgCaseTypeID and def.[udfsUDFName] = nuf.field_title and def.[udfsScreenName] = 'Court'
@@ -84,8 +84,8 @@ SELECT DISTINCT
 	null					as [udvnModifyUserID],
 	null					as [udvdDtModified],
 	null					as [udvnLevelNo]
-FROM [NeosBrianWhite]..user_case_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+FROM [BrianWhiteNeos]..user_case_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 --JOIN NeedlesUserFields nuf on nuf.field_id = ucf.id
 JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50),td.casesid)
 JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cas.casnOrgCaseTypeID and def.[udfsUDFName] = ucf.field_title and def.[udfsScreenName] = 'Court'

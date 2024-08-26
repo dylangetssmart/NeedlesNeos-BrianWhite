@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 if exists (select * From sys.tables where name = 'Tab10_MedProv_Helper')
@@ -12,8 +12,8 @@ GO
 --------------------------------------------
 SELECT DISTINCT n.case_id,m.field_title, [user_name], ioc.*, cas.casnCaseID
 INTO Tab10_MedProv_Helper
-FROM [NeosBrianWhite]..User_Tab10_Matter m
-JOIN NeosBrianWhite..user_Tab10_Name n on m.ref_num = n.ref_num
+FROM [BrianWhiteNeos]..User_Tab10_Matter m
+JOIN BrianWhiteNeos..user_Tab10_Name n on m.ref_num = n.ref_num
 JOIN IndvOrgContacts_Indexed ioc on ioc.saga = convert(varchar,[user_name])
 JOIN sma_trn_cases cas on cas.casscasenumber = convert(varchar,n.case_id)
 WHERE n.[user_name] <> 0
@@ -123,7 +123,7 @@ SELECT
     case when D.Treatment_Since_Injury between '1/1/1900' and '6/6/2079' then D.Treatment_Since_Injury else NULL end	as [vissTreatmentPlan],
     isnull('Medical History: ' + nullif(convert(varchar(max),d.Medical_History),'') + CHAR(13),'') +
 	''							as [vissComments]
-FROM [NeosBrianWhite]..[user_tab10_data] D
+FROM [BrianWhiteNeos]..[user_tab10_data] D
 JOIN sma_trn_Cases cas on cas.casscasenumber = convert(varchar,d.case_id)
 LEFT JOIN (Select case_id, hosnHospitalID From sma_TRN_Hospitals h join Tab10_MedProv_Helper mp on mp.field_Title = 'Hospital Name' and mp.casnCaseID = h.hosnCaseID and mp.ctg = h.hosnContactCtg and mp.CID = h.hosnContactID) HN on hn.case_id = d.case_id
 LEFT JOIN (Select case_id, hosnHospitalID From sma_TRN_Hospitals hdr join Tab10_MedProv_Helper mpdr on mpdr.field_Title = 'Dr. Name' and mpdr.casnCaseID = hdr.hosnCaseID and mpdr.ctg = hdr.hosnContactCtg and mpdr.CID = hdr.hosnContactID) DN on dn.case_id = d.case_id

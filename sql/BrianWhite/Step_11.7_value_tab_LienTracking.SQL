@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -59,11 +59,11 @@ INSERT INTO value_tab_Liencheckbox_Helper
 	)
 	SELECT
 		VP1.id
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] VP1
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] VP1
 	LEFT JOIN (
 		SELECT DISTINCT
 			id
-		FROM [NeosBrianWhite]..[value_Indexed]
+		FROM [BrianWhiteNeos]..[value_Indexed]
 		WHERE lien = 1
 	) VP2
 		ON VP1.id = VP2.id
@@ -86,8 +86,8 @@ INSERT INTO [sma_MST_LienType]
 	SELECT DISTINCT
 		'CONVERSION'
 	   ,VC.[description]
-	FROM [NeosBrianWhite].[dbo].[value] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON VC.id = V.valuecodeid
 	WHERE ISNULL(Vc.code, '') IN ('OAG')
 	)
@@ -161,8 +161,8 @@ INSERT INTO value_tab_Lien_Helper
 	   ,CAS.casnCaseID					AS casnCaseID
 	   ,NULL							AS PlaintiffID
 	   ,NULL							AS Paid
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON VC.id = V.valuecodeid
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
@@ -199,20 +199,20 @@ SELECT
    ,CONVERT(VARCHAR, ((
 		SELECT
 			SUM(payment_amount)
-		FROM [NeosBrianWhite].[dbo].[value_payment]
+		FROM [BrianWhiteNeos].[dbo].[value_payment]
 		WHERE id = V.id
 	)
 	))		  AS Paid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON VC.id = V.valuecodeid
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
 JOIN [sma_TRN_Plaintiff] t
 	ON t.plnnCaseID = CAS.casnCaseID
 		AND t.saga_party = v.partyid
---JOIN [NeosBrianWhite].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
+--JOIN [BrianWhiteNeos].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 GO
@@ -243,7 +243,7 @@ SELECT
    ,CONVERT(VARCHAR, ((
 		SELECT
 			SUM(payment_amount)
-		FROM [NeosBrianWhite].[dbo].[value_payment]
+		FROM [BrianWhiteNeos].[dbo].[value_payment]
 		WHERE id = V.id
 	)
 	))		  AS Paid
@@ -255,15 +255,15 @@ SELECT
 			AND plnbIsPrimary = 1
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON VC.id = V.valuecodeid
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
 JOIN [sma_TRN_Defendants] d
 	ON d.defnCaseID = cas.casncaseid
 		AND d.saga_party = v.partyid
---JOIN [NeosBrianWhite].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
+--JOIN [BrianWhiteNeos].[dbo].Party_Indexed pt on pt.id = v.partyid and pt.casesid = v.casesid
 --JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA_REF = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
@@ -308,7 +308,7 @@ INSERT INTO [sma_TRN_Lienors]
 			WHERE lntsDscrptn = (
 					SELECT
 						[description]
-					FROM NeosBrianWhite..[value_code]
+					FROM BrianWhiteNeos..[value_code]
 					WHERE [code] = vc.code
 				)
 		)						 
@@ -331,8 +331,8 @@ INSERT INTO [sma_TRN_Lienors]
 	   ,GETDATE()				 AS [lnrdDtCreated]
 	   ,0						 AS [lnrnFinal]
 	   ,V.id					 AS [saga]
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON VC.id = V.valuecodeid
 	JOIN [value_tab_Lien_Helper] MAP
 		ON MAP.case_id = V.casesid

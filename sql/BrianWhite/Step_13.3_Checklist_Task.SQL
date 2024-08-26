@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -23,11 +23,11 @@ INSERT INTO [sma_MST_TaskCategory]
 
 /*
 select distinct (select top 1 replace(ltrim(DIR.[description]),'>','')) 
-FROM [NeosBrianWhite].[dbo].[checklist_dir] DIR 
-inner join [NeosBrianWhite].[dbo].[case_checklist] LST on DIR.code=LST.code
+FROM [BrianWhiteNeos].[dbo].[checklist_dir] DIR 
+inner join [BrianWhiteNeos].[dbo].[case_checklist] LST on DIR.code=LST.code
 where isnull(DIR.[description],'')<>''
 except
-select tskCtgDescription from [SANeosBrianWhite].[dbo].[sma_MST_TaskCategory] 
+select tskCtgDescription from [BrianWhiteSANeos].[dbo].[sma_MST_TaskCategory] 
 GO
 */
 ---(0)---
@@ -147,7 +147,7 @@ INSERT INTO [sma_TRN_TaskNew]
 		END							 AS [tskCompleted]
 	   ,CONVERT(VARCHAR(50), CKL.id) AS [saga]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[case_checklist] CKL
+	FROM [BrianWhiteNeos].[dbo].[case_checklist] CKL
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CKL.casesid)
 	WHERE ISNULL(CAS.casdClosingDate, '') = ''

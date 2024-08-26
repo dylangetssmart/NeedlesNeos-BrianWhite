@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /******************************************
@@ -83,8 +83,8 @@ INSERT INTO NeedlesUserFields
 			ELSE NULL
 		END
 	--Select *
-	FROM NeosBrianWhite..[user_case_fields] ucf
---LEFT JOIN NeosBrianWhite..[mini_dir_list] dl on ucf.minidirlistid = dl.id
+	FROM BrianWhiteNeos..[user_case_fields] ucf
+--LEFT JOIN BrianWhiteNeos..[mini_dir_list] dl on ucf.minidirlistid = dl.id
 
 -----------------------------------------------------
 --CURSOR TO FILL IN DROP DOWN VALUES FOR MINI DIRS
@@ -107,8 +107,8 @@ SELECT
 	IDENTITY(INT, 1, 1) AS Number
    ,gd.code INTO #values
 --select *
-FROM NeosBrianWhite..mini_general_dir gd
---JOIN NeosBrianWhite..mini_dir_list dl on gd.num_assigned = dl.dir_key
+FROM BrianWhiteNeos..mini_general_dir gd
+--JOIN BrianWhiteNeos..mini_dir_list dl on gd.num_assigned = dl.dir_key
 WHERE gd.minidirlistid = @miniDir
 
 SET @numberCt = (

@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_trn_caseJudgeorClerk] disable trigger all
@@ -29,7 +29,7 @@ GO
 
 /*
 select * 
-FROM [NeosBrianWhite].[dbo].[cases] C
+FROM [BrianWhiteNeos].[dbo].[cases] C
 WHERE isnull(convert(varchar(50),court_namesid),'')<>''
 or isnull(convert(varchar(50),judge_namesid),'')<>''
 or isnull(docket,'') <> ''
@@ -57,7 +57,7 @@ INSERT INTO [sma_TRN_Courts]
 		   ,IOC.AID
 		--C.judge_link
 		--select *
-		FROM [NeosBrianWhite].[dbo].[cases] C
+		FROM [BrianWhiteNeos].[dbo].[cases] C
 		JOIN [sma_TRN_cases] CAS
 			ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
 		JOIN IndvOrgContacts_Indexed IOC
@@ -70,7 +70,7 @@ INSERT INTO [sma_TRN_Courts]
 		   ,IOC.CID
 		   ,IOC.AID
 		--C.judge_link
-		FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
+		FROM [BrianWhiteNeos].[dbo].[cases_Indexed] C
 		JOIN [sma_TRN_cases] CAS
 			ON CAS.Neos_Saga = C.id
 		JOIN IndvOrgContacts_Indexed IOC
@@ -89,8 +89,8 @@ UPDATE sma_TRN_Courts
 SET crtsPlaintiffCaption = c.[Plaintiff Caption]
    ,crtsDefendantCaption = c.[Defendant Caption]
    ,crtsComment = ISNULL('Type of Court : ' + NULLIF(CONVERT(VARCHAR(MAX), d.code), '') + CHAR(13), '') + ''
-FROM NeosBrianWhite..NeosUserCase c
-LEFT JOIN NeosBrianWhite..mini_general_dir d
+FROM BrianWhiteNeos..NeosUserCase c
+LEFT JOIN BrianWhiteNeos..mini_general_dir d
 	ON d.id = c.[type of court]
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.casesid)
@@ -135,7 +135,7 @@ INSERT INTO [sma_TRN_CourtDocket]
 	FROM [sma_TRN_Courts] CRT
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.casnCaseID = CRT.crtnCaseID
-	JOIN [NeosBrianWhite].[dbo].[cases_indexed] C
+	JOIN [BrianWhiteNeos].[dbo].[cases_indexed] C
 		ON CONVERT(VARCHAR(50), c.id) = CAS.Neos_Saga
 GO
 
@@ -166,7 +166,7 @@ INSERT INTO [sma_trn_caseJudgeorClerk]
 		ON CRT.crtnPKCourtsID = CRD.crdnCourtsID
 	JOIN sma_trn_Cases cas
 		ON cas.casnCaseID = crt.crtnCaseID
-	JOIN [NeosBrianWhite]..[cases_indexed] ci
+	JOIN [BrianWhiteNeos]..[cases_indexed] ci
 		ON CONVERT(VARCHAR(50), ci.id) = cas.Neos_Saga
 	JOIN IndvOrgContacts_Indexed IOC
 		ON IOC.SAGA = CONVERT(VARCHAR(50), ci.judge_namesid)

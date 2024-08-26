@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -39,11 +39,11 @@ SELECT DISTINCT
 	 'user_Tab8_Data'+ucf.field_title	as [udfshortName],
     nuf.dropdownValues		as [udfsNewValues],
     DENSE_RANK() over( order by cas.casnOrgCaseTypeID) as udfnSortOrder
-FROM [NeosBrianWhite]..user_tab8_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+FROM [BrianWhiteNeos]..user_tab8_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 JOIN NeedlesUserFields nuf on nuf.field_title = ucf.field_title 
 JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50), td.casesid)
---LEFT JOIN (select distinct table_Name, column_name From [NeosBrianWhite]..[document_merge_params] where table_Name = 'user_Tab8_Data') dmp
+--LEFT JOIN (select distinct table_Name, column_name From [BrianWhiteNeos]..[document_merge_params] where table_Name = 'user_Tab8_Data') dmp
 												--on dmp.column_name = ucf.field_Title
 LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cas.casnOrgCaseTypeID and def.[udfsUDFName] = ucf.field_title and def.[udfsScreenName] = 'Other1' and udfstype = nuf.UDFType
 WHERE def.udfnUDFID IS NULL
@@ -84,8 +84,8 @@ select --fieldtitle, udf.casnOrgCaseTypeID,
 	null				as [udvdDtModified],
 	null				as [udvnLevelNo]
 --select *
-FROM [NeosBrianWhite]..user_tab8_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+FROM [BrianWhiteNeos]..user_tab8_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 JOIN NeedlesUserFields nuf on nuf.field_title = ucf.field_title 
 LEFT JOIN IndvOrgContacts_Indexed ioc on ioc.saga = convert(varchar(50),td.namesid)
 JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50), td.casesid)

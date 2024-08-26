@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -111,7 +111,7 @@ INSERT INTO [sma_TRN_SOLs]
 	   ,NULL			  AS [soldToProcessServerDt]
 	   ,NULL			  AS [soldRcvdDate]
 	   ,'D'				  AS [solsType]
-	FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
+	FROM [BrianWhiteNeos].[dbo].[cases_Indexed] C
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
 	JOIN [sma_TRN_Defendants] D

@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_MST_EmailWebsite] disable trigger all
@@ -48,7 +48,7 @@ INSERT INTO [sma_MST_EmailWebsite]
 	   , -- indicate email
 		ISNULL('Type: ' + NULLIF(CONVERT(VARCHAR, n.[type]), '') + CHAR(13), '') +
 		''				 AS [cewnComments]
-	FROM [NeosBrianWhite].[dbo].[email_accounts] N
+	FROM [BrianWhiteNeos].[dbo].[email_accounts] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesId)
 	WHERE ISNULL(email, '') <> ''
@@ -87,7 +87,7 @@ INSERT INTO [sma_MST_EmailWebsite]
 		--isnull('Type: ' + nullif(convert(varchar,n.[type]),'') + CHAR(13),'') +
 		''				 AS [cewnComments]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[staff] N
+	FROM [BrianWhiteNeos].[dbo].[staff] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
 	WHERE ISNULL(email, '') <> ''
@@ -107,8 +107,8 @@ SELECT
 		getdate()			as cewdDtModified,
 		null,
 		4					as saga -- indicate website
-FROM [NeosBrianWhite].[dbo].[names] N
-JOIN [SANeosBrianWhite].[dbo].[sma_MST_IndvContacts] C on C.saga_ref = N.names_id
+FROM [BrianWhiteNeos].[dbo].[names] N
+JOIN [BrianWhiteSANeos].[dbo].[sma_MST_IndvContacts] C on C.saga_ref = N.names_id
 WHERE isnull(website,'') <> ''
 */
 
@@ -145,7 +145,7 @@ INSERT INTO [sma_MST_EmailWebsite]
 	   , -- indicate email
 		ISNULL('Type: ' + NULLIF(CONVERT(VARCHAR, n.[type]), '') + CHAR(13), '') +
 		''				 AS [cewnComments]
-	FROM [NeosBrianWhite].[dbo].[email_accounts] N
+	FROM [BrianWhiteNeos].[dbo].[email_accounts] N
 	JOIN [sma_MST_OrgContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesId)
 	WHERE ISNULL(email, '') <> ''
@@ -165,7 +165,7 @@ SELECT
 		getdate()			as cewdDtModified,
 		null,
 		4					as saga -- indicate website
-FROM [NeosBrianWhite].[dbo].[names] N
+FROM [BrianWhiteNeos].[dbo].[names] N
 JOIN [sma_MST_OrgContacts] C on C.saga_ref = N.names_id
 WHERE isnull(website,'') <> ''
 */

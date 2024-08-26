@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 IF EXISTS (
@@ -28,7 +28,7 @@ INSERT INTO InsuredHelper
 	SELECT DISTINCT
 		insured
 	   ,dbo.WordCount(Insured)
-	FROM [NeosBrianWhite].[dbo].[insurance] INS
+	FROM [BrianWhiteNeos].[dbo].[insurance] INS
 	WHERE ISNULL(insured, '') <> ''
 
 

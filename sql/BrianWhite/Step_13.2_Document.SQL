@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -60,8 +60,8 @@ INSERT INTO [sma_MST_ScannedDocCategories]
 	(
 	SELECT DISTINCT
 		cat.[name] AS sctgsCategoryName
-	FROM [NeosBrianWhite].[dbo].[documents] doc
-	JOIN [NeosBrianWhite].[dbo].[document_category] cat
+	FROM [BrianWhiteNeos].[dbo].[documents] doc
+	JOIN [BrianWhiteNeos].[dbo].[document_category] cat
 		ON doc.doc_category_id = cat.id
 	UNION
 	SELECT
@@ -218,10 +218,10 @@ INSERT INTO [sma_TRN_Documents]
 	   ,  -- normal priority
 		CONVERT(VARCHAR(50), doc.id) AS [saga]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[documents] DOC
-	JOIN [NeosBrianWhite].[dbo].[one_drive_items] odi
+	FROM [BrianWhiteNeos].[dbo].[documents] DOC
+	JOIN [BrianWhiteNeos].[dbo].[one_drive_items] odi
 		ON doc.onedriveitemid = odi.id
-	LEFT JOIN [NeosBrianWhite].[dbo].[document_category] cat
+	LEFT JOIN [BrianWhiteNeos].[dbo].[document_category] cat
 		ON doc.doc_category_id = cat.id
 	LEFT JOIN IndvOrgContacts_Indexed auth
 		ON auth.saga_ref = CONVERT(VARCHAR(50), doc.author)

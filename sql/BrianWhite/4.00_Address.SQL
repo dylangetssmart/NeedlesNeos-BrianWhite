@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_MST_Address] disable trigger all
@@ -7,8 +7,8 @@ delete from [sma_MST_Address]
 DBCC CHECKIDENT ('[sma_MST_Address]', RESEED, 0);
 alter table [sma_MST_Address] enable trigger all
 */
--- select distinct addr_Type from  [NeosBrianWhite].[dbo].[multi_addresses]
--- select * from  [NeosBrianWhite].[dbo].[multi_addresses] where addr_type not in ('Home','business', 'other')
+-- select distinct addr_Type from  [BrianWhiteNeos].[dbo].[multi_addresses]
+-- select * from  [BrianWhiteNeos].[dbo].[multi_addresses] where addr_type not in ('Home','business', 'other')
 
 ---
 ALTER TABLE [sma_MST_Address] DISABLE TRIGGER ALL
@@ -94,7 +94,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	--select *
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Indvcontacts] I
 		ON CONVERT(VARCHAR(50), I.saga_ref) = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -185,7 +185,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Indvcontacts] I
 		ON I.saga_ref = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -275,7 +275,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Indvcontacts] I
 		ON I.saga_ref = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -370,7 +370,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Orgcontacts] O
 		ON O.saga_Ref = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -461,7 +461,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Orgcontacts] O
 		ON O.saga_ref = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -552,7 +552,7 @@ INSERT INTO [sma_MST_Address]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[multi_addresses] A
+	FROM [BrianWhiteNeos].[dbo].[multi_addresses] A
 	JOIN [sma_MST_Orgcontacts] O
 		ON O.saga_ref = CONVERT(VARCHAR(50), A.namesid)
 	JOIN [sma_MST_AddressTypes] T
@@ -719,14 +719,14 @@ GO
 
 ------------- Check Uniqueness------------
 -- select I.cinnContactID
--- 	 from [SANeosBrianWhite].[dbo].[sma_MST_Indvcontacts] I 
---	 inner join [SANeosBrianWhite].[dbo].[sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary=1 
+-- 	 from [BrianWhiteSANeos].[dbo].[sma_MST_Indvcontacts] I 
+--	 inner join [BrianWhiteSANeos].[dbo].[sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary=1 
 --	 group by cinnContactID
 --	 having count(cinnContactID)>1
 
 -- select O.connContactID
--- 	 from [SANeosBrianWhite].[dbo].[sma_MST_OrgContacts] O 
---	 inner join [SANeosBrianWhite].[dbo].[sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary=1 
+-- 	 from [BrianWhiteSANeos].[dbo].[sma_MST_OrgContacts] O 
+--	 inner join [BrianWhiteSANeos].[dbo].[sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary=1 
 --	 group by connContactID
 --	 having count(connContactID)>1
 

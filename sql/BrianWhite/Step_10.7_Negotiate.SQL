@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_Negotiations] disable trigger all
@@ -115,10 +115,10 @@ INSERT INTO [sma_TRN_Negotiations]
 			ELSE NULL
 		END			   AS [SettlementAmount]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[negotiation] NEG
-	LEFT JOIN NeosBrianWhite..negotiation_type nt
+	FROM [BrianWhiteNeos].[dbo].[negotiation] NEG
+	LEFT JOIN BrianWhiteNeos..negotiation_type nt
 		ON nt.id = neg.negotiationtypeid
-	LEFT JOIN [NeosBrianWhite].[dbo].[insurance_Indexed] INS
+	LEFT JOIN [BrianWhiteNeos].[dbo].[insurance_Indexed] INS
 		ON INS.id = NEG.insuranceid
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), neg.casesid)

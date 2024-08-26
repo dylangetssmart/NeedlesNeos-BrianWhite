@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_Notes] disable trigger all
@@ -57,7 +57,7 @@ INSERT INTO sma_TRN_Notes
 	   ,GETDATE()		 AS notdDtCreated
 	   ,NULL			 AS notnModifyUserID
 	   ,NULL			 AS notdDtModified
-	FROM [NeosBrianWhite].[dbo].[party] P
+	FROM [BrianWhiteNeos].[dbo].[party] P
 	JOIN sma_MST_IndvContacts I
 		ON I.saga_ref = CONVERT(VARCHAR(50), P.namesid)
 
@@ -104,7 +104,7 @@ INSERT INTO sma_TRN_Notes
 	   ,GETDATE()		 AS notdDtCreated
 	   ,NULL			 AS notnModifyUserID
 	   ,NULL			 AS notdDtModified
-	FROM [NeosBrianWhite].[dbo].[party] P
+	FROM [BrianWhiteNeos].[dbo].[party] P
 	JOIN sma_MST_IndvContacts I
 		ON I.saga_ref = CONVERT(VARCHAR(50), P.namesid)
 
@@ -144,7 +144,7 @@ INSERT INTO sma_TRN_Notes
 	   ,GETDATE() AS notdDtCreated
 	   ,NULL	  AS notnModifyUserID
 	   ,NULL	  AS notdDtModified
-	FROM [NeosBrianWhite].[dbo].[provider_notes] PN
+	FROM [BrianWhiteNeos].[dbo].[provider_notes] PN
 	JOIN IndvOrgContacts_Indexed IOC
 		ON IOC.saga_ref = CONVERT(VARCHAR(50), PN.providerid)
 

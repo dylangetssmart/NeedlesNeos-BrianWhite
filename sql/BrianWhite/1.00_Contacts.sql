@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_MST_IndvContacts] disable trigger all
@@ -42,7 +42,7 @@ GO
 /*
 --(0)---
 INSERT INTO [sma_MST_Languages] ([lngsLanguageName])
-SELECT race_name FROM [NeosBrianWhite].[dbo].[race] WHERE isnull(race_name,'')<>''
+SELECT race_name FROM [BrianWhiteNeos].[dbo].[race] WHERE isnull(race_name,'')<>''
 EXCEPT
 SELECT [lngsLanguageName] FROM [sma_MST_Languages]
 GO
@@ -594,10 +594,10 @@ INSERT INTO [sma_MST_IndvContacts]
 	   , -- Remember it to go to sma_MST_Users
 		stf.id							AS [saga_ref]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[staff] stf
-	LEFT JOIN [NeosBrianWhite]..[prefix] p
+	FROM [BrianWhiteNeos].[dbo].[staff] stf
+	LEFT JOIN [BrianWhiteNeos]..[prefix] p
 		ON stf.prefixid = p.id
-	LEFT JOIN [NeosBrianWhite]..[suffix] s
+	LEFT JOIN [BrianWhiteNeos]..[suffix] s
 		ON s.id = stf.suffixid
 
 
@@ -757,7 +757,7 @@ INSERT INTO [sma_MST_Users]
 	   ,stf.active						 AS [usrbActiveState]
 	   ,stf.[id]						 AS [saga]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[staff] STF
+	FROM [BrianWhiteNeos].[dbo].[staff] STF
 	JOIN sma_MST_IndvContacts INDV
 		ON INDV.cinsGrade = STF.staff_code
 	LEFT JOIN [sma_MST_Users] u
@@ -913,7 +913,7 @@ INSERT INTO [sma_MST_IndvContacts]
 			WHEN EXISTS (
 					SELECT
 						*
-					FROM [NeosBrianWhite].[dbo].[party] P
+					FROM [BrianWhiteNeos].[dbo].[party] P
 					WHERE P.[namesid] = N.[id]
 						AND P.incapacitated = 1
 				)
@@ -926,7 +926,7 @@ INSERT INTO [sma_MST_IndvContacts]
 			WHEN EXISTS (
 					SELECT
 						*
-					FROM [NeosBrianWhite].[dbo].[party] P
+					FROM [BrianWhiteNeos].[dbo].[party] P
 					WHERE P.[namesid] = N.[id]
 						AND P.minor = 1
 				)
@@ -960,10 +960,10 @@ INSERT INTO [sma_MST_IndvContacts]
 	   ,NULL											   AS saga
 	   ,n.id											   AS [saga_ref]
 	--SELECT max(len( isnull(aka_first,'') + ' ' + isnull(aka_last,'') ))
-	FROM [NeosBrianWhite]..[names] N
-	LEFT JOIN [NeosBrianWhite]..[prefix] p
+	FROM [BrianWhiteNeos]..[names] N
+	LEFT JOIN [BrianWhiteNeos]..[prefix] p
 		ON n.prefixid = p.id
-	LEFT JOIN [NeosBrianWhite]..[suffix] s
+	LEFT JOIN [BrianWhiteNeos]..[suffix] s
 		ON s.id = n.suffixid
 	WHERE N.[person] = 1
 
@@ -992,7 +992,7 @@ INSERT INTO [sma_MST_OrgContacts]
 	   ,(
 			SELECT
 				octnOrigContactTypeID
-			FROM [SANeosBrianWhite].[dbo].[sma_MST_OriginalContactTypes]
+			FROM [BrianWhiteSANeos].[dbo].[sma_MST_OriginalContactTypes]
 			WHERE octsDscrptn = 'General'
 				AND octnContactCtgID = 2
 		)				   
@@ -1010,7 +1010,7 @@ INSERT INTO [sma_MST_OrgContacts]
 		NULL			   AS [saga]
 	   ,n.id			   AS [saga_ref]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[names] N
 	WHERE N.[person] <> 1
 
 

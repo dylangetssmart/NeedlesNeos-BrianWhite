@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 ------
@@ -160,7 +160,7 @@ SET cinnContactTypeID = (
 FROM (
 	SELECT DISTINCT
 		judge_namesid
-	FROM [NeosBrianWhite].[dbo].[cases_Indexed]
+	FROM [BrianWhiteNeos].[dbo].[cases_Indexed]
 ) A
 WHERE CONVERT(VARCHAR(50), A.judge_namesid) = saga_ref
 AND ISNULL(CONVERT(VARCHAR(50), A.judge_namesid), '') <> ''

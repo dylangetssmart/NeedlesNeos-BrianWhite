@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -49,8 +49,8 @@ GO
 SELECT
 	td.insuranceid
    ,STRING_AGG(ucf.field_title + ': ' + td.[data], CHAR(10) + CHAR(13)) AS ins_comment INTO Insurance_Comment_Helper
-FROM [NeosBrianWhite]..user_insurance_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf
+FROM [BrianWhiteNeos]..user_insurance_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf
 	ON ucf.id = td.usercasefieldid
 GROUP BY td.insuranceid
 
@@ -131,7 +131,7 @@ INSERT INTO Insurance_Contacts_Helper
 	   ,CAS.casnCaseID		 AS caseID
 	   ,NULL				 AS PlaintiffDefendantID
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[insurance_Indexed] INS
+	FROM [BrianWhiteNeos].[dbo].[insurance_Indexed] INS
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), INS.casesid)
 	JOIN IndvOrgContacts_Indexed IOC1
@@ -165,7 +165,7 @@ GO
 SELECT
 	INS.id AS ins_id
    ,T.plnnPlaintiffID INTO [multi_party_helper_temp]
-FROM [NeosBrianWhite]..[insurance_Indexed] INS
+FROM [BrianWhiteNeos]..[insurance_Indexed] INS
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), INS.casesid)
 JOIN [sma_TRN_Plaintiff] T
@@ -195,7 +195,7 @@ GO
 SELECT
 	INS.id AS ins_id
    ,D.defnDefendentID INTO [multi_party_helper_temp]
-FROM [NeosBrianWhite].[dbo].[insurance_Indexed] INS
+FROM [BrianWhiteNeos].[dbo].[insurance_Indexed] INS
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), INS.casesid)
 JOIN [sma_TRN_Defendants] D
@@ -224,8 +224,8 @@ INSERT INTO [sma_MST_InsuranceType]
 	UNION
 	SELECT DISTINCT
 		[type]
-	FROM [NeosBrianWhite]..[insurance] INS
-	JOIN [NeosBrianWhite]..[insurance_type] it
+	FROM [BrianWhiteNeos]..[insurance] INS
+	JOIN [BrianWhiteNeos]..[insurance_type] it
 		ON it.id = ins.insurancetypeid
 	EXCEPT
 	SELECT
@@ -348,15 +348,15 @@ INSERT INTO [sma_TRN_InsuranceCoverage]
 	   ,0						 AS [incbPrimary]
 	   ,INS.id					 AS [saga]
 	--SELECT max(len([claim]))
-	FROM [NeosBrianWhite].[dbo].[insurance_Indexed] INS
-	LEFT JOIN [NeosBrianWhite].[dbo].[insurance_type] it
+	FROM [BrianWhiteNeos].[dbo].[insurance_Indexed] INS
+	LEFT JOIN [BrianWhiteNeos].[dbo].[insurance_type] it
 		ON it.id = ins.insurancetypeid
 	LEFT JOIN Insurance_Comment_Helper UD
 		ON CONVERT(VARCHAR(50), INS.id) = CONVERT(VARCHAR(50), UD.insuranceid)
 	JOIN [Insurance_Contacts_Helper] MAP
 		ON INS.id = MAP.insurance_id
 			AND MAP.pord = 'P'
-	LEFT JOIN NeosBrianWhite..NeosUserInsurance ni
+	LEFT JOIN BrianWhiteNeos..NeosUserInsurance ni
 		ON ni.insuranceid = ins.id
 GO
 
@@ -467,15 +467,15 @@ INSERT INTO [sma_TRN_InsuranceCoverage]
 	   ,NULL					 AS [incnauthtodefcounDt]
 	   ,0						 AS [incbPrimary]
 	   ,INS.id					 AS [saga]
-	FROM [NeosBrianWhite].[dbo].[insurance_Indexed] INS
-	LEFT JOIN [NeosBrianWhite].[dbo].[insurance_type] it
+	FROM [BrianWhiteNeos].[dbo].[insurance_Indexed] INS
+	LEFT JOIN [BrianWhiteNeos].[dbo].[insurance_type] it
 		ON it.id = ins.insurancetypeid
 	LEFT JOIN Insurance_Comment_Helper UD
 		ON CONVERT(VARCHAR(50), INS.id) = CONVERT(VARCHAR(50), UD.insuranceid)
 	JOIN [Insurance_Contacts_Helper] MAP
 		ON INS.ID = MAP.insurance_id
 			AND MAP.pord = 'D'
-	LEFT JOIN NeosBrianWhite..NeosUserInsurance ni
+	LEFT JOIN BrianWhiteNeos..NeosUserInsurance ni
 		ON ni.insuranceid = ins.id
 GO
 ---
@@ -534,7 +534,7 @@ INSERT INTO [sma_TRN_InsuranceCoverageAdjusters]
 		incnInsCovgID
 	   ,ioc2.UNQCID
 	FROM sma_TRN_InsuranceCoverage ic
-	JOIN [NeosBrianWhite]..[insurance_Indexed] INS
+	JOIN [BrianWhiteNeos]..[insurance_Indexed] INS
 		ON CONVERT(VARCHAR(50), INS.ID) = IC.SAGA
 	JOIN IndvOrgContacts_Indexed IOC2
 		ON IOC2.saga_ref = CONVERT(VARCHAR(50), ins.adjuster_namesid)
@@ -544,7 +544,7 @@ INSERT INTO [sma_TRN_InsuranceCoverageAdjusters]
 		incnInsCovgID
 	   ,ioc2.UNQCID
 	FROM sma_TRN_InsuranceCoverage ic
-	JOIN [NeosBrianWhite]..[NeosUserInsurance] INS
+	JOIN [BrianWhiteNeos]..[NeosUserInsurance] INS
 		ON CONVERT(VARCHAR(50), INS.insuranceid) = IC.SAGA
 	JOIN IndvOrgContacts_Indexed IOC2
 		ON IOC2.saga_ref = CONVERT(VARCHAR(50), ins.[UM/UIM Adjuster])

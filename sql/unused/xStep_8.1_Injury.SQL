@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
@@ -44,8 +44,8 @@ SELECT DISTINCT
            NULL,						--,<plinModifyUserID, int,>
            NULL							--,<plidDtModified, smalldatetime,>)
 --select *
-FROM [NeosBrianWhite]..user_tab6_Data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+FROM [BrianWhiteNeos]..user_tab6_Data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 JOIN sma_trn_cases cas on convert(varchar(50),td.casesid) = cas.Neos_Saga
 WHERE field_title in ('Injuries','Injuries from Accident')
 
@@ -95,7 +95,7 @@ SELECT
            	NULL				as [prlsPrCaseNo],
            	NULL				as [prlsInjury]			--Injury nvarchar -1
 --select *
-FROM [NeosBrianWhite]..user_tab10_data ud
+FROM [BrianWhiteNeos]..user_tab10_data ud
 JOIN sma_trn_cases cas on convert(varchar,UD.case_id) = cas.cassCaseNumber
 WHERE isnull(Prior_Injuries,'') <>''
 */

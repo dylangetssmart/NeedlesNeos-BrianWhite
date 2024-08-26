@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_PlaintiffDeath] disable trigger all

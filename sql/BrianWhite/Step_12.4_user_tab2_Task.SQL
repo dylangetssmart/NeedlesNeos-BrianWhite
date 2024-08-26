@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -9,8 +9,8 @@ DBCC CHECKIDENT ('[sma_TRN_TaskNew]', RESEED, 0);
 alter table [sma_TRN_TaskNew] disable trigger all
 
 select distinct g.*
-from NeosBrianWhite..neosUsertab2 u
-LEFT JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Type of Record]
+from BrianWhiteNeos..neosUsertab2 u
+LEFT JOIN BrianWhiteNeos..mini_general_dir g on g.id = u.[Type of Record]
 WHERE isnull(g.code,'') IN ('Investigation Report','Declaration Page','Curriculum Vitae','Itemized Subrogation Lien','Video Preservation',
 'Policy Limits','Open Records','Osha - California','Maintenance Report','Police Report','Lost Wages','Prior Claim(s) Report' )
 */
@@ -38,8 +38,8 @@ INSERT INTO [sma_MST_TaskCategory]
 	)
 	SELECT DISTINCT
 		ISNULL(g.code, 'Other')
-	FROM NeosBrianWhite..neosUsertab2 u
-	LEFT JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab2 u
+	LEFT JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Type of Record]
 	WHERE ISNULL(g.code, '') IN ('Investigation Report', 'Declaration Page', 'Curriculum Vitae', 'Itemized Subrogation Lien', 'Video Preservation',
 		'Policy Limits', 'Open Records', 'Osha - California', 'Maintenance Report', 'Police Report', 'Lost Wages', 'Prior Claim(s) Report')
@@ -148,14 +148,14 @@ INSERT INTO [sma_TRN_TaskNew]
 		END											 AS [tskCompleted]
 	   ,'tab2: ' + CONVERT(VARCHAR(50), u.tablistid) AS [saga]
 	--SELECT *
-	FROM NeosBrianWhite..neosUsertab2 u
-	LEFT JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab2 u
+	LEFT JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Type of Record]
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), u.casesid)
-	LEFT JOIN NeosBrianWhite..value_code vc
+	LEFT JOIN BrianWhiteNeos..value_code vc
 		ON vc.id = u.[value Code]
-	LEFT JOIN NeosBrianWhite..mini_general_dir me
+	LEFT JOIN BrianWhiteNeos..mini_general_dir me
 		ON me.id = u.[method]
 	LEFT JOIN IndvOrgContacts_Indexed iocp
 		ON iocp.saga_ref = CONVERT(VARCHAR(50), u.[provider name])

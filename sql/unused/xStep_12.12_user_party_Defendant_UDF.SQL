@@ -1,13 +1,13 @@
 
-use SANeosBrianWhite
+use BrianWhiteSANeos
 GO
 
 /*
 ---(Supporting Statements)---
 select 'when LIST.column_name=' + ''''+ F.column_name +'''' + ' then convert(varchar(MAX),UD.' + F.column_name + ')',
 'isnull( convert(varchar,'+F.column_name +'),'''')<>'''' or '
-from [NeosBrianWhite].[dbo].[user_case_fields] F
-where field_title in ( select distinct field_title from [NeosBrianWhite].[dbo].[user_party_matter] ) 
+from [BrianWhiteNeos].[dbo].[user_case_fields] F
+where field_title in ( select distinct field_title from [BrianWhiteNeos].[dbo].[user_party_matter] ) 
 */
 
 
@@ -51,7 +51,7 @@ insert into UDF_Helper (
 	field_len
 )
 select ref_num,F.column_name,F.field_title,M.mattercode , udftype, f.field_len
-from [NeosBrianWhite].[dbo].[user_party_matter] M 
+from [BrianWhiteNeos].[dbo].[user_party_matter] M 
 JOIN NeedlesUserFields F on F.field_num=M.ref_num 
 JOIN [PartyRoles] R on R.[Needles Roles]=M.party_role
 where R.[SA Party]='Defendant'
@@ -68,9 +68,9 @@ GO
 
 select p.tableindex, party_ID, case_ID, [role], [sa party],IOC.CID, IOC.CTG, IOC.AID, IOC.UNQCID, IOC.Name, IOC.SAGA 
 INTO UserParty_Helper
-From [NeosBrianWhite].[dbo].[party_Indexed] P
-JOIN [SANeosBrianWhite].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
-JOIN [SANeosBrianWhite].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
+From [BrianWhiteNeos].[dbo].[party_Indexed] P
+JOIN [BrianWhiteSANeos].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
+JOIN [BrianWhiteSANeos].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
 */
 
 
@@ -116,10 +116,10 @@ select distinct
     M.ref_num			   as [udfnLevelNo]
 from [sma_MST_CaseType] CST
 JOIN CaseTypeMixture mix on mix.[SmartAdvocate Case Type] = cst.cstsType
-JOIN [NeosBrianWhite].[dbo].[user_party_matter] M on M.mattercode=mix.matcode
+JOIN [BrianWhiteNeos].[dbo].[user_party_matter] M on M.mattercode=mix.matcode
 JOIN [PartyRoles] R on R.[Needles Roles]=M.party_role
 JOIN NeedlesUserFields ucf on m.ref_num = ucf.field_num
-LEFT JOIN (select distinct table_Name, column_name From [NeosBrianWhite].[dbo].[document_merge_params] where table_Name = 'user_party_Data') dmp
+LEFT JOIN (select distinct table_Name, column_name From [BrianWhiteNeos].[dbo].[document_merge_params] where table_Name = 'user_party_Data') dmp
 												on dmp.column_name = ucf.column_Name
 LEFT JOIN [sma_MST_UDFDefinition] udf on udf.udfnRelatedPK = cst.cstnCaseTypeID and udf.udfsScreenName = [SA Party] and udf.udfsUDFName = m.field_title and udfstype = ucf.UDFType
 where R.[SA Party]='Defendant'
@@ -205,11 +205,11 @@ select
 	null				as [udvnModifyUserID],
 	null				as [udvdDtModified],
 	null				as [udvnLevelNo]
-from [NeosBrianWhite].[dbo].[user_party_data] UD 
-JOIN [NeosBrianWhite].[dbo].[cases_Indexed] ci on ud.case_id = ci.casenum
+from [BrianWhiteNeos].[dbo].[user_party_data] UD 
+JOIN [BrianWhiteNeos].[dbo].[cases_Indexed] ci on ud.case_id = ci.casenum
 JOIN [sma_TRN_cases] CAS on CAS.cassCaseNumber = convert(varchar,UD.case_id)
 JOIN [sma_MST_CaseType] CST on CST.cstnCaseTypeID=CAS.casnOrgCaseTypeID and VenderCaseType='SchechterCaseType'
-join [NeosBrianWhite].[dbo].[party_Indexed] P on P.party_id=UD.party_id and P.case_id=UD.case_id
+join [BrianWhiteNeos].[dbo].[party_Indexed] P on P.party_id=UD.party_id and P.case_id=UD.case_id
 JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA = UD.party_id
 JOIN [sma_TRN_Defendants] T on P.TableIndex= T.[saga_party]
 join UDF_Helper LIST on LIST.mattercode=ci.matcode

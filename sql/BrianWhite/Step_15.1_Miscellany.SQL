@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 TRUNCATE TABLE sma_TRN_RoleCaseStuffMainRoles

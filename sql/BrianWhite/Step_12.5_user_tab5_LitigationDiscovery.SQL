@@ -1,10 +1,10 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 /*
 select DISTINCT g.code
-FROM NeosBrianWhite..NeosUserTab5 u
-JOIN NeosBrianWhite..mini_general_dir g on g.id = u.[Litigation Document]
+FROM BrianWhiteNeos..NeosUserTab5 u
+JOIN BrianWhiteNeos..mini_general_dir g on g.id = u.[Litigation Document]
 */
 
 IF NOT EXISTS (
@@ -36,8 +36,8 @@ INSERT INTO sma_MST_DiscoveryType
 	SELECT DISTINCT
 		g.code
 	   ,g.code
-	FROM NeosBrianWhite..NeosUserTab5 u
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..NeosUserTab5 u
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Litigation Document]
 	WHERE ISNULL([Litigation Document], '') <> ''
 	EXCEPT
@@ -143,8 +143,8 @@ INSERT INTO sma_TRN_LitigationDiscovery
 	   ,NULL									   AS lidnRespondentType
 	   ,'Tab5: ' + CONVERT(VARCHAR(50), tablistid) AS saga
 	--select *
-	FROM NeosBrianWhite..NeosUserTab5 u
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..NeosUserTab5 u
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Litigation Document]
 	JOIN sma_trn_Cases cas
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), u.casesid)
@@ -177,8 +177,8 @@ INSERT INTO sma_TRN_DiscoveryDepositionRespondents
 	   ,368				AS RecUserID
 	   ,GETDATE()		AS DtCreated
 	   ,1				AS CSW
-	FROM NeosBrianWhite..NeosUserTab5 u
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..NeosUserTab5 u
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = u.[Litigation Document]
 	JOIN sma_TRN_LitigationDiscovery ld
 		ON ld.saga = 'Tab5: ' + CONVERT(VARCHAR(50), tablistid)

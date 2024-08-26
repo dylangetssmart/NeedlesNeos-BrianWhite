@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_caseStaff] disable trigger all
@@ -8,9 +8,9 @@ DBCC CHECKIDENT ('[sma_TRN_caseStaff]', RESEED, 0);
 alter table [sma_TRN_caseStaff] enable trigger all
 
 select * 
-From NeosBrianWhite..case_staff cs
-JOIN NeosBrianWhite..matter_staff ms on ms.id = cs.matterstaffid
-JOIN NeosBrianWhite..staff_Role sr on sr.id = ms.staffroleid
+From BrianWhiteNeos..case_staff cs
+JOIN BrianWhiteNeos..matter_staff ms on ms.id = cs.matterstaffid
+JOIN BrianWhiteNeos..staff_Role sr on sr.id = ms.staffroleid
 */
 
 
@@ -27,7 +27,7 @@ INSERT INTO [sma_MST_SubRoleCode]
 			ELSE [role]
 		END
 	   ,10
-	FROM NeosBrianWhite..staff_Role
+	FROM BrianWhiteNeos..staff_Role
 	EXCEPT
 	SELECT
 		srcsDscrptn
@@ -85,10 +85,10 @@ INSERT INTO sma_TRN_caseStaff
 	   ,NULL			AS [cssdDtModified]
 	   ,0				AS cssnLevelNo
 	--SELECT *
-	FROM NeosBrianWhite..case_staff cs
-	JOIN NeosBrianWhite..matter_staff ms
+	FROM BrianWhiteNeos..case_staff cs
+	JOIN BrianWhiteNeos..matter_staff ms
 		ON ms.id = cs.matterstaffid
-	JOIN NeosBrianWhite..staff_Role sr
+	JOIN BrianWhiteNeos..staff_Role sr
 		ON sr.id = ms.staffroleid
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), cs.casesid)

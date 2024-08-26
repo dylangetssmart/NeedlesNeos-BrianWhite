@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_ReferredOut] disable trigger all
@@ -59,7 +59,7 @@ INSERT INTO [sma_TRN_ReferredOut]
 	   ,0			   AS rfonCoCouncil
 	   ,0			   AS rfonIsLawFirmUpdateToSend
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[cases_indexed] C
+	FROM [BrianWhiteNeos].[dbo].[cases_indexed] C
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
 	JOIN [IndvOrgContacts_Indexed] IOC

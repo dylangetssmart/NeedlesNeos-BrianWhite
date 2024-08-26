@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_CalendarAppointments] disable trigger all
@@ -30,8 +30,8 @@ INSERT INTO [sma_MST_ActivityType]
 	FROM (
 		SELECT DISTINCT
 			[TYPE] AS ActivityType
-		FROM [NeosBrianWhite].[dbo].[calendar] CAL
-		JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+		FROM [BrianWhiteNeos].[dbo].[calendar] CAL
+		JOIN [BrianWhiteNeos].[dbo].[appointment_type] ap
 			ON cal.appointmenttypeid = ap.id
 		WHERE ISNULL([TYPE], '') <> ''
 			AND ISNULL(CONVERT(VARCHAR(50), cal.casesid), '') = ''
@@ -233,10 +233,10 @@ INSERT INTO [sma_TRN_CalendarAppointments]
 	   ,NULL
 	   ,NULL
 	   ,CONVERT(VARCHAR(50), CAL.id) AS [SAGA]
-	FROM [NeosBrianWhite].[dbo].[calendar] CAL
-	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+	FROM [BrianWhiteNeos].[dbo].[calendar] CAL
+	LEFT JOIN [BrianWhiteNeos].[dbo].[appointment_type] ap
 		ON cal.appointmenttypeid = ap.id
-	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_status] stat
+	LEFT JOIN [BrianWhiteNeos].[dbo].[appointment_status] stat
 		ON cal.appointmentstatusid = stat.id
 	WHERE ISNULL(CONVERT(VARCHAR(50), CAL.casesid), '') = ''
 
@@ -252,7 +252,7 @@ INSERT INTO [sma_trn_AppointmentStaff]
 	   ,ind.cinnContactID
 	   ,ind.cinnContactCtg
 	FROM [sma_TRN_CalendarAppointments] APP
-	JOIN [NeosBrianWhite].[dbo].[calendar] CAL
+	JOIN [BrianWhiteNeos].[dbo].[calendar] CAL
 		ON APP.saga = CONVERT(VARCHAR(50), CAL.id)
 	CROSS APPLY (
 		SELECT

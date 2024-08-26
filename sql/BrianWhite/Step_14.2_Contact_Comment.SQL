@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 ---
@@ -16,8 +16,8 @@ FROM (
 	   ,P.namesid AS PartyID
 	   ,DATEPART(yyyy, GETDATE()) - DATEPART(yyyy, N.date_of_birth) - 1 AS Age
 
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE N.date_of_birth IS NOT NULL
 ) A
@@ -32,10 +32,10 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,DATEPART(yyyy, C.date_of_incident) - DATEPART(yyyy, N.date_of_birth) - 1 AS DOI
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
-	JOIN [NeosBrianWhite].[dbo].[cases] C
+	JOIN [BrianWhiteNeos].[dbo].[cases] C
 		ON C.id = P.casesid
 	WHERE C.date_of_incident IS NOT NULL
 		AND N.date_of_birth IS NOT NULL
@@ -51,8 +51,8 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,N.Deceased AS Deceased
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE N.Deceased IS NOT NULL
 ) A
@@ -67,8 +67,8 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,DATEPART(yyyy, N.date_of_death) AS DOD
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE N.date_of_death IS NOT NULL
 ) A
@@ -84,8 +84,8 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,P.incapacitated AS incapacitated
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE ISNULL(incapacitated, '') <> ''
 ) A
@@ -100,8 +100,8 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,P.incapacity AS Incapacity
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE ISNULL(incapacity, '') <> ''
 ) A
@@ -117,8 +117,8 @@ FROM (
 		P.casesid AS CaseID
 	   ,P.namesid AS PartyID
 	   ,P.responsibility AS Responsibility
-	FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-	JOIN [NeosBrianWhite].[dbo].[names] N
+	FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+	JOIN [BrianWhiteNeos].[dbo].[names] N
 		ON N.id = P.namesid
 	WHERE ISNULL(P.responsibility, '') <> ''
 ) A

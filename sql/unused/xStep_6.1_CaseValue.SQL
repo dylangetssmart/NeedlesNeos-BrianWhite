@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 
@@ -19,8 +19,8 @@ SELECT DISTINCT
 	null					as csvnExpectedResolutionDate,
 	ud.Estimated_Value_of_Case		as csvnMaxSettlementValue
 --select *
-FROM NeosBrianWhite..insurance ii
+FROM BrianWhiteNeos..insurance ii
 JOIN sma_trn_Cases cas on cas.Neos_Saga = convert(varchar(50),ii.casesid)
-LEFT JOIN NeosBrianWhite..user_tab7_data ud on convert(varchar,ud.case_id) = cas.cassCaseNumber
+LEFT JOIN BrianWhiteNeos..user_tab7_data ud on convert(varchar,ud.case_id) = cas.cassCaseNumber
 WHERE isnull(minimum_amount,0) <> 0
 or isnull(ud.Estimated_Value_of_Case,0)<> 0

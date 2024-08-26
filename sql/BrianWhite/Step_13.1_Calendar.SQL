@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_CalendarAppointments] disable trigger all
@@ -12,7 +12,7 @@ DBCC CHECKIDENT ('[sma_trn_AppointmentStaff]', RESEED, 0);
 alter table [sma_trn_AppointmentStaff] disable trigger all
 */
 
---select * from [NeosBrianWhite].[dbo].[calendar]
+--select * from [BrianWhiteNeos].[dbo].[calendar]
 
 ---(0)---
 IF NOT EXISTS (
@@ -53,14 +53,14 @@ SELECT
    ,0			   AS Court_Contact
    ,0			   AS Court_Address
    ,0			   AS Party_Contact INTO CalendarJudgeStaffCourt
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
+FROM [BrianWhiteNeos].[dbo].[calendar] CAL
 JOIN [sma_TRN_Cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CAL.casesid)
 WHERE ISNULL(CONVERT(VARCHAR(50), CAL.casesid), '') <> ''
 
 UPDATE CalendarJudgeStaffCourt
 SET Judge_Contact = I.cinnContactID
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
+FROM [BrianWhiteNeos].[dbo].[calendar] CAL
 JOIN [sma_TRN_Cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CAL.casesid)
 JOIN [sma_MST_IndvContacts] I
@@ -69,7 +69,7 @@ JOIN [sma_MST_IndvContacts] I
 WHERE CAL.id = ID
 /*
 UPDATE CalendarJudgeStaffCourt set Staff_Contact=J.cinnContactID
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
+FROM [BrianWhiteNeos].[dbo].[calendar] CAL
 JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = convert(varchar(50),CAL.casesid)
 JOIN [sma_MST_IndvContacts] J on J.cinsGrade = CAL.staff_id and isnull(CAL.staff_id,'')<>'' 
 WHERE CAL.id = ID
@@ -77,7 +77,7 @@ WHERE CAL.id = ID
 UPDATE CalendarJudgeStaffCourt
 SET Court_Contact = i.cid
    ,Court_Address = i.aid
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
+FROM [BrianWhiteNeos].[dbo].[calendar] CAL
 JOIN [sma_TRN_Cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CAL.casesid)
 JOIN IndvOrgContacts_Indexed I
@@ -87,7 +87,7 @@ WHERE CAL.id = ID
 
 UPDATE CalendarJudgeStaffCourt
 SET Party_Contact = i.cid
-FROM [NeosBrianWhite].[dbo].[calendar] CAL
+FROM [BrianWhiteNeos].[dbo].[calendar] CAL
 JOIN [sma_TRN_Cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CAL.casesid)
 JOIN IndvOrgContacts_Indexed I
@@ -114,8 +114,8 @@ INSERT INTO [sma_MST_ActivityType]
 	FROM (
 		SELECT DISTINCT
 			[TYPE] AS ActivityType
-		FROM [NeosBrianWhite].[dbo].[calendar] CAL
-		JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+		FROM [BrianWhiteNeos].[dbo].[calendar] CAL
+		JOIN [BrianWhiteNeos].[dbo].[appointment_type] ap
 			ON cal.appointmenttypeid = ap.id
 		WHERE ISNULL([TYPE], '') <> ''
 		EXCEPT
@@ -308,10 +308,10 @@ INSERT INTO [sma_TRN_CalendarAppointments]
 	   ,NULL
 	   ,CONVERT(VARCHAR(50), CAL.id) AS [saga]
 	--select max(len(cal.location))
-	FROM [NeosBrianWhite].[dbo].[calendar] CAL
-	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_type] ap
+	FROM [BrianWhiteNeos].[dbo].[calendar] CAL
+	LEFT JOIN [BrianWhiteNeos].[dbo].[appointment_type] ap
 		ON cal.appointmenttypeid = ap.id
-	LEFT JOIN [NeosBrianWhite].[dbo].[appointment_status] stat
+	LEFT JOIN [BrianWhiteNeos].[dbo].[appointment_status] stat
 		ON cal.appointmentstatusid = stat.id
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), CAL.casesid)
@@ -336,7 +336,7 @@ INSERT INTO [sma_trn_AppointmentStaff]
 	   ,ind.cinnContactID
 	   ,ind.cinnContactCtg
 	FROM [sma_TRN_CalendarAppointments] APP
-	JOIN [NeosBrianWhite].[dbo].[calendar] CAL
+	JOIN [BrianWhiteNeos].[dbo].[calendar] CAL
 		ON APP.saga = CONVERT(VARCHAR(50), CAL.id)
 	CROSS APPLY (
 		SELECT

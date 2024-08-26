@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 
@@ -38,8 +38,8 @@ INSERT INTO [sma_MST_DisbursmentType]
 	(
 	SELECT DISTINCT
 		VC.[description]
-	FROM NeosBrianWhite..value_code vc
-	JOIN NeosBrianWhite..value_Indexed vi
+	FROM BrianWhiteNeos..value_code vc
+	JOIN BrianWhiteNeos..value_Indexed vi
 		ON vc.id = vi.valuecodeid
 	WHERE ISNULL(vc.code, '') IN ('CASEEXP', 'CDB', 'DEBTPAY', 'LOAN', 'ADV', 'DTF', 'Write Off')
 	)
@@ -112,8 +112,8 @@ INSERT INTO value_tab_Disbursement_Helper
 	   ,CAS.casnCaseID AS casnCaseID
 	   ,NULL		   AS PlaintiffID
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -144,10 +144,10 @@ SELECT
 	V.casesid AS cid
    ,V.id	  AS vid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
-JOIN NeosBrianWhite..Party_Indexed pt
+JOIN BrianWhiteNeos..Party_Indexed pt
 	ON pt.id = v.partyid
 JOIN IndvOrgContacts_Indexed IOC
 	ON IOC.SAGA_REF = CONVERT(VARCHAR(50), pt.namesid)
@@ -186,10 +186,10 @@ SELECT
 			AND plnbIsPrimary = 1
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
-JOIN NeosBrianWhite..Party_Indexed pt
+JOIN BrianWhiteNeos..Party_Indexed pt
 	ON pt.id = v.partyid
 JOIN IndvOrgContacts_Indexed IOC
 	ON IOC.SAGA_ref = CONVERT(VARCHAR(50), pt.namesid)
@@ -286,10 +286,10 @@ INSERT INTO [sma_TRN_Disbursement]
 		--1						as disnRecoverable,
 		V.id			AS saga
 	--select max(len(V.[memo]))
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
-	--LEFT JOIN NeosBrianWhite..user_value_data uvd on v.value_ID = uvd.value_id
+	--LEFT JOIN BrianWhiteNeos..user_value_data uvd on v.value_ID = uvd.value_id
 	JOIN value_tab_Disbursement_Helper MAP
 		ON MAP.case_id = V.casesid
 			AND MAP.value_id = V.id

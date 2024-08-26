@@ -1,12 +1,12 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 
 /*
 select  td.casesid, ucf.field_title, ucf.field_type, ucf.field_len, td.[data] as FieldData, td.namesid
 --select distinct td.[data]
-from [NeosBrianWhite]..user_tab7_data td
-JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+from [BrianWhiteNeos]..user_tab7_data td
+JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 WHERE ucf.field_title IN ('Referral Source Code','Internal Referral Source','Referral Decision','Referring Attorney')
 order by ucf.field_title
 */
@@ -25,8 +25,8 @@ INTO ReferralPivot
 FROM
 (
 	SELECT td.casesid as CasesID, case when convert(varchar(50),td.[namesid]) IS NULL then td.[data] else convert(varchar(50),td.[namesid]) end as [data], ucf.field_title
-	FROM [NeosBrianWhite]..user_tab7_data td
-	JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+	FROM [BrianWhiteNeos]..user_tab7_data td
+	JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 	WHERE field_Title in ( 'Fee Agreement', 'Fee Terms', 'Referring Attorney' )
 ) d
 pivot

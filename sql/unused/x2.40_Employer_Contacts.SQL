@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 ----------------------------------------
@@ -25,8 +25,8 @@ SELECT DISTINCT
 		getdate()					as [condDtCreated],
 		'-2'						as [saga],
 		p.[data]					as [saga_ref]
-FROM [NeosBrianWhite].[dbo].[user_tab3_data] P 
-JOIN [NeosBrianWhite].[dbo].[user_case_fields] ucf on ucf.id = p.usercasefieldid
+FROM [BrianWhiteNeos].[dbo].[user_tab3_data] P 
+JOIN [BrianWhiteNeos].[dbo].[user_case_fields] ucf on ucf.id = p.usercasefieldid
 WHERE ucf.field_title = 'Employer Name'
 and isnull(p.[data],'')<>''
 GO

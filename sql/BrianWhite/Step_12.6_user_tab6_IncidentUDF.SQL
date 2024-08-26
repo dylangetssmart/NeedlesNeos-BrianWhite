@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -13,8 +13,8 @@ DBCC CHECKIDENT ('[sma_TRN_UDFValues]', RESEED, 0);
 alter table [sma_TRN_UDFValues] enable trigger all
 
 SELECT td.casesid, case when convert(varchar(50),td.[namesid]) IS NULL then td.[data] else convert(varchar(50),td.[namesid]) end as [data], ucf.field_title
-	FROM [NeosBrianWhite]..user_tab6_data td
-	JOIN [NeosBrianWhite]..user_case_fields ucf on ucf.id = td.usercasefieldid
+	FROM [BrianWhiteNeos]..user_tab6_data td
+	JOIN [BrianWhiteNeos]..user_case_fields ucf on ucf.id = td.usercasefieldid
 */
 
 ----------------------------
@@ -45,14 +45,14 @@ INSERT INTO [sma_MST_UDFDefinition]
 	   ,nuf.dropdownValues								   AS [udfsNewValues]
 	   ,DENSE_RANK() OVER (ORDER BY cas.casnOrgCaseTypeID) AS udfnSortOrder
 	--select td.*
-	FROM [NeosBrianWhite]..user_tab6_data td
-	JOIN [NeosBrianWhite]..user_case_fields ucf
+	FROM [BrianWhiteNeos]..user_tab6_data td
+	JOIN [BrianWhiteNeos]..user_case_fields ucf
 		ON ucf.id = td.usercasefieldid
 	JOIN NeedlesUserFields nuf
 		ON nuf.field_title = ucf.field_title
 	JOIN sma_trn_Cases cas
 		ON cas.Neos_Saga = CONVERT(VARCHAR(50), td.casesid)
-	--LEFT JOIN (select distinct table_Name, column_name From [NeosBrianWhite]..[document_merge_params] where table_Name = 'user_Tab6_Data') dmp
+	--LEFT JOIN (select distinct table_Name, column_name From [BrianWhiteNeos]..[document_merge_params] where table_Name = 'user_Tab6_Data') dmp
 	--on dmp.column_name = ucf.field_Title
 	LEFT JOIN [sma_MST_UDFDefinition] def
 		ON def.[udfnRelatedPK] = cas.casnOrgCaseTypeID
@@ -104,8 +104,8 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL		  AS [udvdDtModified]
 	   ,NULL		  AS [udvnLevelNo]
 	--select 
-	FROM [NeosBrianWhite]..user_tab6_data td
-	JOIN [NeosBrianWhite]..user_case_fields ucf
+	FROM [BrianWhiteNeos]..user_tab6_data td
+	JOIN [BrianWhiteNeos]..user_case_fields ucf
 		ON ucf.id = CONVERT(VARCHAR(50), td.usercasefieldid)
 	JOIN sma_trn_Cases cas
 		ON cas.Neos_Saga = CONVERT(VARCHAR(50), td.casesid)

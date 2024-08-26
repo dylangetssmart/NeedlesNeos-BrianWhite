@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_CriticalComments] disable trigger all
@@ -45,7 +45,7 @@ INSERT INTO [sma_TRN_CriticalComments]
 	   ,NULL		   AS [ctcnLevelNo]
 	   ,NULL		   AS [ctcsCommentType]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
+	FROM [BrianWhiteNeos].[dbo].[cases_Indexed] C
 	JOIN [sma_trn_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), C.id)
 	WHERE ISNULL(special_note, '') <> ''

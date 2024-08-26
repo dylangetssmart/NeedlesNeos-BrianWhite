@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_MST_UDFDefinition] disable trigger all
@@ -17,8 +17,8 @@ alter table [sma_TRN_UDFValues] enable trigger all
 ----------------------------
 /*
 select distinct m.field_Title, column_name, 'convert(varchar(max), ['+ column_Name + '] ) as ['+ m.field_title +'], ', '['+m.field_title+'],'
-FROM [NeosBrianWhite].[dbo].[user_tab9_matter] M 
-JOIN [NeosBrianWhite].[dbo].[user_case_fields] F on F.field_title=M.field_title
+FROM [BrianWhiteNeos].[dbo].[user_tab9_matter] M 
+JOIN [BrianWhiteNeos].[dbo].[user_case_fields] F on F.field_title=M.field_title
 where m.field_Type <> 'label'
 */
 IF EXISTS (Select * From sys.tables where name = 'UserTab9_UDF3' and type = 'U')
@@ -74,8 +74,8 @@ FROM ( SELECT cas.casnCaseID, cas.CasnOrgCaseTypeID, Case_ID,
 		convert(varchar(max), [We_Have_Water_Sewer_Bill] ) as [We Have Water Sewer Bill], 
 		convert(varchar(max), [Who_Filed_Report] ) as [Who Filed Report?], 
 		convert(varchar(max), [Why_Railroad_Was_at_Fault] ) as [Why Railroad Was at Fault]
-	FROM NeosBrianWhite..user_tab9_data ud
-	JOIN NeosBrianWhite..cases_Indexed c on c.casenum = ud.case_id
+	FROM BrianWhiteNeos..user_tab9_data ud
+	JOIN BrianWhiteNeos..cases_Indexed c on c.casenum = ud.case_id
 	JOIN sma_TRN_Cases cas on cas.cassCaseNumber = convert(varchar,ud.case_id)
 ) pv
 UNPIVOT (FieldVal FOR FieldTitle IN ([Accident Report?],[Accredited Service],[Address],[Apartment Home Payment],
@@ -120,7 +120,7 @@ SELECT DISTINCT
     DENSE_RANK() over( order by vd.fieldTitle) as udfnSortOrder
 FROM UserTab9_UDF3 vd
 JOIN NeedlesUserFields ucf on ucf.field_title = vd.fieldtitle 
-LEFT JOIN (select distinct table_Name, column_name From [NeosBrianWhite]..[document_merge_params] where table_Name = 'user_Tab9_Data') dmp
+LEFT JOIN (select distinct table_Name, column_name From [BrianWhiteNeos]..[document_merge_params] where table_Name = 'user_Tab9_Data') dmp
 												on dmp.column_name = ucf.field_Title
 LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = vd.casnOrgCaseTypeID and def.[udfsUDFName] = vd.fieldTitle and def.[udfsScreenName] = 'Other3' and udfstype = ucf.UDFType
 WHERE def.udfnUDFID IS NULL
@@ -128,10 +128,10 @@ ORDER BY vd.fieldtitle
 GO
 --FROM [sma_MST_CaseType] CST
 --JOIN CaseTypeMixture mix on mix.[SmartAdvocate Case Type] = cst.cstsType
---JOIN [NeosBrianWhite].[dbo].[user_tab9_matter] M on M.mattercode=mix.matcode and M.field_type <> 'label'
+--JOIN [BrianWhiteNeos].[dbo].[user_tab9_matter] M on M.mattercode=mix.matcode and M.field_type <> 'label'
 --JOIN (select DISTINCT fieldTitle from UserTab9_UDF3) vd on vd.FieldTitle = m.field_title
 --JOIN NeedlesUserFields ucf on ucf.field_num = m.ref_num
---LEFT JOIN (select distinct table_Name, column_name From [NeosBrianWhite]..[document_merge_params] where table_Name = 'user_Tab9_Data') dmp
+--LEFT JOIN (select distinct table_Name, column_name From [BrianWhiteNeos]..[document_merge_params] where table_Name = 'user_Tab9_Data') dmp
 --												on dmp.column_name = ucf.field_Title
 --LEFT JOIN [sma_MST_UDFDefinition] def on def.[udfnRelatedPK] = cst.cstnCaseTypeID and def.[udfsUDFName] = m.field_title and def.[udfsScreenName] = 'Other3' and udfstype = ucf.UDFType
 --WHERE def.udfnUDFID IS NULL
@@ -174,8 +174,8 @@ SELECT --fieldtitle, udf.casnOrgCaseTypeID,
 FROM UserTab9_UDF3 udf
 --LEFT JOIN (
 --		select m.field_title, n.case_id, convert(varchar,ioc.UNQCID) as UNQCID --n.[user_name], ioc.*
---		from NeosBrianWhite..user_tab9_matter m
---		jOIN NeosBrianWhite..user_tab9_name n on m.ref_num = n.ref_num
+--		from BrianWhiteNeos..user_tab9_matter m
+--		jOIN BrianWhiteNeos..user_tab9_name n on m.ref_num = n.ref_num
 --		LEFT JOIN IndvOrgContacts_Indexed ioc on ioc.saga = n.[user_name]
 --		WHERE n.[user_name] <> 0 ) nm on nm.field_title = udf.FieldTitle and udf.case_id = nm.case_id
 LEFT JOIN sma_MST_UDFDefinition def on def.udfnRelatedPK = udf.casnOrgCaseTypeID and def.udfsUDFName = FieldTitle and def.udfsScreenName = 'Other3'

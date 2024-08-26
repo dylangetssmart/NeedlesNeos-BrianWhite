@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_SOLs] disable trigger all
@@ -75,13 +75,13 @@ INSERT INTO [sma_TRN_SOLs]
 		ON CAS.casnCaseID = D.defnCaseID
 			AND D.defbIsPrimary = 1
 	--JOIN [sma_MST_SOLDetails] S on S.sldnCaseTypeID=CAS.casnOrgCaseTypeID and S.sldnStateID=CAS.casnStateID and S.sldnDefRole=D.defnSubRole
-	JOIN [NeosBrianWhite].[dbo].[case_checklist] CKL
+	JOIN [BrianWhiteNeos].[dbo].[case_checklist] CKL
 		ON CONVERT(VARCHAR(50), CKL.casesid) = CAS.Neos_Saga
 	WHERE CKL.due_date BETWEEN '1900-01-01' AND '2079-06-06'
 		AND (
 			SELECT
 				lim
-			FROM [NeosBrianWhite].[dbo].[checklist_dir]
+			FROM [BrianWhiteNeos].[dbo].[checklist_dir]
 			WHERE ckl.checklistdirid = id
 		)
 		= 1

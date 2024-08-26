@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_Depositions] disable trigger all
@@ -8,7 +8,7 @@ DBCC CHECKIDENT ('[sma_TRN_Depositions]', RESEED, 0);
 alter table [sma_TRN_Depositions] enable trigger all
 */
 
---select * from NeosBrianWhite..neosUsertab1
+--select * from BrianWhiteNeos..neosUsertab1
 
 ALTER TABLE [dbo].[sma_TRN_Depositions]
 ALTER COLUMN [dpssComments] [VARCHAR](MAX) NULL
@@ -140,7 +140,7 @@ INSERT INTO user_tab_contacts_helper
 	   ,NULL			 AS ForWhichParty
 	   ,NULL			 AS ServeByID
 	--select *
-	FROM NeosBrianWhite..neosUsertab1 n
+	FROM BrianWhiteNeos..neosUsertab1 n
 	JOIN [IndvOrgContacts_Indexed] IOC
 		ON IOC.SAGA_ref = CONVERT(VARCHAR(50), n.[Witness Name])
 	JOIN [sma_TRN_Cases] CAS
@@ -154,7 +154,7 @@ SET CourtReporterCID = IOC.CID
    ,CourtReporterAID = IOC.AID
    ,CourtReporterUniqueID = IOC.UNQCID
    ,CourtReporterName = ioc.[name]
-FROM NeosBrianWhite..neosUsertab1 n
+FROM BrianWhiteNeos..neosUsertab1 n
 JOIN [IndvOrgContacts_Indexed] IOC
 	ON IOC.SAGA_ref = CONVERT(VARCHAR(50), n.[Court Reporter])
 WHERE tabid = CONVERT(VARCHAR(50), n.tablistid)
@@ -168,7 +168,7 @@ SET DepoLocationNameID = [Location of Deposition]
    ,DepoLocationCID = ioc.cid
    ,DepoLocationAID = ioc.AID
    ,DepoLocationCTG = ioc.CTG
-FROM NeosBrianWhite..neosUsertab1 n
+FROM BrianWhiteNeos..neosUsertab1 n
 JOIN [IndvOrgContacts_Indexed] IOC
 	ON IOC.SAGA_ref = CONVERT(VARCHAR(50), n.[Location of Deposition])
 WHERE tabid = CONVERT(VARCHAR(50), n.tablistid)
@@ -181,7 +181,7 @@ SET VideographerCID = IOC.CID
    ,VideographerAID = IOC.AID
    ,VideographerUniqueID = IOC.UNQCID
    ,VideographerName = ioc.[name]
-FROM NeosBrianWhite..neosUsertab1 n
+FROM BrianWhiteNeos..neosUsertab1 n
 JOIN [IndvOrgContacts_Indexed] IOC
 	ON IOC.SAGA_ref = CONVERT(VARCHAR(50), n.[Videographer])
 WHERE tabid = CONVERT(VARCHAR(50), n.tablistid)
@@ -206,8 +206,8 @@ INSERT INTO sma_MST_ContactTypes
 	   ,g.code AS cntsDscrptn
 	   ,'O'	   AS cntsRoleGroup
 	   ,1	   AS cntbFlag
-	FROM NeosBrianWhite..neosUsertab1 D
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab1 D
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = d.[Type of Witness]
 	WHERE ISNULL(D.[Type of Witness], '') <> ''
 	EXCEPT
@@ -235,8 +235,8 @@ INSERT INTO sma_MST_Speciality
 			FROM sma_MST_ContactTypes
 			WHERE cntsDscrptn = 'Experts'
 		)
-	FROM NeosBrianWhite..neosUsertab1 D
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab1 D
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = d.[Type of Expert]
 	WHERE ISNULL(d.[Type of Expert], '') <> ''
 	EXCEPT
@@ -260,8 +260,8 @@ INSERT INTO [sma_MST_DepositionType]
 	)
 	SELECT DISTINCT
 		g.code AS cntsDscrptn
-	FROM NeosBrianWhite..neosUsertab1 D
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab1 D
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = d.[Type of Witness]
 	WHERE ISNULL(D.[Type of Witness], '') <> ''
 	EXCEPT
@@ -283,8 +283,8 @@ INSERT INTO SMA_MST_WitnessType
 		g.code
 	   ,368
 	   ,GETDATE()
-	FROM NeosBrianWhite..neosUsertab1 D
-	JOIN NeosBrianWhite..mini_general_dir g
+	FROM BrianWhiteNeos..neosUsertab1 D
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = d.[Type of Witness]
 	LEFT JOIN SMA_MST_WitnessType WT
 		ON WT.WitnessType = g.[code]
@@ -345,10 +345,10 @@ INSERT INTO [dbo].[sma_TRN_CaseWitness]
 	   ,1				AS [witnLevelNo]
 	--select *
 	FROM user_tab_contacts_helper CH
-	JOIN NeosBrianWhite..neosUsertab1 UD
+	JOIN BrianWhiteNeos..neosUsertab1 UD
 		ON CONVERT(VARCHAR(50), UD.tablistid) = CH.tabID
 			AND CONVERT(VARCHAR(50), ud.CasesID) = ch.caseID
-	JOIN NeosBrianWhite..mini_general_dir d
+	JOIN BrianWhiteNeos..mini_general_dir d
 		ON d.id = ud.[Type of Witness]
 	WHERE d.code <> 'Expert'
 GO
@@ -399,10 +399,10 @@ INSERT INTO [dbo].[sma_TRN_ExpertContacts]
 	--(select splnSpecialityID from sma_MST_Speciality where UD.Type_of_Expert = splsSpeciality)			as [ectnSpeciality],
 	--(select splnSpecialityID from sma_MST_Speciality where UD.Type_of_Expert = splsSpeciality)			as [ectnSubspeciality]
 	FROM user_tab_contacts_helper MAP
-	JOIN NeosBrianWhite..neosUsertab1 UD
+	JOIN BrianWhiteNeos..neosUsertab1 UD
 		ON CONVERT(VARCHAR(50), UD.tablistid) = map.tabID
 			AND CONVERT(VARCHAR(50), ud.CasesID) = map.caseID
-	JOIN NeosBrianWhite..mini_general_dir d
+	JOIN BrianWhiteNeos..mini_general_dir d
 		ON d.id = ud.[Type of Witness]
 	WHERE d.[code] = 'Expert'
 GO
@@ -474,10 +474,10 @@ INSERT INTO sma_TRN_ExpertSpecialtySubSpecialty
 	   ,NULL		   AS [ModifiedUserID]
 	   ,NULL		   AS [ModifiedDate]
 	FROM user_tab_contacts_helper MAP
-	JOIN NeosBrianWhite..neosUsertab1 UD
+	JOIN BrianWhiteNeos..neosUsertab1 UD
 		ON CONVERT(VARCHAR(50), UD.tablistid) = map.tabID
 			AND CONVERT(VARCHAR(50), ud.CasesID) = map.caseID
-	JOIN NeosBrianWhite..mini_general_dir d
+	JOIN BrianWhiteNeos..mini_general_dir d
 		ON d.id = ud.[Type of Expert]
 	WHERE ISNULL([Type of Expert], '') <> ''
 GO
@@ -568,11 +568,11 @@ INSERT INTO [dbo].[sma_TRN_Depositions]
 	   ,NULL					  AS [TranslAgencyUID]
 	   ,UD.tablistid			  AS [saga]
 	--SELECT [Video?]
-	FROM NeosBrianWhite..neosUsertab1 UD
+	FROM BrianWhiteNeos..neosUsertab1 UD
 	JOIN user_tab_contacts_helper MAP
 		ON MAP.caseID = CONVERT(VARCHAR(50), UD.CasesID)
 			AND MAP.tabID = CONVERT(VARCHAR(50), UD.tablistid)
-	JOIN NeosBrianWhite..mini_general_dir g
+	JOIN BrianWhiteNeos..mini_general_dir g
 		ON g.id = ud.[Type of Witness]
 GO
 

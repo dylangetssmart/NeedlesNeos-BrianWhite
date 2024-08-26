@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 --
@@ -118,7 +118,7 @@ INSERT INTO [sma_MST_IndvContacts]
 	   ,NULL							   AS cinsGrade
 	   ,u.[officer]						   AS saga_Ref
 	--select p.[data]
-	FROM NeosBrianWhite..NeosUserTab6 u
+	FROM BrianWhiteNeos..NeosUserTab6 u
 	WHERE ISNULL(officer, '') NOT IN ('', 'N/A', '?', 'NONE')
 GO
 

@@ -1,5 +1,5 @@
 
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 DECLARE @FileId INT;
@@ -22,8 +22,8 @@ DECLARE OtherContact_cursor CURSOR FOR SELECT DISTINCT
 			THEN 'Witness ' + ISNULL(': ' + NULLIF(P.relationship, ''), '')
 		ELSE NULL
 	END
-FROM [NeosBrianWhite].[dbo].[party_Indexed] P
-JOIN [NeosBrianWhite].[dbo].[party_role_list] PR
+FROM [BrianWhiteNeos].[dbo].[party_Indexed] P
+JOIN [BrianWhiteNeos].[dbo].[party_role_list] PR
 	ON pr.id = p.[partyrolelistid]
 JOIN [sma_TRN_Cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), p.casesid)

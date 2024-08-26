@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_MST_ContactNumbers] disable trigger all
@@ -113,7 +113,7 @@ INSERT INTO [sma_MST_ContactNumbers]
 	   ,ISNULL('Phone Type: ' + NULLIF(CONVERT(VARCHAR, n.[title]), '') + CHAR(13), '') +
 		''						  AS [Comments]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[phone] N
+	FROM [BrianWhiteNeos].[dbo].[phone] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesid)
 	LEFT JOIN sma_MST_ContactNoType ct
@@ -181,7 +181,7 @@ INSERT INTO [sma_MST_ContactNumbers]
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
 		''								AS [Comments]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[staff] N
+	FROM [BrianWhiteNeos].[dbo].[staff] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
 	LEFT JOIN sma_MST_ContactNoType ct
@@ -241,7 +241,7 @@ INSERT INTO [sma_MST_ContactNumbers]
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
 		''							  AS [Comments]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[staff] N
+	FROM [BrianWhiteNeos].[dbo].[staff] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
 	LEFT JOIN sma_MST_ContactNoType ct
@@ -300,7 +300,7 @@ INSERT INTO [sma_MST_ContactNumbers]
 		--isnull('Phone Type: ' + nullif(convert(varchar,n.[title]),'') + CHAR(13),'') +
 		''								 AS [Comments]
 	--select *
-	FROM [NeosBrianWhite].[dbo].[staff] N
+	FROM [BrianWhiteNeos].[dbo].[staff] N
 	JOIN [sma_MST_IndvContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.id)
 	LEFT JOIN sma_MST_ContactNoType ct
@@ -360,7 +360,7 @@ INSERT INTO [sma_MST_ContactNumbers]
 	   ,GETDATE()				  AS cnndDtModified
 	   ,NULL
 	   ,NULL
-	FROM [NeosBrianWhite].[dbo].[phone] N
+	FROM [BrianWhiteNeos].[dbo].[phone] N
 	JOIN [sma_MST_OrgContacts] C
 		ON C.saga_ref = CONVERT(VARCHAR(50), N.namesid)
 	LEFT JOIN sma_MST_ContactNoType ct
@@ -393,7 +393,7 @@ SELECT
 	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
 	cnnnContactNumberID as ContactNumberID  
 FROM [sma_MST_ContactNumbers] 
-WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSANeos].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID
@@ -405,7 +405,7 @@ SELECT
 	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
 	cnnnContactNumberID as ContactNumberID  
 FROM [sma_MST_ContactNumbers] 
-WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [SANeosBrianWhite].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSANeos].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID

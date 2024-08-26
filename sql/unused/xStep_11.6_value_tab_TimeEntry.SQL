@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 --select * From sma_MST_ActivityCodes
@@ -6,8 +6,8 @@ GO
 INSERT INTO sma_MST_ActivityCodes ( ActivityCodeDescription )
 (
 	SELECT DISTINCT VC.[description] 
-		FROM [NeosBrianWhite].[dbo].[value] V
-		JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id = V.valuecodeid
+		FROM [BrianWhiteNeos].[dbo].[value] V
+		JOIN [BrianWhiteNeos].[dbo].[value_code] VC on VC.id = V.valuecodeid
 		WHERE isnull(Vc.code,'') in ( 'TIME' ) 
 	EXCEPT 
 	SELECT ActivityCodeDescription FROM sma_MST_ActivityCodes
@@ -17,8 +17,8 @@ GO
 ---(0)---
 INSERT INTO sma_MST_CaseTypeActivityCodeRelationship ( CaseTypeID,ActivityCodeID )
 SELECT DISTINCT 0, (select ActivityCodeID from sma_MST_ActivityCodes where ActivityCodeDescription=vc.[description])
-FROM [NeosBrianWhite].[dbo].[value] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id = V.valuecodeid
+FROM [BrianWhiteNeos].[dbo].[value] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC on VC.id = V.valuecodeid
 WHERE isnull(VC.code,'') in ( 'TIME' ) 
 EXCEPT 
 SELECT CaseTypeID,ActivityCodeID FROM sma_MST_CaseTypeActivityCodeRelationship 
@@ -73,10 +73,10 @@ SELECT
 	   0				    as cutnAddTime,
 	   T.plnnPlaintiffID	as cutnPlaintiffID
 --select *
-FROM [NeosBrianWhite].[dbo].[value] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC on VC.id = V.valuecodeid
+FROM [BrianWhiteNeos].[dbo].[value] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC on VC.id = V.valuecodeid
 JOIN [sma_TRN_Cases] CAS on CAS.Neos_Saga = convert(varchar(50),v.casesid )
-LEFT JOIN [NeosBrianWhite].[dbo].Party_Indexed pty on pty.id = v.partyid and v.casesid = pty.casesid
+LEFT JOIN [BrianWhiteNeos].[dbo].Party_Indexed pty on pty.id = v.partyid and v.casesid = pty.casesid
 LEFT JOIN [sma_TRN_Plaintiff] T on T.[saga_party]=convert(varchar(50),Pty.TableIndex)
 WHERE vc.code = 'TIME'
 GO

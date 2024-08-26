@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 ----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ INSERT INTO sma_MST_SpecialDamageSubType
 			WHERE SpDamageTypeDescription = 'Other'
 		)
 	   ,vc.[description]--, getdate(), 368
-	FROM NeosBrianWhite..value_code vc
+	FROM BrianWhiteNeos..value_code vc
 	WHERE code IN ('PROP DAM')
 	EXCEPT
 	SELECT
@@ -108,8 +108,8 @@ INSERT INTO [value_tab_spDamages_Helper]
 	   ,IOC.AID							AS ProviderAID
 	   ,CAS.casnCaseID					AS casnCaseID
 	   ,NULL							AS PlaintiffID
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
@@ -138,8 +138,8 @@ SELECT
 	V.casesid AS cid
    ,V.id	  AS vid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
@@ -147,7 +147,7 @@ JOIN [sma_TRN_Plaintiff] t
 	ON t.plnnCaseID = CAS.casnCaseID
 		AND t.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = v.partyid  and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = v.partyid  and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 GO
@@ -182,8 +182,8 @@ SELECT
 			AND plnbIsPrimary = 1
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_Saga = CONVERT(VARCHAR(50), V.casesid)
@@ -191,7 +191,7 @@ JOIN [sma_TRN_Defendants] d
 	ON d.defnCaseID = cas.casncaseid
 		AND d.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(Varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
@@ -263,8 +263,8 @@ INSERT INTO [sma_TRN_SpDamages]
 			ELSE NULL
 		END													  AS spddDateTo
 	   ,'Provider: ' + SDH.[ProviderName] + CHAR(13) + v.memo AS spdsComments
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN [value_tab_spDamages_Helper] SDH
 		ON CONVERT(VARCHAR(50), v.id) = sdh.value_id

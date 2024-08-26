@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_CriticalDeadlines] disable trigger all
@@ -22,7 +22,7 @@ INSERT INTO [sma_MST_CriticalDeadlineTypes]
 	SELECT DISTINCT
 		[label]
 	   ,1
-	FROM NeosBrianWhite..[date_labels]
+	FROM BrianWhiteNeos..[date_labels]
 	EXCEPT
 	SELECT
 		cdtsDscrptn
@@ -57,8 +57,8 @@ INSERT INTO [sma_TRN_CriticalDeadlines]
 		END											AS [crddDueDate]
 	   ,CONVERT(VARCHAR, aci.UniqueContactId) + ';' AS [crdsRequestFrom]
 	   ,CONVERT(VARCHAR, aci.UniqueContactId)		AS [ResponderUID]
-	FROM [NeosBrianWhite]..[case_dates] C
-	JOIN [NeosBrianWhite]..date_labels dl
+	FROM [BrianWhiteNeos]..[case_dates] C
+	JOIN [BrianWhiteNeos]..date_labels dl
 		ON c.datelabelid = dl.id
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_Saga = CONVERT(VARCHAR(50), c.casesid)

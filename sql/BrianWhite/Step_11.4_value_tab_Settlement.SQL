@@ -1,5 +1,5 @@
 
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 
@@ -10,7 +10,7 @@ DBCC CHECKIDENT ('[sma_TRN_Settlements]', RESEED, 1);
 alter table [sma_TRN_Settlements] enable trigger all
 */
 
---select distinct code, description from [NeosBrianWhite].[dbo].[value] order by code
+--select distinct code, description from [BrianWhiteNeos].[dbo].[value] order by code
 ---(0)---
 IF NOT EXISTS (
 		SELECT
@@ -100,8 +100,8 @@ INSERT INTO value_tab_Settlement_Helper
 	   ,IOC.AID							AS ProviderAID
 	   ,CAS.casnCaseID					AS casnCaseID
 	   ,NULL							AS PlaintiffID
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN [sma_TRN_cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -130,8 +130,8 @@ SELECT
 	V.casesid AS cid
    ,V.id	  AS vid
    ,T.plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -139,7 +139,7 @@ JOIN [sma_TRN_Plaintiff] t
 	ON t.plnnCaseID = CAS.casnCaseID
 		AND t.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = v.partyid and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(varchar(50),pt.namesid)
 --JOIN [sma_TRN_Plaintiff] T on T.plnnContactID=IOC.CID and T.plnnContactCtg=IOC.CTG and T.plnnCaseID=CAS.casnCaseID
 
@@ -173,8 +173,8 @@ SELECT
 			AND plnbIsPrimary = 1
 	)		  
 	AS plnnPlaintiffID INTO value_tab_Multi_Party_Helper_Temp
-FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-JOIN [NeosBrianWhite].[dbo].[value_code] VC
+FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 	ON v.valuecodeid = vc.id
 JOIN [sma_TRN_cases] CAS
 	ON CAS.Neos_saga = CONVERT(VARCHAR(50), V.casesid)
@@ -182,7 +182,7 @@ JOIN [sma_TRN_Defendants] d
 	ON d.defnCaseID = cas.casncaseid
 		AND d.saga_party = v.partyid
 
---JOIN [NeosBrianWhite].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
+--JOIN [BrianWhiteNeos].[dbo].[Party_Indexed] pt on pt.id = convert(varchar(50),v.partyid) and v.casesid = pt.casesid
 --JOIN IndvOrgContacts_Indexed IOC on IOC.SAGA_ref = convert(Varchar(50),pt.namesid)
 --JOIN [sma_TRN_Defendants] D on D.defnContactID=IOC.CID and D.defnContactCtgID=IOC.CTG and D.defnCaseID=CAS.casnCaseID
 GO
@@ -264,8 +264,8 @@ INSERT INTO [sma_TRN_Settlements]
 			ELSE NULL
 		END				AS stldSettlementDate
 	   ,V.id			AS saga
-	FROM [NeosBrianWhite].[dbo].[value_Indexed] V
-	JOIN [NeosBrianWhite].[dbo].[value_code] VC
+	FROM [BrianWhiteNeos].[dbo].[value_Indexed] V
+	JOIN [BrianWhiteNeos].[dbo].[value_code] VC
 		ON v.valuecodeid = vc.id
 	JOIN value_tab_Settlement_Helper MAP
 		ON MAP.case_id = CONVERT(VARCHAR(50), V.casesid)

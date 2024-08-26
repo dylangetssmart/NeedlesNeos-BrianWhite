@@ -1,4 +1,4 @@
-USE NeosBrianWhite
+USE BrianWhiteNeos
 GO
 
 --------------------------------
@@ -15,8 +15,8 @@ INTO NeosUserCase
 FROM (SELECT casesid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_case_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+	from BrianWhiteNeos..user_case_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Aff 118001 Due Date],[Affs Deadline Due Date],[Arbitrator],[Counter Aff Due Date],[County of Suit],[Court Reporter],[Def Answer Due Date],[Defendant Caption],[Defendant],[Judicial District],
 								[JURY],[Mediator],[NON JURY],[Offensive Disc Due Date],[Plaintiff Caption],[Plaintiff],[Process Service],[Resp to RFD's Due Date],[State of Suit],[Type of Case],[Type of Court])  
@@ -35,8 +35,8 @@ end
 select insuranceid, [Insurance Information],[MedPay Coverage],[Other Household Vehicles],[PIP Coverage],[PIP Exhausted],[PIP Waiver],[UM/UIM Adjuster],[UM/UIM Coverage]
 INTO NeosUserInsurance
 FROM (SELECT insuranceid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
-from NeosBrianWhite..user_insurance_data id
-JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+from BrianWhiteNeos..user_insurance_data id
+JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ([Insurance Information],[MedPay Coverage],[Other Household Vehicles],[PIP Coverage],[PIP Exhausted],[PIP Waiver],[UM/UIM Adjuster],[UM/UIM Coverage])  
 	)
@@ -56,8 +56,8 @@ INTO NeosUserCounsel
 FROM (SELECT counselid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_counsel_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+	from BrianWhiteNeos..user_counsel_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Depo Date(s)],[Due Date] )  
 	)
@@ -86,8 +86,8 @@ INTO NeosUserParty
 FROM (SELECT partyid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_party_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+	from BrianWhiteNeos..user_party_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Accidents/Injuries],[Agent for Service],[Answers],[ANY SUBSEQUENT SURGERIES],[Are You a US Citizen?],[Arrested?],[Attorney],[Breed of Animal],[Burning Eyes],
 				[Burning Skin],[Business Type],[Case Title],[Cause of Death],[Charge-When-Where(County)],[Charges],[Chest Pain],[Chest Tightness],[Child Support],[Convicted of a Crime],
@@ -117,9 +117,9 @@ INTO NeosUserTab1
 FROM (SELECT casesid, tablistid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_tab1_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid 
-	JOIN NeosBrianWhite..user_tab1_list tl on tl.id = id.tablistid) i
+	from BrianWhiteNeos..user_tab1_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid 
+	JOIN BrianWhiteNeos..user_tab1_list tl on tl.id = id.tablistid) i
 pivot (
 	max(fieldVal) for field_title in ( [Court Reporter Cost],[Court Reporter],[CV on File?],[Depo Date],[Depo Prep Date],[Depo Prep Time],[Depo Time],[Interpreter],[Location of Deposition],
 										[Notes],[Type of Expert],[Type of Witness],[Video?],[Videographer],[Witness Name] )  
@@ -140,9 +140,9 @@ INTO NeosUserTab2
 FROM (SELECT casesid, tablistid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_tab2_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid
-	JOIN NeosBrianWhite..user_tab2_list tl on tl.id = id.tablistid ) i
+	from BrianWhiteNeos..user_tab2_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid
+	JOIN BrianWhiteNeos..user_tab2_list tl on tl.id = id.tablistid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Alternate Provider],[Comments],[Date Received],[Date Requested],[Findings],[Medical Bill],[Memo],[Method],[Ordered By],[Pre-Payment Required],
 										[Provider Name],[Type of Record],[Value Code] )  
@@ -165,9 +165,9 @@ INTO NeosUserTab5
 FROM (SELECT casesid, tablistid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_tab5_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid
-	JOIN NeosBrianWhite..user_tab5_list tl on tl.id = id.tablistid) i
+	from BrianWhiteNeos..user_tab5_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid
+	JOIN BrianWhiteNeos..user_tab5_list tl on tl.id = id.tablistid) i
 pivot (
 	max(fieldVal) for field_title in ( [All Counsel Copied],[Answered Date],[Document Name],[Due Date],[Filed Date],[Filing Party],[Litigation Document],
 [Medical Provider],[Note],[Party Receiving],[Received Date],[Service Date] )  
@@ -195,8 +195,8 @@ INTO NeosUserTab6
 FROM (SELECT casesid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_tab6_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+	from BrianWhiteNeos..user_tab6_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Accident Report?],[Address of Incident],[Airbag Deployed],[Animal Control Contacted?],[Animal Restrained?],[Assault?],[Badge],[Citation Info],[City],
 							[County],[Day of Week],[Def 2 License Plate],[Def 2 Veh Yr/Make/Model],[Def 2 Vehicle Drivable],[Def Description of Damage],[Def License Plate],[Def on Cell Phone],
@@ -223,8 +223,8 @@ INTO NeosUserTab7
 FROM (SELECT casesid, isnull(isnull( convert(varchar(max),id.namesid), convert(varchar(max),picklistID)), convert(varchar(max),id.[data]) ) as FieldVal, field_title
 	--select distinct '['+f.field_title+'],'
 	--select id.*
-	from NeosBrianWhite..user_tab7_data id
-	JOIN NeosBrianWhite..user_case_fields f on f.id = id.usercasefieldid ) i
+	from BrianWhiteNeos..user_tab7_data id
+	JOIN BrianWhiteNeos..user_case_fields f on f.id = id.usercasefieldid ) i
 pivot (
 	max(fieldVal) for field_title in ( [Agreement Sent],[Date Dropped],[Date Rejected],[Dropped By],[Fee Terms],[Reason Dropped],[Reason for Rejection],[Received Signed Agreement],
 										[Referral Source Code],[Referring Attorney],[Rejected By],[SOL Issue],[Star Case] )  

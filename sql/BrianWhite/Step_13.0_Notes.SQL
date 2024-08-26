@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 
 /*
@@ -32,8 +32,8 @@ INSERT INTO [sma_MST_NoteTypes]
 	SELECT DISTINCT
 		topic AS nttsDscrptn
 	   ,topic AS nttsNoteText
-	FROM [NeosBrianWhite].[dbo].[case_notes_Indexed] cn
-	JOIN [NeosBrianWhite]..[case_note_topic] t
+	FROM [BrianWhiteNeos].[dbo].[case_notes_Indexed] cn
+	JOIN [BrianWhiteNeos]..[case_note_topic] t
 		ON cn.casenotetopicid = t.id
 	EXCEPT
 	SELECT
@@ -96,8 +96,8 @@ INSERT INTO [sma_TRN_Notes]
 	   ,NULL							AS [notnSubject]
 	   ,CONVERT(VARCHAR(50), n.ID)		AS SAGA
 	--select *
-	FROM [NeosBrianWhite].[dbo].[case_notes_Indexed] N
-	LEFT JOIN [NeosBrianWhite]..[case_note_topic] t
+	FROM [BrianWhiteNeos].[dbo].[case_notes_Indexed] N
+	LEFT JOIN [BrianWhiteNeos]..[case_note_topic] t
 		ON n.casenotetopicid = t.id
 	JOIN [sma_TRN_Cases] C
 		ON C.Neos_Saga = CONVERT(VARCHAR(50), N.casesid)

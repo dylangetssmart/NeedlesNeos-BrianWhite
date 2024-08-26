@@ -1,4 +1,4 @@
-USE [SANeosBrianWhite]
+USE [BrianWhiteSANeos]
 GO
 /*
 alter table [sma_TRN_Cases] disable trigger all
@@ -99,7 +99,7 @@ INSERT INTO [sma_mst_offices]
 	   ,NULL				AS [UniqueContactId]
 	   ,sd.phone			AS [PhoneNumber]
 	--Select *
-	FROM NeosBrianWhite..systemdata sd
+	FROM BrianWhiteNeos..systemdata sd
 	LEFT JOIN [sma_mst_offices] o
 		ON o.office_name = sd.firm_name
 	WHERE o.office_id IS NULL
@@ -632,7 +632,7 @@ INSERT INTO [sma_TRN_Cases]
 			WHERE office_name = (
 					SELECT
 						firm_name
-					FROM [NeosBrianWhite]..systemdata
+					FROM [BrianWhiteNeos]..systemdata
 				)
 		)			   
 		AS office_id
@@ -648,18 +648,18 @@ INSERT INTO [sma_TRN_Cases]
 	   ,0			   AS CloseReason
 	   ,c.[id]		   AS [Neos_saga]
 	--SELECT *
-	FROM [NeosBrianWhite].[dbo].[cases_Indexed] C
+	FROM [BrianWhiteNeos].[dbo].[cases_Indexed] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_case_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_case_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'State of Suit'
 	) s
 		ON s.casesid = c.id
-	LEFT JOIN [NeosBrianWhite]..[matter] m
+	LEFT JOIN [BrianWhiteNeos]..[matter] m
 		ON m.id = c.matterid
 	JOIN caseTypeMixture mix
 		ON mix.matcode = m.matcode

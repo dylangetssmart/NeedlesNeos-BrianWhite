@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 
@@ -88,13 +88,13 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL		   AS [udvnModifyUserID]
 	   ,NULL		   AS [udvdDtModified]
 	   ,NULL		   AS [udvnLevelNo]
-	FROM [NeosBrianWhite].[dbo].[cases] C
+	FROM [BrianWhiteNeos].[dbo].[cases] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'Location of Accident'
 	) u
@@ -139,13 +139,13 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL		   AS [udvnModifyUserID]
 	   ,NULL		   AS [udvdDtModified]
 	   ,NULL		   AS [udvnLevelNo]
-	FROM [NeosBrianWhite].[dbo].[cases] C
+	FROM [BrianWhiteNeos].[dbo].[cases] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'City'
 	) u
@@ -188,13 +188,13 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL		   AS [udvnModifyUserID]
 	   ,NULL		   AS [udvdDtModified]
 	   ,NULL		   AS [udvnLevelNo]
-	FROM [NeosBrianWhite].[dbo].[cases] C
+	FROM [BrianWhiteNeos].[dbo].[cases] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'County'
 	) u
@@ -238,13 +238,13 @@ INSERT INTO [sma_TRN_UDFValues]
 	   ,NULL		   AS [udvnModifyUserID]
 	   ,NULL		   AS [udvdDtModified]
 	   ,NULL		   AS [udvnLevelNo]
-	FROM [NeosBrianWhite].[dbo].[cases] C
+	FROM [BrianWhiteNeos].[dbo].[cases] C
 	LEFT JOIN (
 		SELECT
 			td.casesid
 		   ,td.[data]
-		FROM [NeosBrianWhite]..user_tab6_data td
-		JOIN [NeosBrianWhite]..user_case_fields ucf
+		FROM [BrianWhiteNeos]..user_tab6_data td
+		JOIN [BrianWhiteNeos]..user_case_fields ucf
 			ON ucf.id = td.usercasefieldid
 		WHERE field_title = 'State'
 	) u

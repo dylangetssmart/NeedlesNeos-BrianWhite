@@ -1,4 +1,4 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 /*
 alter table [sma_TRN_PlaintiffAttorney] disable trigger all
@@ -45,7 +45,7 @@ GO
 --INSERT ATTORNEY TYPES
 -----------------------------------------------------------------------------------
 INSERT INTO sma_MST_AttorneyTypes (atnsAtorneyDscrptn)
-SELECT Distinct Type_OF_Attorney From NeosBrianWhite..user_counsel_data where isnull(Type_of_attorney,'')<>''
+SELECT Distinct Type_OF_Attorney From BrianWhiteNeos..user_counsel_data where isnull(Type_of_attorney,'')<>''
 EXCEPT
 SELECT atnsAtorneydscrptn from sma_MST_AttorneyTypes
 */
@@ -140,8 +140,8 @@ INSERT INTO [sma_TRN_PlaintiffAttorney]
 		''				  AS [plasComments]
 	   ,c.id			  AS [saga]
 	--SELECT *
-	FROM [NeosBrianWhite]..[counsel_Indexed] C
-	--LEFT JOIN [NeosBrianWhite].[dbo].[user_counsel_data] UD on UD.counsel_id=C.counsel_id and C.case_num=UD.casenum  
+	FROM [BrianWhiteNeos]..[counsel_Indexed] C
+	--LEFT JOIN [BrianWhiteNeos].[dbo].[user_counsel_data] UD on UD.counsel_id=C.counsel_id and C.case_num=UD.casenum  
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), C.casesid)
 	JOIN IndvOrgContacts_Indexed IOC
@@ -229,8 +229,8 @@ INSERT INTO [sma_TRN_LawFirms]
 		ISNULL('Attorney for party : ' + NULLIF(CONVERT(VARCHAR(MAX), IOCD.name), '') + CHAR(13), '') +
 		''				  AS [lwfsComments]
 	   ,c.id			  AS [saga]
-	FROM [NeosBrianWhite].[dbo].[counsel_Indexed] C
-	--LEFT JOIN [NeosBrianWhite].[dbo].[user_counsel_data] UD on UD.counsel_id=C.counsel_id and C.case_num=UD.casenum
+	FROM [BrianWhiteNeos].[dbo].[counsel_Indexed] C
+	--LEFT JOIN [BrianWhiteNeos].[dbo].[user_counsel_data] UD on UD.counsel_id=C.counsel_id and C.case_num=UD.casenum
 	JOIN [sma_TRN_Cases] CAS
 		ON CAS.Neos_saga = CONVERT(VARCHAR(50), C.casesid)
 	JOIN IndvOrgContacts_Indexed IOC
@@ -320,8 +320,8 @@ FROM (
 	SELECT
 		I.cinnContactID AS ID
 	--select *
-	FROM [NeosBrianWhite].[dbo].[counsel_Indexed] C
-	JOIN [NeosBrianWhite].[dbo].[names] L
+	FROM [BrianWhiteNeos].[dbo].[counsel_Indexed] C
+	JOIN [BrianWhiteNeos].[dbo].[names] L
 		ON C.counselnamesid = L.id
 	JOIN [dbo].[sma_MST_IndvContacts] I
 		ON saga_ref = CONVERT(VARCHAR(50), L.id)

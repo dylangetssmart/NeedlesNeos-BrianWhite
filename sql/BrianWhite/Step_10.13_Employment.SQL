@@ -1,10 +1,10 @@
-USE SANeosBrianWhite
+USE BrianWhiteSANeos
 GO
 
 
 /*
 select [name of employer], [Lenght of Time at Working], [occupation], [Other Employment], [Position], [Scope of Employment]
-from NeosBrianWhite..NeosUserParty
+from BrianWhiteNeos..NeosUserParty
 WHERE isnull([name of employer],'') <> ''
 or isnull([Lenght of Time at Working],'') <> ''
 or isnull([occupation],'') <> ''
@@ -99,8 +99,8 @@ INSERT INTO [sma_TRN_Employment]
 		''								 AS empsComments
 	   ,CONVERT(VARCHAR(50), ud.partyid) AS saga
 	--select *
-	FROM NeosBrianWhite..NeosUserParty ud
-	JOIN NeosBrianWhite..Party_Indexed p
+	FROM BrianWhiteNeos..NeosUserParty ud
+	JOIN BrianWhiteNeos..Party_Indexed p
 		ON p.id = ud.partyid
 	JOIN sma_trn_cases cas
 		ON cas.Neos_saga = CONVERT(VARCHAR(50), p.casesid)
