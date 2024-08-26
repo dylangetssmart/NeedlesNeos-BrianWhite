@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_MST_Address] disable trigger all
@@ -719,14 +719,14 @@ GO
 
 ------------- Check Uniqueness------------
 -- select I.cinnContactID
--- 	 from [BrianWhiteSANeos].[dbo].[sma_MST_Indvcontacts] I 
---	 inner join [BrianWhiteSANeos].[dbo].[sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary=1 
+-- 	 from [BrianWhiteSA].[dbo].[sma_MST_Indvcontacts] I 
+--	 inner join [BrianWhiteSA].[dbo].[sma_MST_Address] A on A.addnContactID=I.cinnContactID and A.addnContactCtgID=I.cinnContactCtg and A.addbPrimary=1 
 --	 group by cinnContactID
 --	 having count(cinnContactID)>1
 
 -- select O.connContactID
--- 	 from [BrianWhiteSANeos].[dbo].[sma_MST_OrgContacts] O 
---	 inner join [BrianWhiteSANeos].[dbo].[sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary=1 
+-- 	 from [BrianWhiteSA].[dbo].[sma_MST_OrgContacts] O 
+--	 inner join [BrianWhiteSA].[dbo].[sma_MST_Address] A on A.addnContactID=O.connContactID and A.addnContactCtgID=O.connContactCtg and A.addbPrimary=1 
 --	 group by connContactID
 --	 having count(connContactID)>1
 

@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_MST_ContactNumbers] disable trigger all
@@ -393,7 +393,7 @@ SELECT
 	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
 	cnnnContactNumberID as ContactNumberID  
 FROM [sma_MST_ContactNumbers] 
-WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSANeos].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSA].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Individual')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID
@@ -405,7 +405,7 @@ SELECT
 	ROW_NUMBER() OVER (Partition BY cnnnContactID order by cnnnContactNumberID )  as RowNumber,
 	cnnnContactNumberID as ContactNumberID  
 FROM [sma_MST_ContactNumbers] 
-WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSANeos].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
+WHERE cnnnContactCtgID = (select ctgnCategoryID FROM [BrianWhiteSA].[dbo].[sma_MST_ContactCtg] where ctgsDesc='Organization')
 ) A
 WHERE A.RowNumber <> 1
 and A.ContactNumberID=cnnnContactNumberID

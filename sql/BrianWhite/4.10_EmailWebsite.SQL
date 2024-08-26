@@ -1,4 +1,4 @@
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_MST_EmailWebsite] disable trigger all
@@ -108,7 +108,7 @@ SELECT
 		null,
 		4					as saga -- indicate website
 FROM [BrianWhiteNeos].[dbo].[names] N
-JOIN [BrianWhiteSANeos].[dbo].[sma_MST_IndvContacts] C on C.saga_ref = N.names_id
+JOIN [BrianWhiteSA].[dbo].[sma_MST_IndvContacts] C on C.saga_ref = N.names_id
 WHERE isnull(website,'') <> ''
 */
 

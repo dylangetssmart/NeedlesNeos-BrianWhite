@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 
 /******************************************************
@@ -209,24 +209,44 @@ IF OBJECT_ID(N'dbo.Integer2DateTime', N'FN') IS NOT NULL
 	DROP FUNCTION Integer2DateTime;
 GO
 
+--CREATE FUNCTION dbo.Integer2DateTime (@intDate INT, @intTime INT)
+--RETURNS SMALLDATETIME
+--AS
+
+--BEGIN
+--	DECLARE @ret SMALLDATETIME;
+--	DECLARE @date DATE;
+--	DECLARE @time TIME;
+
+--	SELECT
+--		@date = CAST(DATEADD(DAY, @intDate, '1800-12-28') AS DATE)
+
+--	SELECT
+--		@time = CAST(DATEADD(SECOND, @intTime / 100, '1800-12-28 00:00:00') AS TIME)
+
+--	SET @ret = @date + CAST(@time AS SMALLDATETIME);
+
+--	RETURN @ret;
+--END
+--GO
+
+-- ds 8/26/2024 > The data types date and smalldatetime are incompatible in the add operator.
 CREATE FUNCTION dbo.Integer2DateTime (@intDate INT, @intTime INT)
 RETURNS SMALLDATETIME
 AS
-
 BEGIN
-	DECLARE @ret SMALLDATETIME;
-	DECLARE @date DATE;
-	DECLARE @time TIME;
+    DECLARE @ret SMALLDATETIME;
+    DECLARE @datetime DATETIME;
 
-	SELECT
-		@date = CAST(DATEADD(DAY, @intDate, '1800-12-28') AS DATE)
+    SELECT
+        @datetime = DATEADD(DAY, @intDate, '1800-12-28 00:00:00');
 
-	SELECT
-		@time = CAST(DATEADD(SECOND, @intTime / 100, '1800-12-28 00:00:00') AS TIME)
+    SELECT
+        @datetime = DATEADD(SECOND, @intTime / 100, @datetime);
 
-	SET @ret = @date + CAST(@time AS SMALLDATETIME);
+    SET @ret = CAST(@datetime AS SMALLDATETIME);
 
-	RETURN @ret;
+    RETURN @ret;
 END
 GO
 

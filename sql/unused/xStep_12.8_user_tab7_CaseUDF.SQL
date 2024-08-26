@@ -1,4 +1,4 @@
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_MST_UDFDefinition] disable trigger all

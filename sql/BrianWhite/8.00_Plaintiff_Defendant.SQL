@@ -1,5 +1,5 @@
 
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 /*
 alter table [sma_TRN_Defendants] disable trigger all
@@ -160,17 +160,17 @@ select * from [sma_MST_SubRole]
 DECLARE @needles_role varchar(100);
 DECLARE @sa_role varchar(100);
 DECLARE role_cursor CURSOR FOR 
-SELECT [Needles Roles],[SA Roles] FROM [BrianWhiteSANeos].[dbo].[PartyRoles] where [SA Party]='Plaintiff'
+SELECT [Needles Roles],[SA Roles] FROM [BrianWhiteSA].[dbo].[PartyRoles] where [SA Party]='Plaintiff'
  
 OPEN role_cursor 
 FETCH NEXT FROM role_cursor INTO @needles_role,@sa_role
 WHILE @@FETCH_STATUS = 0
 BEGIN
 
-    update [BrianWhiteSANeos].[dbo].[sma_TRN_Plaintiff] set plnnRole=S.sbrnSubRoleId
+    update [BrianWhiteSA].[dbo].[sma_TRN_Plaintiff] set plnnRole=S.sbrnSubRoleId
     from [BrianWhiteNeos].[dbo].[party_indexed] P 
-    inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Cases] CAS on CAS.cassCaseNumber = P.case_id  
-    inner join [BrianWhiteSANeos].[dbo].[sma_MST_SubRole] S on CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID and S.sbrnRoleID=4 and S.sbrsDscrptn=@sa_role
+    inner join [BrianWhiteSA].[dbo].[sma_TRN_Cases] CAS on CAS.cassCaseNumber = P.case_id  
+    inner join [BrianWhiteSA].[dbo].[sma_MST_SubRole] S on CAS.casnOrgCaseTypeID = S.sbrnCaseTypeID and S.sbrnRoleID=4 and S.sbrsDscrptn=@sa_role
     inner join IndvOrgContacts_Indexed CIO on CIO.SAGA = P.party_id
     where P.role=@needles_role
     and P.TableIndex=saga_party 
@@ -264,18 +264,18 @@ GO
 
 /*
 from [BrianWhiteNeos].[dbo].[party_indexed] P 
-inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Cases] C on C.cassCaseNumber = P.case_id  
-inner join [BrianWhiteSANeos].[dbo].[sma_MST_SubRole] S on C.casnOrgCaseTypeID = S.sbrnCaseTypeID
+inner join [BrianWhiteSA].[dbo].[sma_TRN_Cases] C on C.cassCaseNumber = P.case_id  
+inner join [BrianWhiteSA].[dbo].[sma_MST_SubRole] S on C.casnOrgCaseTypeID = S.sbrnCaseTypeID
 inner join IndvOrgContacts_Indexed ACIO on ACIO.SAGA_REF = P.party_id
 where S.sbrnRoleID=5 and S.sbrsDscrptn='(D)-Default Role'
-and P.role in (SELECT [Needles Roles] FROM [BrianWhiteSANeos].[dbo].[PartyRoles] where [SA Party]='Defendant')
+and P.role in (SELECT [Needles Roles] FROM [BrianWhiteSA].[dbo].[PartyRoles] where [SA Party]='Defendant')
 GO
 
 ---( Now. do special role assignment )
 DECLARE @needles_role varchar(100);
 DECLARE @sa_role varchar(100);
 DECLARE role_cursor CURSOR FOR 
-SELECT [Needles Roles],[SA Roles] FROM [BrianWhiteSANeos].[dbo].[PartyRoles] where [SA Party]='Defendant'
+SELECT [Needles Roles],[SA Roles] FROM [BrianWhiteSA].[dbo].[PartyRoles] where [SA Party]='Defendant'
  
 OPEN role_cursor 
 FETCH NEXT FROM role_cursor INTO @needles_role,@sa_role
@@ -283,10 +283,10 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
 
 
-    update [BrianWhiteSANeos].[dbo].[sma_TRN_Defendants] set defnSubRole=S.sbrnSubRoleId
+    update [BrianWhiteSA].[dbo].[sma_TRN_Defendants] set defnSubRole=S.sbrnSubRoleId
     from [BrianWhiteNeos].[dbo].[party_indexed] P 
-    inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Cases] C on C.cassCaseNumber = P.case_id  
-    inner join [BrianWhiteSANeos].[dbo].[sma_MST_SubRole] S on C.casnOrgCaseTypeID = S.sbrnCaseTypeID and S.sbrnRoleID=5 and S.sbrsDscrptn=@sa_role
+    inner join [BrianWhiteSA].[dbo].[sma_TRN_Cases] C on C.cassCaseNumber = P.case_id  
+    inner join [BrianWhiteSA].[dbo].[sma_MST_SubRole] S on C.casnOrgCaseTypeID = S.sbrnCaseTypeID and S.sbrnRoleID=5 and S.sbrsDscrptn=@sa_role
     inner join IndvOrgContacts_Indexed ACIO on ACIO.SAGA_REF = P.party_id
     where P.role=@needles_role
     and P.TableIndex=saga_party 

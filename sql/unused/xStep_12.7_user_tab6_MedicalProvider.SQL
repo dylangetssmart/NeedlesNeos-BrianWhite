@@ -1,4 +1,4 @@
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 
 ALTER TABLE [sma_TRN_Hospitals] DISABLE TRIGGER ALL

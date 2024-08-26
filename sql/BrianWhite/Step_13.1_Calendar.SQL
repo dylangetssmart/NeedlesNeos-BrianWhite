@@ -1,5 +1,7 @@
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
+
+SET QUOTED_IDENTIFIER ON;
 /*
 alter table [sma_TRN_CalendarAppointments] disable trigger all
 delete from [sma_TRN_CalendarAppointments]

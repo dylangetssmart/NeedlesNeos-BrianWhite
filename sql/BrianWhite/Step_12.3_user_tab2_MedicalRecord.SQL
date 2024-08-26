@@ -1,4 +1,4 @@
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 
 /*
@@ -374,7 +374,7 @@ GO
 --------------------------------------------------------------------------
 ------------------------------ MEDICAL VISITS -----------------------------
 --------------------------------------------------------------------------
-insert into  [BrianWhiteSANeos].[dbo].[sma_TRN_Visits]
+insert into  [BrianWhiteSA].[dbo].[sma_TRN_Visits]
 (
        [vissRefTable]
       ,[visnRecordID]
@@ -408,14 +408,14 @@ select
     null				   as [vissComments]
 from [BrianWhiteNeos].[dbo].[user_tab2_data] D
 inner join user_tab2_MedicalProvider_Helper MAP on MAP.tab_ID=D.tab_id
-inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
+inner join [BrianWhiteSA].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
 WHERE isnull(Treatment_Received,'')<> '' or
 isnull(findings,'')<>''
 
 --------------------------------------------------------------------------
 ------------------------------ MEDICAL BILLS -----------------------------
 --------------------------------------------------------------------------
-insert into [BrianWhiteSANeos].[dbo].[sma_TRN_SpDamages]
+insert into [BrianWhiteSA].[dbo].[sma_TRN_SpDamages]
 (
      [spdsRefTable]
     ,[spdnRecordID]
@@ -469,7 +469,7 @@ select
 							as saga_bill_id  -- one bill one value
 from [BrianWhiteNeos].[dbo].[user_tab2_data] D
 inner join user_tab2_MedicalProvider_Helper MAP on MAP.tab_id=D.tab_id
-inner join [BrianWhiteSANeos].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
+inner join [BrianWhiteSA].[dbo].[sma_TRN_Hospitals] H on H.hosnCaseID=MAP.casnCaseID and H.hosnContactID=MAP.ProviderCID and H.hosnContactCtg=MAP.ProviderCTG and H.hosnAddressID=MAP.ProviderAID 
 
 
 ---(Appendix)--- Update hospital TotalBill from Bill section

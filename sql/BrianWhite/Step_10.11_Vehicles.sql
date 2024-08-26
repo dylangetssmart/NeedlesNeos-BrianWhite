@@ -1,4 +1,4 @@
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 
 --truncate table [sma_TRN_Vehicles]

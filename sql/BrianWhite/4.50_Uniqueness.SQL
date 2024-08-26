@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 ---(1)--- Phone number uniqueness
 

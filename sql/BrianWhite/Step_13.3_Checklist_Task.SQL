@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 
 /*
@@ -27,7 +27,7 @@ FROM [BrianWhiteNeos].[dbo].[checklist_dir] DIR
 inner join [BrianWhiteNeos].[dbo].[case_checklist] LST on DIR.code=LST.code
 where isnull(DIR.[description],'')<>''
 except
-select tskCtgDescription from [BrianWhiteSANeos].[dbo].[sma_MST_TaskCategory] 
+select tskCtgDescription from [BrianWhiteSA].[dbo].[sma_MST_TaskCategory] 
 GO
 */
 ---(0)---

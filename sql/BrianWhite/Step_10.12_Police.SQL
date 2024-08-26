@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_TRN_PoliceReports] disable trigger all

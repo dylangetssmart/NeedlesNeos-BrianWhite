@@ -1,4 +1,4 @@
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 
 --select * From sma_MST_ActivityCodes

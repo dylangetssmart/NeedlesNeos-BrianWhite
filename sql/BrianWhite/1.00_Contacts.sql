@@ -1,5 +1,5 @@
 
-USE [BrianWhiteSANeos]
+USE [BrianWhiteSA]
 GO
 /*
 alter table [sma_MST_IndvContacts] disable trigger all
@@ -992,7 +992,7 @@ INSERT INTO [sma_MST_OrgContacts]
 	   ,(
 			SELECT
 				octnOrigContactTypeID
-			FROM [BrianWhiteSANeos].[dbo].[sma_MST_OriginalContactTypes]
+			FROM [BrianWhiteSA].[dbo].[sma_MST_OriginalContactTypes]
 			WHERE octsDscrptn = 'General'
 				AND octnContactCtgID = 2
 		)				   

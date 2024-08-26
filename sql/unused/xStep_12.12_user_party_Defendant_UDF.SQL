@@ -1,5 +1,5 @@
 
-use BrianWhiteSANeos
+use BrianWhiteSA
 GO
 
 /*
@@ -69,8 +69,8 @@ GO
 select p.tableindex, party_ID, case_ID, [role], [sa party],IOC.CID, IOC.CTG, IOC.AID, IOC.UNQCID, IOC.Name, IOC.SAGA 
 INTO UserParty_Helper
 From [BrianWhiteNeos].[dbo].[party_Indexed] P
-JOIN [BrianWhiteSANeos].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
-JOIN [BrianWhiteSANeos].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
+JOIN [BrianWhiteSA].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
+JOIN [BrianWhiteSA].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
 */
 
 

@@ -1,5 +1,5 @@
 
-use BrianWhiteSANeos
+use BrianWhiteSA
 GO
 
 /*
@@ -69,8 +69,8 @@ GO
 select p.tableindex, party_ID, case_ID, [role], [sa party],IOC.CID, IOC.CTG, IOC.AID, IOC.UNQCID, IOC.Name, IOC.SAGA 
 INTO UserParty_Helper
 From [BrianWhiteNeos].[dbo].[party_Indexed] P
-JOIN [BrianWhiteSANeos].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
-JOIN [BrianWhiteSANeos].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
+JOIN [BrianWhiteSA].[dbo].[IndvOrgContacts_Indexed] IOC on IOC.SAGA = P.party_id
+JOIN [BrianWhiteSA].[dbo].[PartyRoles] R on R.[Needles Roles]=p.[role]
 */
 --select * from BrianWhiteNeos..user_case_fields
 
@@ -214,7 +214,7 @@ join [BrianWhiteNeos].[dbo].[party_Indexed] P on P.party_id=UD.party_id and P.ca
 JOIN [IndvOrgContacts_Indexed] IOC on IOC.SAGA = UD.party_id
 join sma_TRN_Plaintiff T on P.TableIndex= T.[saga_party]
 join UDF_Helper LIST on LIST.mattercode=ci.matcode
-join (SELECT [Needles Roles] FROM [BrianWhiteSANeos].[dbo].[PartyRoles] where [SA Party]='Plaintiff') N on N.[Needles Roles]=P.[role]
+join (SELECT [Needles Roles] FROM [BrianWhiteSA].[dbo].[PartyRoles] where [SA Party]='Plaintiff') N on N.[Needles Roles]=P.[role]
 WHERE (
 		isnull( convert(varchar,Agent_for_Service),'')<>'' or 
 		isnull( convert(varchar,At_What_Wage),'')<>'' or 

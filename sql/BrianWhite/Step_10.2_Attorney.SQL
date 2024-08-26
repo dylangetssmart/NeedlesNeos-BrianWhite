@@ -1,4 +1,4 @@
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 /*
 alter table [sma_TRN_PlaintiffAttorney] disable trigger all

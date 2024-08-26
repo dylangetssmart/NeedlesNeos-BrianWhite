@@ -1,5 +1,5 @@
 
-USE BrianWhiteSANeos
+USE BrianWhiteSA
 GO
 
 /*
@@ -59,9 +59,9 @@ CREATE TABLE value_tab_Employment_Helper (
 ) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (case_id);
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (value_id);
-CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON BrianWhiteSANeos.[dbo].[value_tab_Employment_Helper] (ProviderNameId);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_case_id ON BrianWhiteSA.[dbo].[value_tab_Employment_Helper] (case_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_value_id ON BrianWhiteSA.[dbo].[value_tab_Employment_Helper] (value_id);
+CREATE NONCLUSTERED INDEX IX_NonClustered_Index_value_tab_Employment_Helper_ProviderNameId ON BrianWhiteSA.[dbo].[value_tab_Employment_Helper] (ProviderNameId);
 GO
 
 ---(0)---
