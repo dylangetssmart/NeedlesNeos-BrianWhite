@@ -61,55 +61,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_MST_IndvContacts]
 		(
-		[cinbPrimary]
-	   ,[cinnContactTypeID]
-	   ,[cinnContactSubCtgID]
-	   ,[cinsPrefix]
-	   ,[cinsFirstName]
-	   ,[cinsMiddleName]
-	   ,[cinsLastName]
-	   ,[cinsSuffix]
-	   ,[cinsNickName]
-	   ,[cinbStatus]
-	   ,[cinsSSNNo]
-	   ,[cindBirthDate]
-	   ,[cinsComments]
-	   ,[cinnContactCtg]
-	   ,[cinnRefByCtgID]
-	   ,[cinnReferredBy]
-	   ,[cindDateOfDeath]
-	   ,[cinsCVLink]
-	   ,[cinnMaritalStatusID]
-	   ,[cinnGender]
-	   ,[cinsBirthPlace]
-	   ,[cinnCountyID]
-	   ,[cinsCountyOfResidence]
-	   ,[cinbFlagForPhoto]
-	   ,[cinsPrimaryContactNo]
-	   ,[cinsHomePhone]
-	   ,[cinsWorkPhone]
-	   ,[cinsMobile]
-	   ,[cinbPreventMailing]
-	   ,[cinnRecUserID]
-	   ,[cindDtCreated]
-	   ,[cinnModifyUserID]
-	   ,[cindDtModified]
-	   ,[cinnLevelNo]
-	   ,[cinsPrimaryLanguage]
-	   ,[cinsOtherLanguage]
-	   ,[cinbDeathFlag]
-	   ,[cinsCitizenship]
-	   ,[cinsHeight]
-	   ,[cinnWeight]
-	   ,[cinsReligion]
-	   ,[cindMarriageDate]
-	   ,[cinsMarriageLoc]
-	   ,[cinsDeathPlace]
-	   ,[cinsMaidenName]
-	   ,[cinsOccupation]
-	   ,[saga]
-	   ,[cinsSpouse]
-	   ,[cinsGrade]
+		[cinbPrimary], [cinnContactTypeID], [cinnContactSubCtgID], [cinsPrefix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsSuffix], [cinsNickName], [cinbStatus], [cinsSSNNo], [cindBirthDate], [cinsComments], [cinnContactCtg], [cinnRefByCtgID], [cinnReferredBy], [cindDateOfDeath], [cinsCVLink], [cinnMaritalStatusID], [cinnGender], [cinsBirthPlace], [cinnCountyID], [cinsCountyOfResidence], [cinbFlagForPhoto], [cinsPrimaryContactNo], [cinsHomePhone], [cinsWorkPhone], [cinsMobile], [cinbPreventMailing], [cinnRecUserID], [cindDtCreated], [cinnModifyUserID], [cindDtModified], [cinnLevelNo], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinbDeathFlag], [cinsCitizenship], [cinsHeight], [cinnWeight], [cinsReligion], [cindMarriageDate], [cinsMarriageLoc], [cinsDeathPlace], [cinsMaidenName], [cinsOccupation], [saga], [cinsSpouse], [cinsGrade]
 		)
 
 		SELECT
@@ -174,55 +126,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_MST_IndvContacts]
 		(
-		[cinbPrimary]
-	   ,[cinnContactTypeID]
-	   ,[cinnContactSubCtgID]
-	   ,[cinsPrefix]
-	   ,[cinsFirstName]
-	   ,[cinsMiddleName]
-	   ,[cinsLastName]
-	   ,[cinsSuffix]
-	   ,[cinsNickName]
-	   ,[cinbStatus]
-	   ,[cinsSSNNo]
-	   ,[cindBirthDate]
-	   ,[cinsComments]
-	   ,[cinnContactCtg]
-	   ,[cinnRefByCtgID]
-	   ,[cinnReferredBy]
-	   ,[cindDateOfDeath]
-	   ,[cinsCVLink]
-	   ,[cinnMaritalStatusID]
-	   ,[cinnGender]
-	   ,[cinsBirthPlace]
-	   ,[cinnCountyID]
-	   ,[cinsCountyOfResidence]
-	   ,[cinbFlagForPhoto]
-	   ,[cinsPrimaryContactNo]
-	   ,[cinsHomePhone]
-	   ,[cinsWorkPhone]
-	   ,[cinsMobile]
-	   ,[cinbPreventMailing]
-	   ,[cinnRecUserID]
-	   ,[cindDtCreated]
-	   ,[cinnModifyUserID]
-	   ,[cindDtModified]
-	   ,[cinnLevelNo]
-	   ,[cinsPrimaryLanguage]
-	   ,[cinsOtherLanguage]
-	   ,[cinbDeathFlag]
-	   ,[cinsCitizenship]
-	   ,[cinsHeight]
-	   ,[cinnWeight]
-	   ,[cinsReligion]
-	   ,[cindMarriageDate]
-	   ,[cinsMarriageLoc]
-	   ,[cinsDeathPlace]
-	   ,[cinsMaidenName]
-	   ,[cinsOccupation]
-	   ,[saga]
-	   ,[cinsSpouse]
-	   ,[cinsGrade]
+		[cinbPrimary], [cinnContactTypeID], [cinnContactSubCtgID], [cinsPrefix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsSuffix], [cinsNickName], [cinbStatus], [cinsSSNNo], [cindBirthDate], [cinsComments], [cinnContactCtg], [cinnRefByCtgID], [cinnReferredBy], [cindDateOfDeath], [cinsCVLink], [cinnMaritalStatusID], [cinnGender], [cinsBirthPlace], [cinnCountyID], [cinsCountyOfResidence], [cinbFlagForPhoto], [cinsPrimaryContactNo], [cinsHomePhone], [cinsWorkPhone], [cinsMobile], [cinbPreventMailing], [cinnRecUserID], [cindDtCreated], [cinnModifyUserID], [cindDtModified], [cinnLevelNo], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinbDeathFlag], [cinsCitizenship], [cinsHeight], [cinnWeight], [cinsReligion], [cindMarriageDate], [cinsMarriageLoc], [cinsDeathPlace], [cinsMaidenName], [cinsOccupation], [saga], [cinsSpouse], [cinsGrade]
 		)
 
 		SELECT
@@ -287,55 +191,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_MST_IndvContacts]
 		(
-		[cinbPrimary]
-	   ,[cinnContactTypeID]
-	   ,[cinnContactSubCtgID]
-	   ,[cinsPrefix]
-	   ,[cinsFirstName]
-	   ,[cinsMiddleName]
-	   ,[cinsLastName]
-	   ,[cinsSuffix]
-	   ,[cinsNickName]
-	   ,[cinbStatus]
-	   ,[cinsSSNNo]
-	   ,[cindBirthDate]
-	   ,[cinsComments]
-	   ,[cinnContactCtg]
-	   ,[cinnRefByCtgID]
-	   ,[cinnReferredBy]
-	   ,[cindDateOfDeath]
-	   ,[cinsCVLink]
-	   ,[cinnMaritalStatusID]
-	   ,[cinnGender]
-	   ,[cinsBirthPlace]
-	   ,[cinnCountyID]
-	   ,[cinsCountyOfResidence]
-	   ,[cinbFlagForPhoto]
-	   ,[cinsPrimaryContactNo]
-	   ,[cinsHomePhone]
-	   ,[cinsWorkPhone]
-	   ,[cinsMobile]
-	   ,[cinbPreventMailing]
-	   ,[cinnRecUserID]
-	   ,[cindDtCreated]
-	   ,[cinnModifyUserID]
-	   ,[cindDtModified]
-	   ,[cinnLevelNo]
-	   ,[cinsPrimaryLanguage]
-	   ,[cinsOtherLanguage]
-	   ,[cinbDeathFlag]
-	   ,[cinsCitizenship]
-	   ,[cinsHeight]
-	   ,[cinnWeight]
-	   ,[cinsReligion]
-	   ,[cindMarriageDate]
-	   ,[cinsMarriageLoc]
-	   ,[cinsDeathPlace]
-	   ,[cinsMaidenName]
-	   ,[cinsOccupation]
-	   ,[saga]
-	   ,[cinsSpouse]
-	   ,[cinsGrade]
+		[cinbPrimary], [cinnContactTypeID], [cinnContactSubCtgID], [cinsPrefix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsSuffix], [cinsNickName], [cinbStatus], [cinsSSNNo], [cindBirthDate], [cinsComments], [cinnContactCtg], [cinnRefByCtgID], [cinnReferredBy], [cindDateOfDeath], [cinsCVLink], [cinnMaritalStatusID], [cinnGender], [cinsBirthPlace], [cinnCountyID], [cinsCountyOfResidence], [cinbFlagForPhoto], [cinsPrimaryContactNo], [cinsHomePhone], [cinsWorkPhone], [cinsMobile], [cinbPreventMailing], [cinnRecUserID], [cindDtCreated], [cinnModifyUserID], [cindDtModified], [cinnLevelNo], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinbDeathFlag], [cinsCitizenship], [cinsHeight], [cinnWeight], [cinsReligion], [cindMarriageDate], [cinsMarriageLoc], [cinsDeathPlace], [cinsMaidenName], [cinsOccupation], [saga], [cinsSpouse], [cinsGrade]
 		)
 
 		SELECT
@@ -400,55 +256,7 @@ IF NOT EXISTS (
 BEGIN
 	INSERT INTO [sma_MST_IndvContacts]
 		(
-		[cinbPrimary]
-	   ,[cinnContactTypeID]
-	   ,[cinnContactSubCtgID]
-	   ,[cinsPrefix]
-	   ,[cinsFirstName]
-	   ,[cinsMiddleName]
-	   ,[cinsLastName]
-	   ,[cinsSuffix]
-	   ,[cinsNickName]
-	   ,[cinbStatus]
-	   ,[cinsSSNNo]
-	   ,[cindBirthDate]
-	   ,[cinsComments]
-	   ,[cinnContactCtg]
-	   ,[cinnRefByCtgID]
-	   ,[cinnReferredBy]
-	   ,[cindDateOfDeath]
-	   ,[cinsCVLink]
-	   ,[cinnMaritalStatusID]
-	   ,[cinnGender]
-	   ,[cinsBirthPlace]
-	   ,[cinnCountyID]
-	   ,[cinsCountyOfResidence]
-	   ,[cinbFlagForPhoto]
-	   ,[cinsPrimaryContactNo]
-	   ,[cinsHomePhone]
-	   ,[cinsWorkPhone]
-	   ,[cinsMobile]
-	   ,[cinbPreventMailing]
-	   ,[cinnRecUserID]
-	   ,[cindDtCreated]
-	   ,[cinnModifyUserID]
-	   ,[cindDtModified]
-	   ,[cinnLevelNo]
-	   ,[cinsPrimaryLanguage]
-	   ,[cinsOtherLanguage]
-	   ,[cinbDeathFlag]
-	   ,[cinsCitizenship]
-	   ,[cinsHeight]
-	   ,[cinnWeight]
-	   ,[cinsReligion]
-	   ,[cindMarriageDate]
-	   ,[cinsMarriageLoc]
-	   ,[cinsDeathPlace]
-	   ,[cinsMaidenName]
-	   ,[cinsOccupation]
-	   ,[saga]
-	   ,[cinsSpouse]
-	   ,[cinsGrade]
+		[cinbPrimary], [cinnContactTypeID], [cinnContactSubCtgID], [cinsPrefix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsSuffix], [cinsNickName], [cinbStatus], [cinsSSNNo], [cindBirthDate], [cinsComments], [cinnContactCtg], [cinnRefByCtgID], [cinnReferredBy], [cindDateOfDeath], [cinsCVLink], [cinnMaritalStatusID], [cinnGender], [cinsBirthPlace], [cinnCountyID], [cinsCountyOfResidence], [cinbFlagForPhoto], [cinsPrimaryContactNo], [cinsHomePhone], [cinsWorkPhone], [cinsMobile], [cinbPreventMailing], [cinnRecUserID], [cindDtCreated], [cinnModifyUserID], [cindDtModified], [cinnLevelNo], [cinsPrimaryLanguage], [cinsOtherLanguage], [cinbDeathFlag], [cinsCitizenship], [cinsHeight], [cinnWeight], [cinsReligion], [cindMarriageDate], [cinsMarriageLoc], [cinsDeathPlace], [cinsMaidenName], [cinsOccupation], [saga], [cinsSpouse], [cinsGrade]
 		)
 
 		SELECT DISTINCT
@@ -507,69 +315,51 @@ END
 ------------------------------------------------------------------------------------------------
 ---------------------------------------BEGIN INSERT USERS---------------------------------------
 ------------------------------------------------------------------------------------------------
+
+-- Indv Contact Cards for staff
 INSERT INTO [sma_MST_IndvContacts]
 	(
-	[cinsPrefix]
-   ,[cinsSuffix]
-   ,[cinsFirstName]
-   ,[cinsLastName]
-   ,[cinsHomePhone]
-   ,[cinsWorkPhone]
-   ,[cinsSSNNo]
-   ,[cindBirthDate]
-   ,[cindDateOfDeath]
-   ,[cinnGender]
-   ,[cinsMobile]
-   ,[cinsComments]
-   ,[cinnContactCtg]
-   ,[cinnContactTypeID]
-   ,[cinnRecUserID]
-   ,[cindDtCreated]
-   ,[cinbStatus]
-   ,[cinbPreventMailing]
-   ,[cinsNickName]
-   ,[cinsOccupation]
-   ,[saga]
-   ,[cinsGrade]
-   ,				-- remember the [staff_code]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsOccupation], [saga], [cinsGrade],				-- remember the [staff_code]
 	[saga_ref]
 	)
 	SELECT
-		p.[name]						AS [cinsPrefix]
-	   ,s.[name]						AS [cinsSuffix]
-	   ,CASE
-			WHEN ISNULL(stf.first_name, '') = ''
-				THEN LEFT(ISNULL(first_name, dbo.get_firstword(full_name)), 30)
-			ELSE stf.first_name
-		END								AS [cinsFirstName]
-	   ,CASE
-			WHEN ISNULL(stf.last_name, '') = ''
-				THEN LEFT(ISNULL(last_name, dbo.get_lastword(full_name)), 40)
-			ELSE stf.last_name
-		END								AS [cinsLastName]
+		iu.Prefix						AS [cinsPrefix]
+	   ,iu.Suffix						AS [cinsSuffix]
+	   	,iu.SAFirst								as [cinsFirstName]
+	,iu.SAMiddle							as [cinsmiddleName]
+	 --  ,CASE
+		--	WHEN ISNULL(stf.first_name, '') = ''
+		--		THEN LEFT(ISNULL(first_name, dbo.get_firstword(full_name)), 30)
+		--	ELSE stf.first_name
+		--END								AS [cinsFirstName]
+	 --  ,CASE
+		--	WHEN ISNULL(stf.last_name, '') = ''
+		--		THEN LEFT(ISNULL(last_name, dbo.get_lastword(full_name)), 40)
+		--	ELSE stf.last_name
+		--END								AS [cinsLastName]
 	   ,NULL							AS [cinsHomePhone]
 	   ,LEFT(phone_number, 20)			AS [cinsWorkPhone]
 	   ,NULL							AS [cinsSSNNo]
 	   ,NULL							AS [cindBirthDate]
 	   ,NULL							AS [cindDateOfDeath]
-	   ,CASE [gender]
+	   ,CASE s.gender
 			WHEN 1
 				THEN 1
 			WHEN 2
 				THEN 2
 			ELSE 0
 		END								AS [cinnGender]
-	   ,LEFT(mobile_number, 20)			AS [cinsMobile]
-	   ,ISNULL('Supervisor: ' + NULLIF(CONVERT(VARCHAR, stf.supervisor), '') + CHAR(13), '') +
-		ISNULL('Bar1: ' + NULLIF(CONVERT(VARCHAR, stf.Bar1), '') + CHAR(13), '') +
-		ISNULL('Bar1 State: ' + NULLIF(CONVERT(VARCHAR, stf.Bar_State1), '') + CHAR(13), '') +
-		ISNULL('Bar2: ' + NULLIF(CONVERT(VARCHAR, stf.Bar2), '') + CHAR(13), '') +
-		ISNULL('Bar2 State: ' + NULLIF(CONVERT(VARCHAR, stf.Bar_State2), '') + CHAR(13), '') +
-		ISNULL('Bar3: ' + NULLIF(CONVERT(VARCHAR, stf.Bar3), '') + CHAR(13), '') +
-		ISNULL('Bar3 State: ' + NULLIF(CONVERT(VARCHAR, stf.Bar_State3), '') + CHAR(13), '') +
+	   ,LEFT(s.mobile_number, 20)			AS [cinsMobile]
+	   ,ISNULL('Supervisor: ' + NULLIF(CONVERT(VARCHAR, s.supervisor), '') + CHAR(13), '') +
+		ISNULL('Bar1: ' + NULLIF(CONVERT(VARCHAR, s.Bar1), '') + CHAR(13), '') +
+		ISNULL('Bar1 State: ' + NULLIF(CONVERT(VARCHAR, s.Bar_State1), '') + CHAR(13), '') +
+		ISNULL('Bar2: ' + NULLIF(CONVERT(VARCHAR, s.Bar2), '') + CHAR(13), '') +
+		ISNULL('Bar2 State: ' + NULLIF(CONVERT(VARCHAR, s.Bar_State2), '') + CHAR(13), '') +
+		ISNULL('Bar3: ' + NULLIF(CONVERT(VARCHAR, s.Bar3), '') + CHAR(13), '') +
+		ISNULL('Bar3 State: ' + NULLIF(CONVERT(VARCHAR, s.Bar_State3), '') + CHAR(13), '') +
 		'Works on Cases: ' +
 		CASE
-			WHEN stf.works_on_cases = 1
+			WHEN s.works_on_cases = 1
 				THEN 'Yes'
 			ELSE 'No'
 		END + CHAR(13) +
@@ -584,30 +374,37 @@ INSERT INTO [sma_MST_IndvContacts]
 		)								
 		AS [cinnContactTypeID]
 	   ,368
-	   ,stf.Date_Created
+	   ,s.Date_Created
 	   ,1								AS [cinbStatus]
 	   ,0
-	   ,CONVERT(VARCHAR(15), full_name) AS [cinsNickName]
-	   ,stf.job_title					AS [cinsOccupation]
+	   ,CONVERT(VARCHAR(15), s.full_name) AS [cinsNickName]
+	   ,s.job_title					AS [cinsOccupation]
 	   ,NULL							AS [saga]
-	   ,stf.staff_code					AS [cinsGrade]
+	   ,s.staff_code					AS [cinsGrade]
 	   , -- Remember it to go to sma_MST_Users
-		stf.id							AS [saga_ref]
+		s.id							AS [saga_ref]
 	--SELECT *
-	FROM [BrianWhiteNeos].[dbo].[staff] stf
-	LEFT JOIN [BrianWhiteNeos]..[prefix] p
-		ON stf.prefixid = p.id
-	LEFT JOIN [BrianWhiteNeos]..[suffix] s
-		ON s.id = stf.suffixid
+	--FROM [BrianWhiteNeos].[dbo].[staff] stf
+	--LEFT JOIN [BrianWhiteNeos]..[prefix] p
+	--	ON stf.prefixid = p.id
+	--LEFT JOIN [BrianWhiteNeos]..[suffix] s
+	--	ON s.id = stf.suffixid
+	FROM [implementation_users] iu
+--LEFT JOIN [sma_MST_IndvContacts] ind on iu.StaffCode = ind.cinsgrade
+LEFT JOIN [sma_MST_IndvContacts] ind on iu.SAContactID = ind.cinnContactID
+LEFT JOIN BrianWhiteNeos..[staff] s on s.staff_code = iu.staffcode
+WHERE cinncontactid IS NULL
+and SALoginID <> 'aadmin'
 
+GO
 
 
 -- (3.2) construct [sma_MST_Users]
 IF (
 		SELECT
 			COUNT(*)
-		FROM sma_mst_users
-		WHERE usrsloginid = 'aadmin'
+		FROM sma_MST_Users
+		WHERE usrsLoginID = 'aadmin'
 	)
 	= 0
 BEGIN
@@ -615,40 +412,13 @@ BEGIN
 
 	INSERT INTO [sma_MST_Users]
 		(
-		usrnuserid
-	   ,[usrnContactID]
-	   ,[usrsLoginID]
-	   ,[usrsPassword]
-	   ,[usrsBackColor]
-	   ,[usrsReadBackColor]
-	   ,[usrsEvenBackColor]
-	   ,[usrsOddBackColor]
-	   ,[usrnRoleID]
-	   ,[usrdLoginDate]
-	   ,[usrdLogOffDate]
-	   ,[usrnUserLevel]
-	   ,[usrsWorkstation]
-	   ,[usrnPortno]
-	   ,[usrbLoggedIn]
-	   ,[usrbCaseLevelRights]
-	   ,[usrbCaseLevelFilters]
-	   ,[usrnUnsuccesfulLoginCount]
-	   ,[usrnRecUserID]
-	   ,[usrdDtCreated]
-	   ,[usrnModifyUserID]
-	   ,[usrdDtModified]
-	   ,[usrnLevelNo]
-	   ,[usrsCaseCloseColor]
-	   ,[usrnDocAssembly]
-	   ,[usrnAdmin]
-	   ,[usrnIsLocked]
-	   ,[usrbActiveState]
+		usrnUserID, [usrnContactID], [usrsLoginID], [usrsPassword], [usrsBackColor], [usrsReadBackColor], [usrsEvenBackColor], [usrsOddBackColor], [usrnRoleID], [usrdLoginDate], [usrdLogOffDate], [usrnUserLevel], [usrsWorkstation], [usrnPortno], [usrbLoggedIn], [usrbCaseLevelRights], [usrbCaseLevelFilters], [usrnUnsuccesfulLoginCount], [usrnRecUserID], [usrdDtCreated], [usrnModifyUserID], [usrdDtModified], [usrnLevelNo], [usrsCaseCloseColor], [usrnDocAssembly], [usrnAdmin], [usrnIsLocked], [usrbActiveState]
 		)
 		SELECT DISTINCT
 			368
 		   ,(
 				SELECT
-					cinncontactid
+					cinnContactID
 				FROM sma_mst_Indvcontacts
 				WHERE [cinsFirstName] = 'Staff'
 					AND cinsLastName = 'Unassigned'
@@ -695,41 +465,18 @@ BEGIN
 END
 GO
 
+-- ds 2024-11-13
+-- Insert data into sma_MST_Users table from implementation_users table
+-- don't create users that already exist
 INSERT INTO [sma_MST_Users]
 	(
-	[usrnContactID]
-   ,[usrsLoginID]
-   ,[usrsPassword]
-   ,[usrsBackColor]
-   ,[usrsReadBackColor]
-   ,[usrsEvenBackColor]
-   ,[usrsOddBackColor]
-   ,[usrnRoleID]
-   ,[usrdLoginDate]
-   ,[usrdLogOffDate]
-   ,[usrnUserLevel]
-   ,[usrsWorkstation]
-   ,[usrnPortno]
-   ,[usrbLoggedIn]
-   ,[usrbCaseLevelRights]
-   ,[usrbCaseLevelFilters]
-   ,[usrnUnsuccesfulLoginCount]
-   ,[usrnRecUserID]
-   ,[usrdDtCreated]
-   ,[usrnModifyUserID]
-   ,[usrdDtModified]
-   ,[usrnLevelNo]
-   ,[usrsCaseCloseColor]
-   ,[usrnDocAssembly]
-   ,[usrnAdmin]
-   ,[usrnIsLocked]
-   ,[usrbActiveState]
-   ,[saga]
+	[usrnContactID], [usrsLoginID], [usrsPassword], [usrsBackColor], [usrsReadBackColor], [usrsEvenBackColor], [usrsOddBackColor], [usrnRoleID], [usrdLoginDate], [usrdLogOffDate], [usrnUserLevel], [usrsWorkstation], [usrnPortno], [usrbLoggedIn], [usrbCaseLevelRights], [usrbCaseLevelFilters], [usrnUnsuccesfulLoginCount], [usrnRecUserID], [usrdDtCreated], [usrnModifyUserID], [usrdDtModified], [usrnLevelNo], [usrsCaseCloseColor], [usrnDocAssembly], [usrnAdmin], [usrnIsLocked], [usrbActiveState], [saga]
 	)
 
 	SELECT
-		cinncontactid					 AS [usrnContactID]
-	   ,CONVERT(VARCHAR(20), staff_code) AS [usrsLoginID]
+		indv.cinnContactID					 AS [usrnContactID]
+	   --,CONVERT(VARCHAR(20), staff_code) AS [usrsLoginID]
+	   ,stf.saloginid AS [usrsLoginID]
 	   ,'#'								 AS [usrsPassword]
 	   ,NULL
 	   ,NULL
@@ -755,21 +502,29 @@ INSERT INTO [sma_MST_Users]
 	   ,NULL
 	   ,NULL
 	   ,stf.active						 AS [usrbActiveState]
-	   ,stf.[id]						 AS [saga]
+	   --,stf.[id]						 AS [saga]
+	   ,CONVERT(VARCHAR(20), STF.staffcode) as saga
 	--SELECT *
-	FROM [BrianWhiteNeos].[dbo].[staff] STF
-	JOIN sma_MST_IndvContacts INDV
-		ON INDV.cinsGrade = STF.staff_code
-	LEFT JOIN [sma_MST_Users] u
-		ON u.saga = STF.[id]
-	WHERE u.usrsLoginID IS NULL
+	--FROM [BrianWhiteNeos].[dbo].[staff] STF
+	--JOIN sma_MST_IndvContacts INDV
+	--	ON INDV.cinsGrade = STF.staff_code
+	--LEFT JOIN [sma_MST_Users] u
+	--	ON u.saga = STF.[id]
+	--WHERE u.usrsLoginID IS NULL
+	FROM implementation_users STF
+JOIN sma_MST_IndvContacts INDV
+	ON INDV.cinsGrade = STF.staffcode
+LEFT JOIN [sma_MST_Users] u
+	ON u.saga = CONVERT(VARCHAR(20), STF.staffcode)
+WHERE u.usrsLoginID IS NULL
+GO
 
 -----------------------------------------------------------
 
 DECLARE @UserID INT
 
 DECLARE staff_cursor CURSOR FAST_FORWARD FOR SELECT
-	usrnuserid
+	usrnUserID
 FROM sma_mst_users
 
 OPEN staff_cursor
@@ -782,15 +537,7 @@ BEGIN
 
 INSERT INTO sma_TRN_CaseBrowseSettings
 	(
-	cbsnColumnID
-   ,cbsnUserID
-   ,cbssCaption
-   ,cbsbVisible
-   ,cbsnWidth
-   ,cbsnOrder
-   ,cbsnRecUserID
-   ,cbsdDtCreated
-   ,cbsn_StyleName
+	cbsnColumnID, cbsnUserID, cbssCaption, cbsbVisible, cbsnWidth, cbsnOrder, cbsnRecUserID, cbsdDtCreated, cbsn_StyleName
 	)
 	SELECT DISTINCT
 		cbcnColumnID
@@ -815,8 +562,7 @@ DEALLOCATE staff_cursor
 ---- Appendix ----
 INSERT INTO Account_UsersInRoles
 	(
-	user_id
-   ,role_id
+	user_id, role_id
 	)
 	SELECT
 		usrnUserID AS user_id
@@ -837,31 +583,7 @@ WHERE user_id = 368
 --INDV CONTACTS
 INSERT INTO [sma_MST_IndvContacts]
 	(
-	[cinsPrefix]
-   ,[cinsSuffix]
-   ,[cinsFirstName]
-   ,[cinsMiddleName]
-   ,[cinsLastName]
-   ,[cinsHomePhone]
-   ,[cinsWorkPhone]
-   ,[cinsSSNNo]
-   ,[cindBirthDate]
-   ,[cindDateOfDeath]
-   ,[cinnGender]
-   ,[cinsMobile]
-   ,[cinsComments]
-   ,[cinnContactCtg]
-   ,[cinnContactTypeID]
-   ,[cinnContactSubCtgID]
-   ,[cinnRecUserID]
-   ,[cindDtCreated]
-   ,[cinbStatus]
-   ,[cinbPreventMailing]
-   ,[cinsNickName]
-   ,[cinsPrimaryLanguage]
-   ,[cinsOtherLanguage]
-   ,[saga]
-   ,[saga_ref]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsMiddleName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnContactSubCtgID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsPrimaryLanguage], [cinsOtherLanguage], [saga], [saga_ref]
 	)
 	SELECT
 		p.[name]										   AS [cinsPrefix]
@@ -972,16 +694,7 @@ INSERT INTO [sma_MST_IndvContacts]
 -----------------
 INSERT INTO [sma_MST_OrgContacts]
 	(
-	[consName]
-   ,[consWorkPhone]
-   ,[consComments]
-   ,[connContactCtg]
-   ,[connContactTypeID]
-   ,[connRecUserID]
-   ,[condDtCreated]
-   ,[conbStatus]
-   ,[saga]
-   ,[saga_ref]
+	[consName], [consWorkPhone], [consComments], [connContactCtg], [connContactTypeID], [connRecUserID], [condDtCreated], [conbStatus], [saga], [saga_ref]
 	)
 	SELECT
 		N.[last_long_name] AS [consName]

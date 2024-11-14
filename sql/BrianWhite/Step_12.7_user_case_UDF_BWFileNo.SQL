@@ -148,9 +148,9 @@ INSERT INTO [sma_MST_UDFDefinition]
 		ON def.[udfnRelatedPK] = cas.casnOrgCaseTypeID
 			AND def.[udfsUDFName] = 'BW File No.'
 			AND def.[udfsScreenName] = 'Case'
-			AND udfstype = nuf.UDFType
+			--AND udfstype = nuf.UDFType
 	WHERE def.udfnUDFID IS NULL
-	ORDER BY ucf.field_title
+	--ORDER BY ucf.field_title
 GO
 
 
