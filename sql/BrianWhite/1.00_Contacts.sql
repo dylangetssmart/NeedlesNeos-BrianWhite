@@ -20,13 +20,13 @@ alter table [sma_MST_OrgContacts] enable trigger all
 
 
 --(0) saga field for needles names_id ---
-ALTER TABLE [sma_MST_IndvContacts]
-ADD saga_ref VARCHAR(50)
-GO
+--ALTER TABLE [sma_MST_IndvContacts]
+--ADD saga_ref VARCHAR(50)
+--GO
 
-ALTER TABLE [sma_MST_OrgContacts]
-ADD saga_ref VARCHAR(50)
-GO
+--ALTER TABLE [sma_MST_OrgContacts]
+--ADD saga_ref VARCHAR(50)
+--GO
 
 ALTER TABLE [sma_MST_IndvContacts]
 ALTER COLUMN [cinsNickName] VARCHAR(50)
