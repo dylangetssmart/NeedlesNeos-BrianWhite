@@ -39,3 +39,12 @@ venv/
 
 # Ignore compiled SA site
 SACompiled/
+
+vsworkspacestate.json
+.ssms_suo
+slnx.sqlite
+
+/.vs
+/.vs/*
+/.vs/VSWorkspaceState.json
+/JoelBieber/
