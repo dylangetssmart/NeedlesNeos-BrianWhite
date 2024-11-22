@@ -1,15 +1,17 @@
+SET QUOTED_IDENTIFIER ON;
+
 update sma_mst_sareports
 set
     ReportViewerURL = replace(
                                 replace(ReportViewerURL,'http://sql64', ''),
                                 '/ReportServer/Pages/ReportViewer.aspx?'
-                                ,'https://rpt.smartadvocate.com/ReportServer/Pages/ReportViewer.aspx?/SAglpattorneysLaw'
+                                ,'https://rpt.smartadvocate.com/ReportServer/Pages/ReportViewer.aspx?/SAAttorneyBrianWhiteLaw'
                             )
     ,ReportSubscriptionURL = replace(
                                         replace(
                                                 replace(ReportSubscriptionURL,
-                                                    'http://sql64/Reports/Pages/SubscriptionProperties.aspx?CreateNew=True&IsDataDriven=False&ItemPath=','https://rpt.smartadvocate.com/Reports/manage/catalogitem/addsubscription/SAglpattorneysLaw'
-                                                    ),'/Reports/Pages/SubscriptionProperties.aspx?CreateNew=True&IsDataDriven=False&ItemPath=','https://rpt.smartadvocate.com/Reports/manage/catalogitem/addsubscription/SAglpattorneysLaw'
+                                                    'http://sql64/Reports/Pages/SubscriptionProperties.aspx?CreateNew=True&IsDataDriven=False&ItemPath=','https://rpt.smartadvocate.com/Reports/manage/catalogitem/addsubscription/SAAttorneyBrianWhiteLaw'
+                                                    ),'/Reports/Pages/SubscriptionProperties.aspx?CreateNew=True&IsDataDriven=False&ItemPath=','https://rpt.smartadvocate.com/Reports/manage/catalogitem/addsubscription/SAAttorneyBrianWhiteLaw'
                                                 ),'&RedirectUrl=CloseWindow.html','')
 where ReportViewerURL not like '%rpt.%'
 go

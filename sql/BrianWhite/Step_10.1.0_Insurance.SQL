@@ -16,7 +16,7 @@ IF NOT EXISTS (
 			*
 		FROM sys.columns
 		WHERE Name = N'saga'
-			AND Object_ID = OBJECT_ID(N'sma_TRN_InsuranceCoverage')
+			AND object_id = OBJECT_ID(N'sma_TRN_InsuranceCoverage')
 	)
 BEGIN
 	ALTER TABLE [sma_TRN_InsuranceCoverage]
@@ -104,18 +104,7 @@ GO
 ---(0)---
 INSERT INTO Insurance_Contacts_Helper
 	(
-	insurance_id
-   ,insurer_id
-   ,adjuster_id
-   ,insured
-   ,incnInsContactID
-   ,incnInsAddressID
-   ,incnAdjContactId
-   ,incnAdjAddressID
-   ,incnInsured
-   ,pord
-   ,caseID
-   ,PlaintiffDefendantID
+	insurance_id, insurer_id, adjuster_id, insured, incnInsContactID, incnInsAddressID, incnAdjContactId, incnAdjAddressID, incnInsured, pord, caseID, PlaintiffDefendantID
 	)
 	SELECT
 		CONVERT(VARCHAR(50), INS.id)
@@ -243,46 +232,7 @@ GO
 -------------------------------------
 INSERT INTO [sma_TRN_InsuranceCoverage]
 	(
-	[incnCaseID]
-   ,[incnInsContactID]
-   ,[incnInsAddressID]
-   ,[incbCarrierHasLienYN]
-   ,[incnInsType]
-   ,[incnAdjContactId]
-   ,[incnAdjAddressID]
-   ,[incsPolicyNo]
-   ,[incsClaimNo]
-   ,[incnStackedTimes]
-   ,[incsComments]
-   ,[incnInsured]
-   ,[incnCovgAmt]
-   ,[incnDeductible]
-   ,[incnUnInsPolicyLimit]
-   ,[incnUnderPolicyLimit]
-   ,[incbPolicyTerm]
-   ,[incbTotCovg]
-   ,[incsPlaintiffOrDef]
-   ,[incnPlaintiffIDOrDefendantID]
-   ,[incnTPAdminOrgID]
-   ,[incnTPAdminAddID]
-   ,[incnTPAdjContactID]
-   ,[incnTPAdjAddID]
-   ,[incsTPAClaimNo]
-   ,[incnRecUserID]
-   ,[incdDtCreated]
-   ,[incnModifyUserID]
-   ,[incdDtModified]
-   ,[incnLevelNo]
-   ,[incnUnInsPolicyLimitAcc]
-   ,[incnUnderPolicyLimitAcc]
-   ,[incb100Per]
-   ,[incnMVLeased]
-   ,[incnPriority]
-   ,[incbDelete]
-   ,[incnauthtodefcoun]
-   ,[incnauthtodefcounDt]
-   ,[incbPrimary]
-   ,[saga]
+	[incnCaseID], [incnInsContactID], [incnInsAddressID], [incbCarrierHasLienYN], [incnInsType], [incnAdjContactId], [incnAdjAddressID], [incsPolicyNo], [incsClaimNo], [incnStackedTimes], [incsComments], [incnInsured], [incnCovgAmt], [incnDeductible], [incnUnInsPolicyLimit], [incnUnderPolicyLimit], [incbPolicyTerm], [incbTotCovg], [incsPlaintiffOrDef], [incnPlaintiffIDOrDefendantID], [incnTPAdminOrgID], [incnTPAdminAddID], [incnTPAdjContactID], [incnTPAdjAddID], [incsTPAClaimNo], [incnRecUserID], [incdDtCreated], [incnModifyUserID], [incdDtModified], [incnLevelNo], [incnUnInsPolicyLimitAcc], [incnUnderPolicyLimitAcc], [incb100Per], [incnMVLeased], [incnPriority], [incbDelete], [incnauthtodefcoun], [incnauthtodefcounDt], [incbPrimary], [saga]
 	)
 	SELECT
 		MAP.caseID				 AS [incnCaseID]
@@ -302,11 +252,10 @@ INSERT INTO [sma_TRN_InsuranceCoverage]
 		AS [incnInsType]
 	   ,MAP.incnAdjContactId	 AS [incnAdjContactId]
 	   ,MAP.incnAdjAddressID	 AS [incnAdjAddressID]
-	   ,INS.[policy]			 AS [incsPolicyNo]
-	   ,  --30
-		INS.claim				 AS [incsClaimNo]
-	   ,	--30
-		NULL					 AS [incnStackedTimes]
+	   ,LEFT(INS.[policy], 35)	 AS [incsPolicyNo]
+	   ,LEFT(INS.claim, 45)		 AS [incsClaimNo]
+
+	   ,NULL					 AS [incnStackedTimes]
 	   ,ISNULL('Comment: ' + NULLIF(CONVERT(VARCHAR, ud.ins_comment), '') + CHAR(13), '') +
 		ISNULL('Insurance Information: ' + NULLIF(CONVERT(VARCHAR, ni.[Insurance Information]), '') + CHAR(13), '') +
 		ISNULL('MedPay Coverage: ' + NULLIF(CONVERT(VARCHAR, ni.[MedPay Coverage]), '') + CHAR(13), '') +
@@ -367,46 +316,7 @@ GO
 -------------------------------------
 INSERT INTO [sma_TRN_InsuranceCoverage]
 	(
-	[incnCaseID]
-   ,[incnInsContactID]
-   ,[incnInsAddressID]
-   ,[incbCarrierHasLienYN]
-   ,[incnInsType]
-   ,[incnAdjContactId]
-   ,[incnAdjAddressID]
-   ,[incsPolicyNo]
-   ,[incsClaimNo]
-   ,[incnStackedTimes]
-   ,[incsComments]
-   ,[incnInsured]
-   ,[incnCovgAmt]
-   ,[incnDeductible]
-   ,[incnUnInsPolicyLimit]
-   ,[incnUnderPolicyLimit]
-   ,[incbPolicyTerm]
-   ,[incbTotCovg]
-   ,[incsPlaintiffOrDef]
-   ,[incnPlaintiffIDOrDefendantID]
-   ,[incnTPAdminOrgID]
-   ,[incnTPAdminAddID]
-   ,[incnTPAdjContactID]
-   ,[incnTPAdjAddID]
-   ,[incsTPAClaimNo]
-   ,[incnRecUserID]
-   ,[incdDtCreated]
-   ,[incnModifyUserID]
-   ,[incdDtModified]
-   ,[incnLevelNo]
-   ,[incnUnInsPolicyLimitAcc]
-   ,[incnUnderPolicyLimitAcc]
-   ,[incb100Per]
-   ,[incnMVLeased]
-   ,[incnPriority]
-   ,[incbDelete]
-   ,[incnauthtodefcoun]
-   ,[incnauthtodefcounDt]
-   ,[incbPrimary]
-   ,[saga]
+	[incnCaseID], [incnInsContactID], [incnInsAddressID], [incbCarrierHasLienYN], [incnInsType], [incnAdjContactId], [incnAdjAddressID], [incsPolicyNo], [incsClaimNo], [incnStackedTimes], [incsComments], [incnInsured], [incnCovgAmt], [incnDeductible], [incnUnInsPolicyLimit], [incnUnderPolicyLimit], [incbPolicyTerm], [incbTotCovg], [incsPlaintiffOrDef], [incnPlaintiffIDOrDefendantID], [incnTPAdminOrgID], [incnTPAdminAddID], [incnTPAdjContactID], [incnTPAdjAddID], [incsTPAClaimNo], [incnRecUserID], [incdDtCreated], [incnModifyUserID], [incdDtModified], [incnLevelNo], [incnUnInsPolicyLimitAcc], [incnUnderPolicyLimitAcc], [incb100Per], [incnMVLeased], [incnPriority], [incbDelete], [incnauthtodefcoun], [incnauthtodefcounDt], [incbPrimary], [saga]
 	)
 	SELECT DISTINCT
 		MAP.caseID				 AS [incnCaseID]
@@ -426,8 +336,8 @@ INSERT INTO [sma_TRN_InsuranceCoverage]
 		AS [incnInsType]
 	   ,MAP.incnAdjContactId	 AS [incnAdjContactId]
 	   ,MAP.incnAdjAddressID	 AS [incnAdjAddressID]
-	   ,INS.[policy]			 AS [incsPolicyNo]
-	   ,INS.claim				 AS [incsClaimNo]
+	   ,left(INS.[policy],35)			 AS [incsPolicyNo]
+	   ,left(INS.claim,45)				 AS [incsClaimNo]
 	   ,NULL					 AS [incnStackedTimes]
 	   ,ISNULL('Comment: ' + NULLIF(CONVERT(VARCHAR, ud.ins_comment), '') + CHAR(13), '') +
 		ISNULL('Insurance Information: ' + NULLIF(CONVERT(VARCHAR, ni.[Insurance Information]), '') + CHAR(13), '') +
@@ -487,20 +397,7 @@ GO
 ---(Adjuster/Insurer association)---
 INSERT INTO [sma_MST_RelContacts]
 	(
-	[rlcnPrimaryCtgID]
-   ,[rlcnPrimaryContactID]
-   ,[rlcnPrimaryAddressID]
-   ,[rlcnRelCtgID]
-   ,[rlcnRelContactID]
-   ,[rlcnRelAddressID]
-   ,[rlcnRelTypeID]
-   ,[rlcnRecUserID]
-   ,[rlcdDtCreated]
-   ,[rlcnModifyUserID]
-   ,[rlcdDtModified]
-   ,[rlcnLevelNo]
-   ,[rlcsBizFam]
-   ,[rlcnOrgTypeID]
+	[rlcnPrimaryCtgID], [rlcnPrimaryContactID], [rlcnPrimaryAddressID], [rlcnRelCtgID], [rlcnRelContactID], [rlcnRelAddressID], [rlcnRelTypeID], [rlcnRecUserID], [rlcdDtCreated], [rlcnModifyUserID], [rlcdDtModified], [rlcnLevelNo], [rlcsBizFam], [rlcnOrgTypeID]
 	)
 	SELECT DISTINCT
 		1					  AS [rlcnPrimaryCtgID]
@@ -527,8 +424,7 @@ INSERT INTO [sma_MST_RelContacts]
 ------------------------------
 INSERT INTO [sma_TRN_InsuranceCoverageAdjusters]
 	(
-	insuranceCoverageID
-   ,AdjusterContactUID
+	InsuranceCoverageId, AdjusterContactUID
 	)
 	SELECT
 		incnInsCovgID

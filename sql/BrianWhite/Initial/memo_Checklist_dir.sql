@@ -1,3 +1,4 @@
+use BrianWhiteNeos
 
 IF EXISTS (SELECT * FROM sys.objects WHERE name='checklist_dir_indexed' and type='U')
 BEGIN

@@ -19,40 +19,7 @@ GO
 -----------------------------------------------------------------------------
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		I.cinnContactCtg AS addnContactCtgID
@@ -60,7 +27,7 @@ INSERT INTO [sma_MST_Address]
 	   ,T.addnAddTypeID	 AS addnAddressTypeID
 	   ,T.addsDscrptn	 AS addsAddressType
 	   ,T.addsCode		 AS addsAddTypeCode
-	   ,A.[address]		 AS addsAddress1
+	   ,left(A.[address],75)		 AS addsAddress1
 	   ,A.[address_2]	 AS addsAddress2
 	   ,NULL			 AS addsAddress3
 	   ,A.[state]		 AS addsStateCode
@@ -111,40 +78,7 @@ INSERT INTO [sma_MST_Address]
 
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		I.cinnContactCtg AS addnContactCtgID
@@ -203,40 +137,7 @@ INSERT INTO [sma_MST_Address]
 
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		I.cinnContactCtg AS addnContactCtgID
@@ -296,40 +197,7 @@ INSERT INTO [sma_MST_Address]
 -------------------------------------------------------
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		O.connContactCtg AS addnContactCtgID
@@ -387,40 +255,7 @@ INSERT INTO [sma_MST_Address]
 
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		O.connContactCtg AS addnContactCtgID
@@ -480,40 +315,7 @@ INSERT INTO [sma_MST_Address]
 
 INSERT INTO [sma_MST_Address]
 	(
-	[addnContactCtgID]
-   ,[addnContactID]
-   ,[addnAddressTypeID]
-   ,[addsAddressType]
-   ,[addsAddTypeCode]
-   ,[addsAddress1]
-   ,[addsAddress2]
-   ,[addsAddress3]
-   ,[addsStateCode]
-   ,[addsCity]
-   ,[addnZipID]
-   ,[addsZip]
-   ,[addsCounty]
-   ,[addsCountry]
-   ,[addbIsResidence]
-   ,[addbPrimary]
-   ,[adddFromDate]
-   ,[adddToDate]
-   ,[addnCompanyID]
-   ,[addsDepartment]
-   ,[addsTitle]
-   ,[addnContactPersonID]
-   ,[addsComments]
-   ,[addbIsCurrent]
-   ,[addbIsMailing]
-   ,[addnRecUserID]
-   ,[adddDtCreated]
-   ,[addnModifyUserID]
-   ,[adddDtModified]
-   ,[addnLevelNo]
-   ,[caseno]
-   ,[addbDeleted]
-   ,[addsZipExtn]
-   ,[saga]
+	[addnContactCtgID], [addnContactID], [addnAddressTypeID], [addsAddressType], [addsAddTypeCode], [addsAddress1], [addsAddress2], [addsAddress3], [addsStateCode], [addsCity], [addnZipID], [addsZip], [addsCounty], [addsCountry], [addbIsResidence], [addbPrimary], [adddFromDate], [adddToDate], [addnCompanyID], [addsDepartment], [addsTitle], [addnContactPersonID], [addsComments], [addbIsCurrent], [addbIsMailing], [addnRecUserID], [adddDtCreated], [addnModifyUserID], [adddDtModified], [addnLevelNo], [caseno], [addbDeleted], [addsZipExtn], [saga]
 	)
 	SELECT
 		O.connContactCtg AS addnContactCtgID
@@ -572,14 +374,7 @@ INSERT INTO [sma_MST_Address]
 ---(A.0)
 INSERT INTO [sma_MST_Address]
 	(
-	addnContactCtgID
-   ,addnContactID
-   ,addnAddressTypeID
-   ,addsAddressType
-   ,addsAddTypeCode
-   ,addbPrimary
-   ,addnRecUserID
-   ,adddDtCreated
+	addnContactCtgID, addnContactID, addnAddressTypeID, addsAddressType, addsAddTypeCode, addbPrimary, addnRecUserID, adddDtCreated
 	)
 	SELECT
 		I.cinnContactCtg AS addnContactCtgID
@@ -606,10 +401,7 @@ INSERT INTO [sma_MST_Address]
 ---(A.1)
 INSERT INTO [sma_MST_AddressTypes]
 	(
-	addsCode
-   ,addsDscrptn
-   ,addnContactCategoryID
-   ,addbIsWork
+	addsCode, addsDscrptn, addnContactCategoryID, addbIsWork
 	)
 	SELECT
 		'OTH_O'
@@ -627,14 +419,7 @@ INSERT INTO [sma_MST_AddressTypes]
 
 INSERT INTO [sma_MST_Address]
 	(
-	addnContactCtgID
-   ,addnContactID
-   ,addnAddressTypeID
-   ,addsAddressType
-   ,addsAddTypeCode
-   ,addbPrimary
-   ,addnRecUserID
-   ,adddDtCreated
+	addnContactCtgID, addnContactID, addnAddressTypeID, addsAddressType, addsAddTypeCode, addbPrimary, addnRecUserID, adddDtCreated
 	)
 	SELECT
 		O.connContactCtg AS addnContactCtgID

@@ -1,3 +1,4 @@
+use BrianWhiteNeos
 
 IF EXISTS (SELECT * FROM sys.objects where name='counsel_Indexed' and type='U')
 BEGIN

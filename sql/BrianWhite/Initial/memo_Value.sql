@@ -1,3 +1,4 @@
+use BrianWhiteNeos
 
 
 IF EXISTS (SELECT * FROM sys.objects WHERE name='value_Indexed' and type='U')

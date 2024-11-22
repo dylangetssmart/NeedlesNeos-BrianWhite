@@ -20,13 +20,13 @@ alter table [sma_MST_OrgContacts] enable trigger all
 
 
 --(0) saga field for needles names_id ---
---ALTER TABLE [sma_MST_IndvContacts]
---ADD saga_ref VARCHAR(50)
---GO
+ALTER TABLE [sma_MST_IndvContacts]
+ADD saga_ref VARCHAR(50)
+GO
 
---ALTER TABLE [sma_MST_OrgContacts]
---ADD saga_ref VARCHAR(50)
---GO
+ALTER TABLE [sma_MST_OrgContacts]
+ADD saga_ref VARCHAR(50)
+GO
 
 ALTER TABLE [sma_MST_IndvContacts]
 ALTER COLUMN [cinsNickName] VARCHAR(50)
@@ -465,6 +465,9 @@ BEGIN
 END
 GO
 
+alter TABLE [sma_MST_Users] DISABLE TRIGGER ALL
+go
+
 -- ds 2024-11-13
 -- Insert data into sma_MST_Users table from implementation_users table
 -- don't create users that already exist
@@ -519,44 +522,48 @@ LEFT JOIN [sma_MST_Users] u
 WHERE u.usrsLoginID IS NULL
 GO
 
+alter TABLE [sma_MST_Users] ENABLE TRIGGER ALL
+go
+
 -----------------------------------------------------------
 
-DECLARE @UserID INT
 
-DECLARE staff_cursor CURSOR FAST_FORWARD FOR SELECT
-	usrnUserID
-FROM sma_mst_users
+--DECLARE @UserID INT
 
-OPEN staff_cursor
+--DECLARE staff_cursor CURSOR FAST_FORWARD FOR SELECT
+--	usrnUserID
+--FROM sma_mst_users
 
-FETCH NEXT FROM staff_cursor INTO @UserID
+--OPEN staff_cursor
 
-SET NOCOUNT ON;
-WHILE @@FETCH_STATUS = 0
-BEGIN
+--FETCH NEXT FROM staff_cursor INTO @UserID
 
-INSERT INTO sma_TRN_CaseBrowseSettings
-	(
-	cbsnColumnID, cbsnUserID, cbssCaption, cbsbVisible, cbsnWidth, cbsnOrder, cbsnRecUserID, cbsdDtCreated, cbsn_StyleName
-	)
-	SELECT DISTINCT
-		cbcnColumnID
-	   ,@UserID
-	   ,cbcscolumnname
-	   ,'True'
-	   ,200
-	   ,cbcnDefaultOrder
-	   ,@UserID
-	   ,GETDATE()
-	   ,'Office2007Blue'
-	FROM [sma_MST_CaseBrowseColumns]
-	WHERE cbcnColumnID NOT IN (1, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33)
+--SET NOCOUNT ON;
+--WHILE @@FETCH_STATUS = 0
+--BEGIN
 
-FETCH NEXT FROM staff_cursor INTO @UserID
-END
+--INSERT INTO sma_TRN_CaseBrowseSettings
+--	(
+--	cbsnColumnID, cbsnUserID, cbssCaption, cbsbVisible, cbsnWidth, cbsnOrder, cbsnRecUserID, cbsdDtCreated, cbsn_StyleName
+--	)
+--	SELECT DISTINCT
+--		cbcnColumnID
+--	   ,@UserID
+--	   ,cbcscolumnname
+--	   ,'True'
+--	   ,200
+--	   ,cbcnDefaultOrder
+--	   ,@UserID
+--	   ,GETDATE()
+--	   ,'Office2007Blue'
+--	FROM [sma_MST_CaseBrowseColumns]
+--	WHERE cbcnColumnID NOT IN (1, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33)
 
-CLOSE staff_cursor
-DEALLOCATE staff_cursor
+--FETCH NEXT FROM staff_cursor INTO @UserID
+--END
+
+--CLOSE staff_cursor
+--DEALLOCATE staff_cursor
 
 
 ---- Appendix ----

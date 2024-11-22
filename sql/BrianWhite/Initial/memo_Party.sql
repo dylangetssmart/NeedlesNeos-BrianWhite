@@ -1,3 +1,4 @@
+use BrianWhiteNeos
 
 
 IF EXISTS (SELECT * FROM sys.objects WHERE name='party_Indexed' and type='U')
