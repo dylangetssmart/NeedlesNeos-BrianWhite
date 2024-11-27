@@ -1,20 +1,25 @@
--- insert contacts from staff 
--- but not for contacts that exist already (staff > imp_user > contacts)
--- but not for users where saga is null (staff > imp_user > user)
-
-SELECT *, CASE WHEN iu.StaffCode = '' then 'y' else 'n' end FROM implementation_users iu ORDER BY iu.StaffCode
-
-
-SELECT * FROM BrianWhiteNeos..staff  order BY full_name WHERE first_name = 'lex'
-SELECT * FROM implementation_users iu order BY iu.SAFirst WHERE iu.SAFirst = 'lex'
-SELECT * FROM sma_MST_IndvContacts smic WHERE smic.cinnContactID = 52
-SELECT * FROM sma_MST_Users smu WHERE smu.usrnUserID = 410
+/*
+- During the final conversion, users and their associated contact records were not created for contacts that did not exist
+in the implementation system.
+- This script creates the contacts that were missed, and then the associated user records.
+- Both contacts and users are marked as inactive.
 
 
-DROP TABLE contacts_to_exclude
+1. contacts_to_exclude
 
+A list of contacts that we do not want to create. These contacts were created manually in the implementation system and
+as such do not have a saga to key off of. They should not be created
+
+
+*/
+
+--SELECT * FROM contacts_to_exclude cte
+IF OBJECT_ID('contacts_to_exclude', 'U') IS NOT NULL
+	DROP TABLE contacts_to_exclude;
+GO
 
 CREATE TABLE contacts_to_exclude (id UNIQUEIDENTIFIER);
+GO
 
 INSERT INTO contacts_to_exclude (id)
 VALUES 
@@ -24,37 +29,20 @@ VALUES
 ('FBC4634C-01D0-4C45-85E2-B02F0104C2D9'), -- Brigitte Rosado Rivera
 ('A580FC79-9AC6-4636-A988-B1F100FD7368'), -- Diana Maldonado Molina
 ('EB06256E-2D32-43AB-9B6E-AFD90139E279'), -- Flavia Medeiros Da Cunha
+('9E74B3DA-16E7-4F0C-9CFB-B12B00F67846'), -- Jessica Zamudio
 ('98A6D36A-9FF1-4990-AADA-B12401672379'), -- John M. Kuker
 ('793F065F-AAB8-45A9-A68C-AE2500D2A20B'), -- Lex M. Allgaier
 ('F07D6787-4757-49D3-9FEA-B1E1011FBEE5'), -- Matthew Clemen
 ('EA460689-9818-4D67-98D6-B1FB014857E0'), -- Willie Rodriguez
-('439EBE8A-0691-435D-AA12-B1E100F5BD2E') -- Noelia Vargas
-
--- does not exist in staff (8):
--- hakeem
--- jesica thomas
--- mara siegel
--- marlon perez (?) > Marlon Moncrieffe: 7486163E-F3D9-4CD8-B183-B1E200EEC432
--- noelia Quiros
--- rosemary Wilshusen
--- aadmin
--- implementation
-
--- records from staff without a match in imp_users
-SELECT s.* FROM BrianWhiteNeos..staff s
-LEFT JOIN implementation_users iu
-ON iu.StaffCode = s.staff_code
-WHERE iu.StaffCode is NULL
-AND s.id NOT IN (SELECT id FROM contacts_to_exclude)
-order BY s.full_name 
-
+('439EBE8A-0691-435D-AA12-B1E100F5BD2E'), -- Noelia Vargas
+('EFFA63DF-F1C1-EA11-B9E0-54BF64903F76'), -- neos-sup, neos-sys
+('7486163E-F3D9-4CD8-B183-B1E200EEC432')  -- Marlon Moncrieffe
+GO
 
 -- Indv Contact Cards for staff
 INSERT INTO [sma_MST_IndvContacts]
 	(
-	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath],
-	[cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing],
-	[cinsNickName], [cinsOccupation], [saga], [cinsGrade],				-- remember the [staff_code]
+	[cinsPrefix], [cinsSuffix], [cinsFirstName], [cinsLastName], [cinsHomePhone], [cinsWorkPhone], [cinsSSNNo], [cindBirthDate], [cindDateOfDeath], [cinnGender], [cinsMobile], [cinsComments], [cinnContactCtg], [cinnContactTypeID], [cinnRecUserID], [cindDtCreated], [cinbStatus], [cinbPreventMailing], [cinsNickName], [cinsOccupation], [saga], [cinsGrade],				-- remember the [staff_code]
 	[saga_ref]
 	)
 	SELECT
@@ -115,6 +103,7 @@ INSERT INTO [sma_MST_IndvContacts]
 	   ,47									AS [saga]
 	   ,stf.staff_code						AS [cinsGrade]
 	   ,stf.id								AS [saga_ref]
+	--SELECT *
 	FROM [BrianWhiteNeos].[dbo].[staff] stf
 	LEFT JOIN [BrianWhiteNeos]..[prefix] pre
 		ON stf.prefixid = pre.id
@@ -125,32 +114,28 @@ INSERT INTO [sma_MST_IndvContacts]
 	LEFT JOIN [sma_MST_IndvContacts] smic
 		ON smic.cinnContactID = iu.SAContactID
 	WHERE iu.SAContactID IS NULL
-	AND stf.id NOT IN (SELECT id FROM contacts_to_exclude)	
-
+		AND stf.id NOT IN (
+			SELECT
+				id
+			FROM contacts_to_exclude
+		)
 GO
 
-select * from sma_MST_IndvContacts smic WHERE smic.saga = 47 order BY smic.cinsFirstName
+SELECT
+	*
+FROM sma_MST_IndvContacts smic
+ORDER BY smic.cinsFirstName --WHERE smic.saga = 47
+SELECT
+	*
+FROM sma_MST_Users smu
+ORDER BY smu.usrsLoginID
 
 INSERT INTO [sma_MST_Users]
 	(
-	[usrnContactID],
-	[usrsLoginID],
-	[usrsPassword],
-	[usrsBackColor],
-	[usrsReadBackColor],
-	[usrsEvenBackColor],
-	[usrsOddBackColor],
-	[usrnRoleID],
-	[usrdLoginDate],
-	[usrdLogOffDate],
-	[usrnUserLevel],
-	[usrsWorkstation],
-	[usrnPortno], [usrbLoggedIn],
-	[usrbCaseLevelRights],
-	[usrbCaseLevelFilters], [usrnUnsuccesfulLoginCount], [usrnRecUserID], [usrdDtCreated], [usrnModifyUserID], [usrdDtModified], [usrnLevelNo], [usrsCaseCloseColor], [usrnDocAssembly], [usrnAdmin], [usrnIsLocked], [usrbActiveState], [saga]
+	[usrnContactID], [usrsLoginID], [usrsPassword], [usrsBackColor], [usrsReadBackColor], [usrsEvenBackColor], [usrsOddBackColor], [usrnRoleID], [usrdLoginDate], [usrdLogOffDate], [usrnUserLevel], [usrsWorkstation], [usrnPortno], [usrbLoggedIn], [usrbCaseLevelRights], [usrbCaseLevelFilters], [usrnUnsuccesfulLoginCount], [usrnRecUserID], [usrdDtCreated], [usrnModifyUserID], [usrdDtModified], [usrnLevelNo], [usrsCaseCloseColor], [usrnDocAssembly], [usrnAdmin], [usrnIsLocked], [usrbActiveState], [saga]
 	)
 	SELECT
-		indv.cinnContactID					 AS [usrnContactID]
+		indv.cinnContactID				 AS [usrnContactID]
 	   ,CONVERT(VARCHAR(20), staff_code) AS [usrsLoginID]
 	   ,'#'								 AS [usrsPassword]
 	   ,NULL
@@ -176,9 +161,9 @@ INSERT INTO [sma_MST_Users]
 	   ,NULL
 	   ,NULL
 	   ,NULL
-	   ,0						 AS [usrbActiveState]
+	   ,0								 AS [usrbActiveState]
 	   ,stf.[id]						 AS [saga]
-	   --,CONVERT(VARCHAR(20), STF.staff_code) as saga
+	--,CONVERT(VARCHAR(20), STF.staff_code) as saga
 	--SELECT *
 	FROM [BrianWhiteNeos].[dbo].[staff] STF
 	JOIN sma_MST_IndvContacts INDV
@@ -186,8 +171,8 @@ INSERT INTO [sma_MST_Users]
 	LEFT JOIN [sma_MST_Users] u
 		ON u.saga = STF.[id]
 	WHERE u.usrsLoginID IS NULL
-		and indv.saga = 47
-	order BY u.usrsLoginID
+		AND indv.saga = 47
+	ORDER BY u.usrsLoginID
 		--AND u.usrnUserID <> 410
 
 
@@ -216,7 +201,50 @@ INSERT INTO [sma_MST_Users]
 
 
 
+-- insert contacts from staff 
+-- but not for contacts that exist already (staff > imp_user > contacts)
+-- but not for users where saga is null (staff > imp_user > user)
 
+SELECT *, CASE WHEN iu.StaffCode = '' then 'y' else 'n' end FROM implementation_users iu ORDER BY iu.StaffCode
+
+
+--24F2B802-C315-4676-B3B8-B0AB0101FF1D
+
+--Brigitte Rosado Rivera
+--FBC4634C-01D0-4C45-85E2-B02F0104C2D9
+-- sa contactid = 32
+-- sa userid = 390
+SELECT * FROM BrianWhiteNeos..staff s WHERE s.id = 'FBC4634C-01D0-4C45-85E2-B02F0104C2D9'
+SELECT * FROM sma_MST_IndvContacts smic WHERE smic.cinsFirstName = 'brigitte'
+SELECT * FROM sma_MST_Users smu WHERE smu.usrnContactID = 32 or smu.usrnContactID = 14424
+
+SELECT * FROM sma_MST_Users smu WHERE smu.saga is null
+
+SELECT * FROM BrianWhiteNeos..staff  order BY full_name WHERE first_name = 'lex'
+SELECT * FROM implementation_users iu order BY iu.SAFirst WHERE iu.SAFirst = 'lex'
+SELECT * FROM sma_MST_IndvContacts smic WHERE smic.cinnContactID = 52
+SELECT * FROM sma_MST_Users smu WHERE smu.usrnUserID = 410
+
+
+
+
+-- does not exist in staff (8):
+-- hakeem
+-- jesica thomas
+-- mara siegel
+-- marlon perez (?) > Marlon Moncrieffe: 7486163E-F3D9-4CD8-B183-B1E200EEC432
+-- noelia Quiros
+-- rosemary Wilshusen
+-- aadmin
+-- implementation
+
+-- records from staff without a match in imp_users
+SELECT s.* FROM BrianWhiteNeos..staff s
+LEFT JOIN implementation_users iu
+ON iu.StaffCode = s.staff_code
+WHERE iu.StaffCode is NULL
+AND s.id NOT IN (SELECT id FROM contacts_to_exclude)
+order BY s.full_name 
 
 
 
