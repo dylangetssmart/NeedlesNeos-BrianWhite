@@ -2,7 +2,6 @@
 Author:		Dylan Smith | dylans@smartadvocate.com
 Date:		2024-11-27
 
-
 - During the final conversion, users and their associated contact records were not created for contacts that did not exist
 in the implementation system.
 - This script creates the contacts that were missed, and then the associated user records.
@@ -12,6 +11,7 @@ in the implementation system.
 
 use BrianWhiteSA
 go
+
 -----------------------------------------------------------------------------------------------------------
 -- 1. contacts_to_exclude
 	-- A list of contacts that we do not want to create. These contacts were created manually in the implementation system and
@@ -64,6 +64,28 @@ VALUES
 ('7486163E-F3D9-4CD8-B183-B1E200EEC432')  -- Marlon Moncrieffe
 GO
 --SELECT * FROM contacts_to_exclude cte
+
+
+-- 1.2 Pre-validation
+-- Save to excel - users to create
+--SELECT
+--	*
+--FROM BrianWhiteNeos..staff s
+--LEFT JOIN sma_MST_Users u
+--	ON u.saga = s.id
+--WHERE u.saga IS NULL
+--	AND s.id NOT IN (
+--		SELECT
+--			id
+--		FROM contacts_to_exclude
+--	)
+--ORDER BY s.staff_code
+
+-- Save to excel - all contacts before insert
+SELECT * FROM sma_MST_IndvContacts smic
+
+-- Save to excel - all users before insert
+SELECT * FROM sma_MST_Users smu
 
 -----------------------------------------------------------------------------------------------------------
 -- 2. Insert individual contact records
@@ -259,7 +281,7 @@ WHERE usrsLoginID IN (
     'noelia',
     'will'
 );
-
+GO
 
 -----------------------------------------------------------------------------------------------------------
 -- 5. Validation
@@ -282,9 +304,23 @@ ORDER BY s.staff_code
 	-- Cooper (SA)
 SELECT * FROM sma_MST_Users smu WHERE smu.saga is null
 
+---- Save to excel - contacts that were created
+--SELECT *
+--from sma_MST_IndvContacts ic
+--WHERE ic.saga = 47
 
+---- Save to excel - users that were created
+--SELECT *
+--from sma_MST_Users u
+--JOIN sma_MST_IndvContacts ic
+--on ic.cinnContactID = u.usrnContactID
+--WHERE ic.saga = 47
 
+-- Save to excel - all contacts after insert
+SELECT * FROM sma_MST_IndvContacts smic
 
+-- Save to excel - all users after insert
+SELECT * FROM sma_MST_Users smu
 
 
 
@@ -335,7 +371,7 @@ SELECT * FROM sma_MST_Users smu WHERE smu.saga is null
 ---- aadmin
 ---- implementation
 
----- records from staff without a match in imp_users
+-- records from staff without a match in imp_users
 --SELECT s.* FROM BrianWhiteNeos..staff s
 --LEFT JOIN implementation_users iu
 --ON iu.StaffCode = s.staff_code
